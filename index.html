@@ -1,0 +1,947 @@
+<!doctype html>
+<html lang="it">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#17142C">
+<meta name="description" content="Lezioni brevi per imparare Claude e GitHub, dal corso IDEA^IA per docenti.">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icone/icona-192.png">
+<link rel="apple-touch-icon" href="icone/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Claudio">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}[hidden]{display:none!important}</style>
+<title>Claudio</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,650;1,9..144,400;1,9..144,600&family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&display=swap">
+<style>
+/* Un'app a lezioni brevi nel mondo delle Carte delle idee: di notte nel bosco, un sentiero di lucciole da accendere una alla volta. Un solo aspetto, notturno, voluto. */
+:root{
+  --bg:#17142C; --bg-2:#261E40; --panel:rgba(38,30,64,.86); --ink:#F3EAF0; --muted:#B9A9C4; --line:#3B3056;
+  --night:#1D1735; --paper:#F7F1EE; --paper-ink:#2A2045; --paper-muted:#6C5F77;
+  --blu:#9EA6E2; --rosso:#EA9B8C; --giallo:#F2B97F; --verde:#88C0AF; --lilla:#C8A5D8;
+  --blu-d:#404894; --rosso-d:#A3493C; --giallo-d:#8A5217; --verde-d:#2A6858; --lilla-d:#6B4A85;
+  --ok:#88C0AF; --ok-d:#2A6858; --ko:#EA9B8C; --ko-d:#A3493C; --glow:#F6D58E;
+  --f-display:"Bricolage Grotesque","Arial Narrow",system-ui,sans-serif;
+  --f-serif:"Fraunces",Georgia,"Times New Roman",serif;
+  --f-body:"Atkinson Hyperlegible",Verdana,system-ui,sans-serif;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{background:var(--bg)}
+body{margin:0;background:linear-gradient(to bottom,#14122A 0%,#1F1A3C 34%,#35284F 58%,#5C3760 78%,#8C4F63 92%,#B86E66 100%) fixed,var(--bg);color:var(--ink);font-family:var(--f-body);font-size:17px;line-height:1.5;min-height:100vh;overflow-x:hidden;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0 140px}
+button{font:inherit;color:inherit;cursor:pointer}
+:focus-visible{outline:3px solid var(--giallo);outline-offset:3px}
+.sky{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:0}
+.sky circle{fill:#FFF3E6}
+.sky .tw{animation:twinkle var(--d,4s) ease-in-out infinite;animation-delay:var(--dl,0s)}
+@keyframes twinkle{0%,100%{opacity:.15}50%{opacity:.95}}
+.forest{position:fixed;left:0;right:0;bottom:0;width:100%;height:clamp(120px,22vh,230px);pointer-events:none;z-index:0}
+.fly{fill:var(--glow);animation:fly var(--d,6s) ease-in-out infinite;animation-delay:var(--dl,0s)}
+@keyframes fly{0%,100%{opacity:0;transform:translate(0,0)}40%{opacity:.9}60%{opacity:.8;transform:translate(var(--fx,8px),var(--fy,-10px))}}
+.c-blu{--suit:var(--blu);--suit-d:var(--blu-d)} .c-rosso{--suit:var(--rosso);--suit-d:var(--rosso-d)} .c-giallo{--suit:var(--giallo);--suit-d:var(--giallo-d)} .c-verde{--suit:var(--verde);--suit-d:var(--verde-d)} .c-lilla{--suit:var(--lilla);--suit-d:var(--lilla-d)}
+
+.app{position:relative;z-index:1;max-width:620px;margin:0 auto}
+.view[hidden]{display:none!important}
+
+/* barra in alto */
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;display:flex;align-items:center;gap:10px;padding:14px 0 12px;background:linear-gradient(to bottom,#14122A 70%,rgba(20,18,42,0))}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:#14122A}
+.courses{display:flex;gap:4px;background:var(--bg-2);border-radius:999px;padding:4px}
+.course{display:flex;align-items:center;gap:7px;border:0;background:transparent;color:var(--muted);font-weight:700;padding:7px 14px;border-radius:999px;font-size:.95rem}
+.course svg{width:16px;height:16px;fill:currentColor}
+.course[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+.stats{margin-left:auto;display:flex;align-items:center;gap:6px}
+.stat{display:flex;align-items:center;gap:5px;font-family:var(--f-display);font-weight:800;font-size:1rem;padding:6px 9px;border-radius:12px}
+.stat svg{width:20px;height:20px}
+.iconbtn{display:grid;place-items:center;width:38px;height:38px;border-radius:12px;border:0;background:transparent;color:var(--muted)}
+.iconbtn:hover{background:var(--bg-2);color:var(--ink)}
+.iconbtn svg{width:20px;height:20px;fill:currentColor}
+
+/* mascotte */
+.mascot{display:block;overflow:visible}
+.mascot .halo{animation:halo 2.8s ease-in-out infinite;transform-origin:60px 82px}
+.bob{animation:bob 3.2s ease-in-out infinite}
+@keyframes halo{50%{transform:scale(1.18);opacity:.55}}
+@keyframes bob{50%{transform:translateY(-5px)}}
+
+/* home */
+.hello{display:flex;align-items:center;gap:14px;margin:6px 0 26px}
+.hello .mascot{width:96px;flex:none}
+.bubble{position:relative;background:var(--paper);color:var(--paper-ink);border-radius:18px;padding:14px 18px;font-size:1rem;box-shadow:0 14px 30px -18px #000}
+.bubble::before{content:"";position:absolute;left:-9px;top:26px;border:9px solid transparent;border-right-color:var(--paper);border-left:0}
+.bubble b{font-family:var(--f-serif);font-weight:650;font-size:1.15rem;display:block;margin-bottom:2px}
+.goal{display:flex;align-items:center;gap:12px;background:var(--panel);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);border-radius:18px;padding:14px 18px;margin-bottom:28px}
+.goal .bar{flex:1;height:14px;border-radius:99px;background:#120F24;overflow:hidden}
+.goal .bar i{display:block;height:100%;width:0;border-radius:99px;background:linear-gradient(90deg,var(--giallo),var(--glow));box-shadow:0 0 12px var(--glow);transition:width .6s}
+.goal small{color:var(--muted);font-size:.85rem;white-space:nowrap}
+
+.unit{margin-bottom:10px}
+.banner{display:flex;align-items:center;gap:12px;background:var(--suit);color:var(--paper-ink);border-radius:20px;padding:16px 18px;box-shadow:0 5px 0 var(--suit-d)}
+.banner .txt{flex:1;min-width:0}
+.banner small{display:block;font-family:var(--f-display);font-weight:800;font-size:.78rem;text-transform:uppercase;letter-spacing:.12em;opacity:.75}
+.banner h2{font-family:var(--f-serif);font-weight:650;font-size:1.35rem;line-height:1.1;margin:2px 0 0;text-wrap:balance}
+.guidebtn{display:flex;align-items:center;gap:6px;border:2px solid var(--paper-ink);background:transparent;color:var(--paper-ink);font-weight:700;font-size:.88rem;padding:7px 12px;border-radius:14px;flex:none}
+.guidebtn svg{width:16px;height:16px;fill:currentColor}
+.path{position:relative;display:flex;flex-direction:column;align-items:center;padding:58px 0 34px}
+.node-wrap{position:relative;transform:translateX(var(--off,0px))}
+.node{position:relative;display:grid;place-items:center;width:84px;height:78px;border-radius:50%;border:0;background:var(--suit);box-shadow:0 8px 0 var(--suit-d);transition:transform .1s,box-shadow .1s}
+.node:active{transform:translateY(6px);box-shadow:0 2px 0 var(--suit-d)}
+.node svg{width:34px;height:34px;fill:var(--paper-ink)}
+.node.done{background:var(--giallo);box-shadow:0 8px 0 var(--giallo-d),0 0 34px -4px var(--glow)}
+.node.next{animation:pulse 2.2s ease-in-out infinite}
+@keyframes pulse{50%{box-shadow:0 8px 0 var(--suit-d),0 0 0 12px color-mix(in srgb,var(--suit) 25%,transparent)}}
+.node-label{display:block;text-align:center;margin-top:16px;font-size:.88rem;color:var(--muted);max-width:180px}
+.startbub{position:absolute;left:50%;bottom:calc(100% + 12px);transform:translateX(-50%);white-space:nowrap;background:var(--paper);color:var(--paper-ink);font-family:var(--f-display);font-weight:800;text-transform:uppercase;letter-spacing:.1em;font-size:.8rem;padding:7px 13px;border-radius:12px;animation:bob 2.4s ease-in-out infinite}
+.startbub::after{content:"";position:absolute;left:50%;top:100%;transform:translateX(-50%);border:7px solid transparent;border-top-color:var(--paper)}
+.special{width:96px;height:88px}
+.trophy{display:flex;flex-direction:column;align-items:center;gap:6px;color:var(--muted);font-size:.9rem;padding:4px 0 30px}
+.trophy svg{width:64px;height:64px}
+
+/* lezione */
+.lhead{display:flex;align-items:center;gap:12px;padding:18px 0 10px}
+.prog{position:relative;flex:1;height:18px;border-radius:99px;background:#120F24;box-shadow:inset 0 0 0 1px var(--line)}
+.prog i{position:absolute;left:0;top:0;bottom:0;width:0;border-radius:99px;background:linear-gradient(90deg,var(--giallo),var(--glow));box-shadow:0 0 14px var(--glow);transition:width .45s cubic-bezier(.2,.8,.2,1)}
+.prog .bug{position:absolute;top:50%;width:34px;height:34px;transform:translate(-50%,-50%);transition:left .45s cubic-bezier(.2,.8,.2,1)}
+.quit{display:none;align-items:center;flex-wrap:wrap;gap:10px;background:var(--panel);border-radius:16px;padding:12px 14px;margin-bottom:10px}
+.quit.on{display:flex}
+.quit p{margin:0;flex:1 1 220px;font-size:.95rem}
+.lbody{padding:10px 0 230px}
+.kind{font-family:var(--f-display);font-weight:800;font-size:.8rem;text-transform:uppercase;letter-spacing:.12em;color:var(--suit);margin:0 0 8px}
+.qrow{display:flex;gap:12px;align-items:flex-start;margin-bottom:20px}
+.qrow .mascot{width:64px;flex:none;margin-top:-4px}
+.q{font-family:var(--f-serif);font-weight:650;font-size:clamp(1.35rem,4.2vw,1.75rem);line-height:1.22;letter-spacing:-.01em;margin:0;text-wrap:balance}
+.stmt{background:var(--paper);color:var(--paper-ink);border-radius:18px;padding:16px 18px;font-family:var(--f-serif);font-size:1.2rem;line-height:1.4;margin:0 0 18px}
+.scene{display:flex;flex-direction:column;gap:10px;margin:0 0 20px}
+.msg{max-width:88%;padding:11px 15px;border-radius:16px;font-size:.98rem;line-height:1.4}
+.msg.tu{align-self:flex-end;background:var(--bg-2);border-bottom-right-radius:4px}
+.msg.cl{align-self:flex-start;background:var(--paper);color:var(--paper-ink);border-bottom-left-radius:4px}
+.msg small{display:block;font-family:var(--f-display);font-weight:800;font-size:.72rem;text-transform:uppercase;letter-spacing:.1em;opacity:.65;margin-bottom:2px}
+.opts{display:grid;gap:10px}
+.opts.two{grid-template-columns:1fr 1fr}
+.opt{display:flex;align-items:center;gap:12px;text-align:left;width:100%;border:2px solid var(--line);background:rgba(29,23,53,.85);border-radius:16px;padding:14px 16px;box-shadow:0 4px 0 var(--line);font-size:1rem;line-height:1.35;transition:transform .08s}
+.opt:active{transform:translateY(3px);box-shadow:0 1px 0 var(--line)}
+.opt .k{flex:none;display:grid;place-items:center;width:26px;height:26px;border-radius:8px;border:1.5px solid var(--line);font-family:var(--f-display);font-weight:800;font-size:.8rem;color:var(--muted)}
+.opt.big{justify-content:center;font-family:var(--f-serif);font-weight:650;font-size:1.3rem;padding:22px}
+.opt.sel{border-color:var(--suit);background:color-mix(in srgb,var(--suit) 18%,#1D1735);box-shadow:0 4px 0 var(--suit-d)}
+.opt.sel .k{border-color:var(--suit);color:var(--suit)}
+.opt.good{border-color:var(--ok);background:color-mix(in srgb,var(--ok) 22%,#1D1735);box-shadow:0 4px 0 var(--ok-d)}
+.opt.bad{border-color:var(--ko);background:color-mix(in srgb,var(--ko) 20%,#1D1735);box-shadow:0 4px 0 var(--ko-d)}
+.opt[disabled]{cursor:default}
+.sentence{font-family:var(--f-serif);font-size:1.35rem;line-height:1.9;margin:0 0 22px}
+.slot{display:inline-block;min-width:110px;padding:2px 12px;border:0;border-bottom:3px solid var(--suit);background:rgba(255,255,255,.05);border-radius:8px 8px 0 0;font-family:var(--f-serif);font-weight:650;font-size:1.3rem;color:var(--suit);vertical-align:baseline}
+.slot:empty::after{content:"\00a0"}
+.chips{display:flex;flex-wrap:wrap;gap:10px}
+.chip{border:2px solid var(--line);background:var(--paper);color:var(--paper-ink);border-radius:14px;padding:10px 14px;box-shadow:0 4px 0 #CFC3B8;font-size:1rem;line-height:1.3;text-align:left}
+.chip.used{visibility:hidden}
+.answerline{min-height:66px;display:flex;flex-direction:column;gap:8px;padding:10px;border:2px dashed var(--line);border-radius:16px;margin-bottom:18px}
+.answerline .chip{display:flex;gap:10px;align-items:center}
+.answerline .chip b{font-family:var(--f-display);color:var(--paper-muted)}
+.answerline.good{border-color:var(--ok)} .answerline.bad{border-color:var(--ko)}
+.hint{color:var(--muted);font-size:.9rem;margin:0 0 10px}
+.match{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.match .col{display:grid;gap:10px;align-content:start}
+.match .opt{font-size:.95rem;padding:12px 14px;min-height:62px}
+.match .opt.ok{opacity:.35;border-color:var(--ok);box-shadow:none}
+.match .opt.shake{animation:shake .35s}
+@keyframes shake{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+
+.lfoot{position:fixed;left:0;right:0;bottom:0;z-index:25;background:#14122A;border-top:2px solid var(--line);padding-bottom:calc(16px + env(safe-area-inset-bottom,0px));padding-top:16px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.lfoot.good{background:#1E3A36;border-color:var(--ok)}
+.lfoot.bad{background:#3C2232;border-color:var(--ko)}
+.lfoot .in{max-width:620px;margin:0 auto;display:flex;flex-wrap:wrap;align-items:center;gap:12px 18px}
+.fb{flex:1 1 260px;display:none;gap:12px;align-items:flex-start}
+.lfoot.good .fb,.lfoot.bad .fb{display:flex}
+.fb .ic{flex:none;display:grid;place-items:center;width:44px;height:44px;border-radius:50%;background:var(--paper)}
+.fb .ic svg{width:24px;height:24px}
+.fb h3{font-family:var(--f-serif);font-weight:650;font-size:1.3rem;margin:0}
+.lfoot.good h3{color:var(--ok)} .lfoot.bad h3{color:var(--ko)}
+.fb p{margin:2px 0 0;font-size:.95rem;color:var(--ink)}
+.fb p.sol{font-weight:700}
+.go{margin-left:auto;min-width:170px;border:0;border-radius:16px;padding:14px 26px;font-family:var(--f-display);font-weight:800;font-size:1rem;text-transform:uppercase;letter-spacing:.08em;background:var(--giallo);color:var(--paper-ink);box-shadow:0 5px 0 var(--giallo-d)}
+.go:active{transform:translateY(4px);box-shadow:0 1px 0 var(--giallo-d)}
+.go[disabled]{background:#2E2650;color:#7C6F92;box-shadow:0 5px 0 #201A3A;cursor:not-allowed}
+.lfoot.good .go{background:var(--ok);box-shadow:0 5px 0 var(--ok-d)}
+.lfoot.bad .go{background:var(--ko);box-shadow:0 5px 0 var(--ko-d)}
+
+/* fine lezione */
+.done{text-align:center;padding:30px 0}
+.done .mascot{width:150px;margin:0 auto 6px}
+.done h1{font-family:var(--f-serif);font-weight:500;font-size:clamp(2rem,7vw,2.8rem);line-height:1;margin:0 0 6px;letter-spacing:-.02em}
+.done h1 em{font-style:italic;color:var(--giallo)}
+.done p{color:var(--muted);margin:0 0 24px}
+.tiles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-bottom:28px}
+.tile{border-radius:16px;border:2px solid var(--suit);overflow:hidden}
+.tile small{display:block;background:var(--suit);color:var(--paper-ink);font-family:var(--f-display);font-weight:800;font-size:.74rem;text-transform:uppercase;letter-spacing:.1em;padding:6px}
+.tile b{display:block;font-family:var(--f-serif);font-weight:650;font-size:1.6rem;padding:10px 4px}
+.done .go{margin:0 auto}
+
+/* guida */
+.sheet{position:fixed;inset:0;z-index:40;display:grid;place-items:center;background:rgba(10,8,22,.72);padding:20px max(16px,env(safe-area-inset-left,0px))}
+.sheet[hidden]{display:none}
+.card{max-width:520px;width:100%;max-height:86vh;overflow:auto;background:var(--paper);color:var(--paper-ink);border-radius:22px;padding:24px 24px 20px;box-shadow:0 30px 60px -20px #000}
+.card small{font-family:var(--f-display);font-weight:800;text-transform:uppercase;letter-spacing:.12em;font-size:.76rem;color:var(--suit-d)}
+.card h2{font-family:var(--f-serif);font-weight:650;font-size:1.6rem;margin:4px 0 14px;line-height:1.1}
+.card ul{margin:0 0 18px;padding:0;list-style:none;display:grid;gap:12px}
+.card li{display:flex;gap:12px;align-items:flex-start;line-height:1.4}
+.card li::before{content:"";flex:none;width:12px;height:12px;margin-top:6px;border-radius:50%;background:var(--suit);box-shadow:0 0 0 4px color-mix(in srgb,var(--suit) 30%,transparent)}
+.card .go{width:100%}
+.card .row{display:flex;gap:10px;flex-wrap:wrap}
+.card .row .go{flex:1;width:auto}
+.btn-line{border:2px solid var(--paper-ink);background:transparent;color:var(--paper-ink);border-radius:16px;padding:12px 18px;font-weight:700;flex:1}
+.toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:50;background:var(--paper);color:var(--paper-ink);border-radius:14px;padding:10px 16px;font-weight:700;box-shadow:0 10px 30px -10px #000}
+.toast[hidden]{display:none}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+/* schermate disegnate dentro la guida */
+.shotlabel{display:flex;align-items:center;gap:8px;margin:4px 0 8px;font-family:var(--f-display);font-weight:800;font-size:.72rem;text-transform:uppercase;letter-spacing:.1em;color:var(--paper-muted)}
+.shot{background:#fff;color:#2A2045;border:1.5px solid #DCD2C3;border-radius:14px;overflow:hidden;font-size:13px;line-height:1.35;margin-bottom:10px;box-shadow:0 10px 24px -16px rgba(42,32,69,.5)}
+.shot .wbar{display:flex;gap:5px;align-items:center;height:24px;padding:0 10px;background:#EFE9E1;border-bottom:1px solid #E2D9CC}
+.shot .wbar i{width:8px;height:8px;border-radius:50%;background:#D3C7B6}
+.shot .wbar span{margin-left:8px;font-size:11px;color:#8A7F90}
+.shot .sb{padding:12px}
+.mk{display:inline-grid;place-items:center;flex:none;width:20px;height:20px;margin:0 3px;border-radius:50%;background:#F2B97F;color:#2A2045;font:800 11px/1 var(--f-display);font-style:normal;box-shadow:0 0 0 3px rgba(242,185,127,.4);vertical-align:middle}
+.s-chat{display:flex;flex-direction:column;gap:8px;min-width:0}
+.s-msg{max-width:92%;padding:8px 10px;border-radius:12px}
+.s-msg.me{align-self:flex-end;background:#EFE9F7}
+.s-msg.ai{align-self:flex-start}
+.s-msg.ai b{color:#C46A50;margin-right:4px}
+.s-msg.ko{background:#F9E3DE;text-decoration:line-through;text-decoration-color:#A3493C}
+.s-msg.ok{background:#E1F0EA}
+.s-tools{margin-top:5px;font-size:11.5px;color:#6C5F77;display:flex;align-items:center;gap:4px}
+.s-input{display:flex;align-items:center;gap:6px;border:1.5px solid #D9CFC2;border-radius:14px;padding:8px 8px 8px 10px;background:#FFFDF8}
+.s-input .s-ph{flex:1;color:#8A7F90;min-width:0}
+.s-input.big{display:block;line-height:1.9;color:#2A2045}
+.s-input .hl{background:#FBE8D3;border-radius:4px;padding:1px 3px;font-weight:700}
+.s-btn{display:grid;place-items:center;width:24px;height:24px;border-radius:8px;border:1.5px solid #D9CFC2;font-weight:700;flex:none}
+.s-send{display:grid;place-items:center;width:26px;height:26px;border-radius:8px;background:#C46A50;color:#fff;font-weight:700;flex:none}
+.s-split{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.3fr);gap:10px}
+.s-split2{display:grid;grid-template-columns:minmax(0,.7fr) minmax(0,1.6fr);gap:10px}
+.s-side{display:flex;flex-direction:column;gap:5px;border-right:1px solid #EEE6DB;padding-right:8px;min-width:0}
+.s-new{display:flex;align-items:center;font-weight:700;color:#C46A50;font-size:12px}
+.s-it{padding:5px 7px;border-radius:7px;font-size:12px;color:#4A3F5A;display:flex;align-items:center;gap:4px}
+.s-it.on{background:#EFE9F7;font-weight:700}
+.s-card{margin-top:6px;display:flex;align-items:center;gap:6px;border:1.5px solid #D9CFC2;border-radius:10px;padding:7px 9px;font-weight:700}
+.s-panel{border:1.5px solid #D9CFC2;border-radius:12px;overflow:hidden;min-width:0}
+.s-phd{display:flex;flex-wrap:wrap;align-items:center;gap:4px;padding:7px 8px;border-bottom:1px solid #EEE6DB;background:#FBF8F3}
+.s-phd b{flex:1 1 100%;font-size:12.5px}
+.s-pill{display:inline-flex;align-items:center;gap:3px;border:1.5px solid #D9CFC2;border-radius:8px;padding:2px 8px;font-weight:700;font-size:12px;background:#fff;white-space:nowrap}
+.s-pill.dark{background:#2A2045;color:#fff;border-color:#2A2045}
+.s-ver{font-size:12px;color:#6C5F77;font-weight:700}
+.s-tabs{display:flex;gap:6px;padding:6px 8px;font-size:12px;color:#6C5F77;flex-wrap:wrap;align-items:center}
+.s-tabs span.on{color:#2A2045;font-weight:700;border-bottom:2px solid #C46A50}
+.s-keys{display:flex;gap:4px;padding:10px}
+.s-keys span{flex:1;height:52px;border-radius:6px}
+.s-keys span:nth-child(1){background:#9EA6E2}.s-keys span:nth-child(2){background:#EA9B8C}.s-keys span:nth-child(3){background:#F2B97F}.s-keys span:nth-child(4){background:#88C0AF}.s-keys span:nth-child(5){background:#C8A5D8}
+.s-files{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.s-file{display:inline-flex;align-items:center;gap:6px;border:1.5px solid #D9CFC2;border-radius:10px;padding:5px 9px;font-weight:700;background:#FBF8F3}
+.s-file em{font-style:normal;font:800 9.5px/1 var(--f-display);background:#C46A50;color:#fff;border-radius:4px;padding:3px 4px}
+.s-file em.img{background:#404894}
+.s-ptitle{display:flex;align-items:center;gap:8px;font-family:var(--f-serif);font-weight:650;font-size:16px;margin-bottom:8px}
+.s-ptitle .s-pill{margin-left:auto;font-family:var(--f-body)}
+.s-pgrid{display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1.5fr);gap:10px}
+.s-list{display:flex;flex-direction:column;gap:4px;min-width:0}
+.s-col{display:flex;flex-direction:column;gap:8px;min-width:0}
+.s-box{border:1.5px solid #D9CFC2;border-radius:10px;padding:8px 9px;background:#FBF8F3}
+.s-box b{font-size:12.5px}
+.s-box p{margin:5px 0 0;font-size:12px;color:#4A3F5A;display:flex;flex-wrap:wrap;gap:4px;align-items:center}
+.s-box.live{background:#E1F0EA;border-color:#88C0AF;font-size:12px}
+.s-ghtop{display:flex;flex-direction:column;gap:2px;border-bottom:1px solid #EEE6DB;margin:-12px -12px 10px;padding:10px 12px 0;background:#FBF8F3}
+.s-ghtop .s-tabs{padding:4px 0 6px}
+.s-ghbar{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin-bottom:8px}
+.s-menu{display:flex;flex-direction:column;border:1.5px solid #D9CFC2;border-radius:10px;overflow:hidden;font-size:12px;margin-left:auto}
+.s-menu span{padding:4px 10px}
+.s-menu span.on{background:#EFE9F7;font-weight:700}
+.s-rows{border:1.5px solid #D9CFC2;border-radius:10px;overflow:hidden;margin-bottom:8px}
+.s-rows div{display:flex;align-items:center;gap:8px;padding:6px 9px;border-top:1px solid #EEE6DB;font-size:12px}
+.s-rows div:first-child{border-top:0}
+.s-rows div span{color:#6C5F77;margin-left:auto}
+.s-field{display:flex;flex-wrap:wrap;align-items:center;gap:6px;font-size:12px}
+.s-line{flex:1 1 200px;border:1.5px solid #D9CFC2;border-radius:8px;padding:4px 8px;background:#FFFDF8}
+.shotcap{margin:0 0 16px;padding:0;list-style:none;display:grid;gap:7px}
+.card .shotcap li::before{display:none}
+.shotcap li{display:flex;gap:10px;align-items:flex-start;font-size:.95rem;line-height:1.4}
+.shotcap li .mk{margin:1px 0 0}
+
+.s-menu span{display:flex;align-items:center;gap:4px}
+.s-tg{display:inline-block;width:28px;height:16px;border-radius:99px;background:#D9CFC2;position:relative;flex:none;vertical-align:middle}
+.s-tg i{position:absolute;top:2px;left:2px;width:12px;height:12px;border-radius:50%;background:#fff}
+.s-tg.on{background:#88C0AF}.s-tg.on i{left:14px}
+.s-row{display:flex;flex-wrap:wrap;align-items:center;gap:6px;border:1.5px solid #D9CFC2;border-radius:10px;padding:7px 9px;background:#FBF8F3;font-size:12px}
+.s-row b{font-size:12.5px}.s-row span{color:#6C5F77}.s-row .s-tg{margin-left:auto}
+.s-ask{margin-top:10px;display:flex;flex-wrap:wrap;align-items:center;gap:6px;border:1.5px dashed #C46A50;border-radius:10px;padding:8px;font-size:12px;background:#FFF6EF}
+.s-ask b{flex:1 1 100%}
+.s-term{background:#17142C;color:#E8E0F0;font-family:ui-monospace,Consolas,"Courier New",monospace;font-size:12px;line-height:1.6;border-radius:10px;padding:10px 12px;display:flex;flex-direction:column;gap:2px;overflow-wrap:anywhere}
+.s-term .p{color:#F2B97F;margin-right:6px}.s-term .d{color:#B9A9C4}
+.s-term .ask{margin:4px 0;padding:6px 8px;border:1px dashed #F2B97F;border-radius:8px;display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.s-term .b{border:1px solid #6C5F8A;border-radius:6px;padding:0 6px}
+.s-note{font-size:12px;background:#FBE8D3;border-radius:8px;padding:6px 8px;margin-bottom:6px;display:flex;align-items:center;gap:4px;flex-wrap:wrap}
+.sb2{padding:8px}
+.top{flex-wrap:wrap}
+.courses{overflow-x:auto;max-width:100%;scrollbar-width:none}
+.courses::-webkit-scrollbar{display:none}
+.course{white-space:nowrap}
+
+/* installa e condividi */
+.qrwrap{display:grid;grid-template-columns:auto minmax(0,1fr);gap:16px;align-items:center;margin:0 0 16px}
+.qrbox{width:150px;height:150px;padding:8px;background:#fff;border-radius:14px;box-shadow:0 0 0 1.5px #DCD2C3}
+.qrbox img,.qrbox canvas{width:100%!important;height:auto!important;display:block}
+.qrside p{margin:0 0 8px;font-size:.95rem}
+.qrlink{display:block;font-family:ui-monospace,Consolas,monospace;font-size:.85rem;word-break:break-all;background:#fff;border:1.5px solid #DCD2C3;border-radius:10px;padding:8px 10px;margin-bottom:8px}
+.how{margin:0 0 16px;padding:0;list-style:none;display:grid;gap:10px}
+.card .how li::before{display:none}
+.how li{display:grid;grid-template-columns:110px minmax(0,1fr);gap:10px;font-size:.93rem;line-height:1.4;border-top:1px solid #E5DCCF;padding-top:10px}
+.how li b{font-family:var(--f-display);font-weight:800;font-size:.78rem;text-transform:uppercase;letter-spacing:.08em;color:var(--suit-d)}
+.waitnote{margin:0 0 14px;padding:12px 14px;border-radius:12px;background:#FBE8D3;font-size:.93rem}
+@media (max-width:460px){.qrwrap{grid-template-columns:minmax(0,1fr);justify-items:center}.how li{grid-template-columns:minmax(0,1fr);gap:2px}}
+.shotnote{margin:-6px 0 16px;font-size:.88rem;color:var(--paper-muted)}
+@media (max-width:460px){.s-split,.s-split2,.s-pgrid{grid-template-columns:minmax(0,1fr)}.s-side{border-right:0;padding-right:0}}
+@media (max-width:460px){.opts.two{grid-template-columns:1fr}.tiles small{font-size:.66rem}.course{padding:7px 11px}.stat{padding:6px 5px}}
+@media (prefers-reduced-motion: reduce){.sky .tw,.fly,.mascot .halo,.bob,.node.next,.startbub,.match .opt.shake{animation:none}.prog i,.prog .bug{transition:none}}
+</style>
+
+<svg class="sky" id="sky" aria-hidden="true"></svg>
+<svg class="forest" id="forest" viewBox="0 0 1440 240" preserveAspectRatio="xMidYMax slice" aria-hidden="true"></svg>
+
+<div class="app">
+  <!-- home -->
+  <div class="view" id="v-home">
+    <header class="top">
+      <div class="courses" role="group" aria-label="Corso">
+        <button class="course" data-course="basi" aria-pressed="true"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 1.5C12.6 8 16 11.4 22.5 12 16 12.6 12.6 16 12 22.5 11.4 16 8 12.6 1.5 12 8 11.4 11.4 8 12 1.5Z"/></svg>Le basi</button><button class="course" data-course="avanzato" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 2h2v5h4V2h2v5h2v4a6 6 0 0 1-5 5.9V22h-2v-5.1A6 6 0 0 1 6 11V7h2Z"/></svg>Avanzato</button><button class="course" data-course="code" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 4h20v16H2Zm2 2v12h16V6Zm2.4 2.6L10 12l-3.6 3.4 1.4 1.4L12.8 12 7.8 7.2ZM12 15h6v2h-6Z"/></svg>Claude Code</button>
+        <button class="course" data-course="github" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3a3 3 0 0 0-1 5.83v6.34A3 3 0 1 0 7 15.17v-1.4c.9.7 2.1 1.2 3.5 1.2H13a3 3 0 0 0 3-2.4 3 3 0 1 0-2.05-.2A1.5 1.5 0 0 1 13 13h-2.5A3.5 3.5 0 0 1 7 9.5V8.83A3 3 0 0 0 6 3Zm0 2a1 1 0 1 1 0 2 1 1 0 0 1 0-2Zm11 5a1 1 0 1 1 0 2 1 1 0 0 1 0-2ZM6 17a1 1 0 1 1 0 2 1 1 0 0 1 0-2Z"/></svg>GitHub</button>
+      </div>
+      <div class="stats">
+        <span class="stat" title="Giorni di fila"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="13" r="9" fill="#F6D58E" opacity=".25"/><circle cx="12" cy="13" r="5.5" fill="#F6D58E"/><path d="M9 6c1-3 5-3 6 0" stroke="#F2B97F" stroke-width="2" fill="none" stroke-linecap="round"/></svg><span id="streak">0</span><span class="sr"> giorni di fila</span></span>
+        <span class="stat" title="Punti esperienza"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 1.5C12.6 8 16 11.4 22.5 12 16 12.6 12.6 16 12 22.5 11.4 16 8 12.6 1.5 12 8 11.4 11.4 8 12 1.5Z" fill="#F2B97F"/></svg><span id="xp">0</span><span class="sr"> punti</span></span>
+        <button class="iconbtn" id="sound" aria-label="Suoni attivi" title="Suoni"></button>
+        <button class="iconbtn" id="install" aria-label="Installa e condividi l'app" title="Installa e condividi"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 2h10a2 2 0 0 1 2 2v16a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2Zm0 3v13h10V5Zm5 14.2a1 1 0 1 0 0 2 1 1 0 0 0 0-2ZM11 7h2v5.2l1.8-1.8 1.4 1.4L12 16l-4.2-4.2 1.4-1.4L11 12.2Z"/></svg></button>
+        <button class="iconbtn" id="menu" aria-label="Impostazioni" title="Impostazioni"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="2.2"/><circle cx="12" cy="12" r="2.2"/><circle cx="19" cy="12" r="2.2"/></svg></button>
+      </div>
+    </header>
+
+    <div class="hello">
+      <div id="m-home"></div>
+      <div class="bubble" id="hello"></div>
+    </div>
+    <div class="goal"><small>Il sentiero</small><div class="bar"><i id="goalbar"></i></div><small id="goaltxt"></small></div>
+    <div id="path"></div>
+  </div>
+
+  <!-- lezione -->
+  <div class="view c-blu" id="v-lesson" hidden>
+    <div class="lhead">
+      <button class="iconbtn" id="close" aria-label="Esci dalla lezione"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.4 5 12 10.6 17.6 5 19 6.4 13.4 12 19 17.6 17.6 19 12 13.4 6.4 19 5 17.6 10.6 12 5 6.4Z"/></svg></button>
+      <div class="prog" role="progressbar" aria-label="Avanzamento della lezione" aria-valuemin="0" aria-valuemax="100" id="prog"><i id="progfill"></i><span class="bug" id="progbug"></span></div>
+    </div>
+    <div class="quit" id="quit"><p>Vuoi uscire? I progressi di questa lezione non vengono salvati.</p><button class="go" id="stay" style="min-width:0;padding:10px 18px">Resto</button><button class="iconbtn" id="leave" style="width:auto;padding:0 14px;color:var(--ko);font-weight:700">Esco</button></div>
+    <div class="lbody" id="lbody" aria-live="polite"></div>
+    <div class="lfoot" id="lfoot">
+      <div class="in">
+        <div class="fb" id="fb" role="status"></div>
+        <button class="go" id="go" disabled>Controlla</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- fine -->
+  <div class="view" id="v-done" hidden>
+    <div class="done" id="donebox"></div>
+  </div>
+</div>
+
+<div class="sheet" id="sheet" hidden><div class="card" id="sheetcard" role="dialog" aria-modal="true" aria-labelledby="sheettitle"></div></div>
+<div class="toast" id="toast" hidden></div>
+
+<script>
+/* ---------- contenuti ---------- */
+const COURSES={
+basi:{name:"Le basi",hello:"Se parti da zero, comincia da qui: ti insegno Claude un passo alla volta. A ogni lezione finita, sul sentiero si accende una lucciola.",units:[
+{id:"c1",title:"Che cos'è Claude",color:"blu",tips:[
+ "Claude è un modello linguistico: scrive il testo una parola alla volta, scegliendo la più probabile in base a moltissimi esempi.",
+ "Scrive ciò che è plausibile, non per forza ciò che è vero: date, citazioni e fonti si controllano sempre.",
+ "Quasi tutto è testo: spartiti, disegni, pagine web. Per questo Claude può costruire strumenti che suonano, si muovono, rispondono."],
+ex:[
+ {type:"choice",q:"Claude è…",opts:["un modello linguistico: prevede il testo che viene dopo","un motore di ricerca che copia pagine web","un archivio di risposte già scritte","una persona che risponde da lontano"],a:0,why:"Claude genera il testo parola dopo parola, in base a ciò che ha imparato da moltissimi esempi."},
+ {type:"fill",q:"Completa il verso, come farebbe un modello linguistico.",text:"Nel mezzo del cammin di nostra ___",words:["vita","strada","lavatrice"],answer:"vita",why:"Hai scelto la parola più probabile: è proprio quello che fa Claude, una parola dopo l'altra."},
+ {type:"tf",s:"Se Claude scrive una cosa con sicurezza, allora è sicuramente vera.",a:false,why:"Claude scrive ciò che è plausibile. Date, citazioni e fonti vanno verificate."},
+ {type:"match",q:"Tutto è testo: abbina la cosa al testo che la descrive.",pairs:[["Uno spartito","Notazione ABC"],["Un disegno","SVG"],["Una pagina interattiva","HTML e JavaScript"],["Una formula","LaTeX"]],why:"Sono tutti fatti di lettere: per questo Claude può scriverli."},
+ {type:"choice",q:"Perché Claude può costruire uno strumento che suona?",opts:["Perché ha una scheda audio","Perché il codice di un'app è testo, e Claude scrive testo","Perché scarica app da internet","Non può: sa solo scrivere"],a:1,why:"Claude scrive il codice; il browser lo trasforma in suono, immagini, movimento."},
+ {type:"tf",s:"Per costruire uno strumento con Claude bisogna saper programmare.",a:false,why:"Bisogna saper descrivere bene che cosa si vuole. Il codice lo scrive Claude."}
+]},
+{id:"c2",title:"La chat",color:"rosso",tips:[
+ "Più contesto dai, meglio è: per chi è, a che cosa serve, come si usa.",
+ "Se il risultato non va, continua nella stessa chat: chiedi una modifica precisa alla volta.",
+ "Puoi correggere un tuo messaggio con la matita: la conversazione riparte da lì. Quando cambi argomento, apri una chat nuova."],
+ex:[
+ {type:"choice",q:"Quale richiesta funziona meglio?",opts:["Fammi un gioco.","Gioco doppie","Crea un gioco per una seconda primaria sulle doppie: lo studente sente una parola e sceglie come si scrive.","Puoi aiutarmi?"],a:2,why:"Chi, che cosa, come: più contesto dai, più il risultato somiglia a ciò che hai in mente."},
+ {type:"order",q:"Metti in ordine il modo di lavorare con Claude.",items:["Descrivi l'idea","Guarda il risultato","Chiedi una modifica precisa","Prova di nuovo"],why:"È un ciclo: ogni giro è una versione migliore."},
+ {type:"choice",q:"Vuoi che il timer diventi rosso negli ultimi 10 secondi. Che cosa scrivi?",scene:[["tu","Crea un timer da 5 minuti per la classe."],["cl","Ecco il timer: un grande quadrante che scorre, con il pulsante Avvia."]],opts:["Rifallo.","Non mi piace.","Fai diventare lo sfondo rosso negli ultimi 10 secondi.","Cambia colore."],a:2,why:"Una richiesta alla volta, precisa: così vedi subito che cosa è cambiato."},
+ {type:"tf",s:"Se una risposta non va bene, conviene sempre ricominciare da una chat nuova.",a:false,why:"Di solito è meglio continuare nella stessa chat: lì Claude ha tutto il contesto di quello che vi siete detti."},
+ {type:"fill",q:"Completa la frase.",text:"Quando cambi argomento, conviene aprire una chat ___",words:["nuova","lunga","vecchia"],answer:"nuova",why:"Una chat per argomento resta ordinata, e Claude non si confonde con il discorso di prima."},
+ {type:"choice",q:"Hai mandato un messaggio con un errore. Che cosa puoi fare?",opts:["Niente: resta così","Lo modifichi con la matita e Claude risponde di nuovo da quel punto","Devi cancellare l'account","Aspetti il giorno dopo"],a:1,why:"Modificando il messaggio, la conversazione riparte da lì con la versione corretta."}
+]},
+{id:"c3",title:"File e immagini",color:"giallo",tips:[
+ "Claude legge PDF, documenti, fogli di calcolo e immagini: una pagina del libro, una foto della lavagna, uno spartito.",
+ "Non si caricano mai dati degli alunni: niente nomi, diagnosi, certificazioni, PEI o foto.",
+ "Se uno strumento deve usare foto personali, chiedi a Claude un pulsante «carica foto»: restano sul dispositivo della scuola."],
+ex:[
+ {type:"choice",q:"Che cosa puoi dare da leggere a Claude?",opts:["Solo il testo scritto nella chat","PDF, documenti, fogli di calcolo e immagini","Solo fotografie","Niente: legge solo internet"],a:1,why:"Puoi allegare file e immagini direttamente nella chat."},
+ {type:"tf",s:"Puoi fotografare una pagina del libro o la lavagna e chiedere a Claude di lavorarci sopra.",a:true,why:"Claude legge le immagini: può trasformare una pagina in domande, schemi o giochi."},
+ {type:"choice",q:"Hai una foto della classe con i bambini. Che cosa fai?",opts:["La carico così com'è","La carico ma senza scrivere i nomi","Non la carico: niente foto degli alunni","La carico in bianco e nero"],a:2,why:"Le immagini degli alunni sono dati personali: non si danno a Claude."},
+ {type:"match",q:"Abbina il file a un possibile uso.",pairs:[["Il PDF di un racconto","Domande di comprensione"],["La foto di uno spartito","Un gioco con le note"],["Un elenco di parole","Un memory"],["L'immagine di un quadro","Zone da scoprire con un clic"]],why:"Lo stesso materiale può diventare strumenti molto diversi: dipende dall'idea."},
+ {type:"tf",s:"Uno strumento può usare le foto del tablet della scuola senza che passino da Claude.",a:true,why:"Basta prevedere un pulsante «carica foto»: le immagini restano sul dispositivo."},
+ {type:"fill",q:"Completa la regola d'oro.",text:"A Claude si descrivono i ___, non le persone.",words:["bisogni","nomi","voti"],answer:"bisogni",why:"«Un alunno che legge con fatica le parole lunghe» basta per progettare bene."}
+]},
+{id:"c4",title:"Gli artifact",color:"verde",tips:[
+ "Un artifact è una pagina o uno strumento funzionante che compare accanto alla chat: lo provi subito.",
+ "Ogni modifica crea una nuova versione: puoi tornare indietro se un cambiamento peggiora le cose.",
+ "Quando funziona lo pubblichi o lo condividi, e apri il link sulla LIM. Puoi anche scaricarne il file."],
+ex:[
+ {type:"choice",q:"Che cos'è un artifact?",opts:["Un errore di Claude","Una pagina o uno strumento funzionante accanto alla chat","Un file da stampare","Un tipo di abbonamento"],a:1,why:"È il posto dove lo strumento prende vita e si può provare."},
+ {type:"order",q:"Dall'idea alla LIM: metti in ordine.",items:["Chiedi lo strumento","Lo provi nell'artifact","Chiedi le modifiche","Lo pubblichi o lo condividi","Apri il link sulla LIM"],why:"Prima si prova e si corregge, poi si porta in classe."},
+ {type:"tf",s:"Ogni volta che chiedi una modifica, l'artifact diventa una nuova versione.",a:true,why:"Le versioni precedenti restano: puoi tornare indietro."},
+ {type:"choice",q:"Lo strumento non funziona come vuoi. Che cosa scrivi?",scene:[["tu","Crea una tastiera di cinque note da suonare sulla LIM."],["cl","Ecco la tastiera: cinque tasti colorati, Do Re Mi Fa Sol."]],opts:["Non funziona.","Quando tocco un tasto non si sente niente: vorrei sentire la nota.","Riprova.","Sbagliato."],a:1,why:"Che cosa fai, che cosa succede, che cosa ti aspetti. Uno screenshot aiuta ancora di più."},
+ {type:"choice",q:"Come porti lo strumento in classe?",opts:["Lo ricopio a mano","Pubblico o condivido l'artifact e apro il link sulla LIM","Lo stampo","Non si può"],a:1,why:"Un link e lo strumento è sulla LIM, pronto da usare."},
+ {type:"fill",q:"Completa il consiglio.",text:"Prima di un grande cambiamento, conviene ___ la versione che funziona.",words:["salvare","cancellare","nascondere"],answer:"salvare",why:"Pubblicala o scaricala: se qualcosa si rompe, sai dove tornare."}
+]},
+{id:"c5",title:"I progetti",color:"blu",tips:[
+ "Un progetto tiene insieme chat, file e istruzioni su un tema: per esempio «Corso IDEA^IA».",
+ "Le istruzioni del progetto valgono in tutte le sue chat: scrivi una volta per chi lavori e come vuoi i testi.",
+ "Nella conoscenza del progetto carichi i materiali che servono sempre, come la scheda progetto."],
+ex:[
+ {type:"choice",q:"A che cosa serve un progetto in Claude?",opts:["A pagare meno","A tenere insieme chat, file e istruzioni su un tema","A stampare le chat","A cancellare le chat vecchie"],a:1,why:"Così non devi rispiegare tutto a ogni chat."},
+ {type:"tf",s:"Le istruzioni di un progetto valgono in tutte le chat di quel progetto.",a:true,why:"Le scrivi una volta, Claude le segue sempre lì dentro."},
+ {type:"match",q:"Abbina le parti del progetto.",pairs:[["Istruzioni","«Scrivi in italiano semplice, per la primaria»"],["Conoscenza","La scheda progetto e i materiali"],["Chat","Le singole conversazioni"]],why:"Istruzioni e conoscenza fanno da sfondo a ogni chat del progetto."},
+ {type:"choice",q:"Quale istruzione di progetto è più utile per il corso?",opts:["Sii bravo.","Fai tutto tu.","Lavoro con una seconda media: voglio testi grandi, italiano semplice e prima una versione minima.","Niente istruzioni."],a:2,why:"Per chi lavori e come vuoi il risultato: Claude lo terrà presente ogni volta."},
+ {type:"fill",q:"Completa la frase.",text:"Nel progetto «Corso» conviene caricare la scheda ___.",words:["progetto","elettorale","telefonica"],answer:"progetto",why:"Così Claude conosce la tua idea fin dalla prima parola."}
+]},
+{id:"c6",title:"Il prompt del progettista",color:"rosso",tips:[
+ "Chi lo usa, a che cosa serve, dove si usa, che gesto si fa, che cosa si vede o si sente.",
+ "Parti da una versione minima: poi aggiungi una cosa alla volta.",
+ "Se qualcosa non è chiaro, chiedi a Claude di farti domande prima di cominciare."],
+ex:[
+ {type:"order",q:"Componi il prompt del progettista.",items:["Crea uno strumento per una terza primaria","che aiuti a fondere le sillabe.","Si userà sulla LIM.","Chi lo usa tocca due sillabe e sente la parola.","Parti da una versione minima."],why:"Per chi, a che cosa serve, dove, come si usa, da dove partire."},
+ {type:"fill",q:"Completa il prompt.",text:"Parti da una versione ___: poi la miglioriamo insieme.",words:["minima","finale","perfetta"],answer:"minima",why:"Una base semplice si corregge facilmente; un progetto enorme no."},
+ {type:"choice",q:"Che cosa manca in questo prompt?",scene:[["tu","Crea un gioco sulle emozioni."]],opts:["Per chi è, dove si usa e che cosa fa chi gioca","Un'emoji","La parola «per favore»","Niente, è perfetto"],a:0,why:"Senza contesto Claude deve indovinare. Con il contesto, progetta."},
+ {type:"tf",s:"Puoi chiedere a Claude di farti domande prima di cominciare.",a:true,why:"«Se qualcosa non è chiaro, fammi una domanda prima di cominciare» è un'ottima chiusura."},
+ {type:"match",q:"Abbina il superpotere allo strumento.",pairs:[["Suona","Il theremin"],["Vede","Il direttore d'orchestra"],["Ascolta","Il semaforo del rumore"],["Parla","L'agenda visiva parlante"]],why:"Sono le carte rosse del mazzo: ogni superpotere apre idee diverse."},
+ {type:"choice",q:"Lo strumento è diventato troppo complicato. Che cosa fai?",opts:["Butti via tutto","Chiedi dieci cose insieme","Torni alla versione che funzionava e chiedi un cambiamento alla volta","Smetti"],a:2,why:"Piccoli passi: è il modo più veloce per arrivare lontano."}
+]},
+{id:"c7",title:"Usarlo bene",color:"verde",tips:[
+ "Il docente resta l'autore: verifica i contenuti e decide se lo strumento serve davvero.",
+ "Claude è riservato ai maggiorenni: agli studenti arriva lo strumento finito, non la chat.",
+ "Anche con Claude Pro ci sono limiti di utilizzo che si azzerano dopo alcune ore."],
+ex:[
+ {type:"tf",s:"Gli studenti minorenni possono usare Claude da soli.",a:false,why:"Claude è riservato ai maggiorenni: gli studenti usano lo strumento finito."},
+ {type:"choice",q:"Claude ti dà una citazione di Leopardi con il numero di pagina. Che cosa fai?",opts:["La uso subito","La controllo su una fonte","Chiedo a Claude se è sicuro","La cambio un po'"],a:1,why:"Le citazioni si verificano su una fonte vera, non chiedendo conferma a Claude."},
+ {type:"choice",q:"Quale richiesta rispetta la privacy?",opts:["Mario, 3ªB, ha la dislessia: crea…","Un alunno di terza che legge con fatica le parole lunghe: crea…","Ecco il PEI di Luca: crea…","Questa è la foto di Sara: crea…"],a:1,why:"Si descrive il bisogno, senza nomi, diagnosi o documenti."},
+ {type:"tf",s:"Anche con Claude Pro ci sono limiti di utilizzo che si azzerano dopo alcune ore.",a:true,why:"In un laboratorio di due ore di solito bastano, ma è bene saperlo."},
+ {type:"fill",q:"Completa la regola del corso.",text:"Uno strumento vale se fa ciò che la ___ non può fare.",words:["lavagna","merenda","campanella"],answer:"lavagna",why:"È la prima domanda del filtro delle idee."}
+]}
+]},
+avanzato:{name:"Avanzato",hello:"Ora andiamo oltre la chat: connettori, ricerca, file veri, skill, memoria e Claude fuori dal browser.",units:[
+{id:"a1",title:"I connettori",color:"blu",tips:[
+ "I connettori collegano Claude ai servizi che usi: Google Drive, Gmail, Google Calendar, Notion, Canva, GitHub e molti altri. Così può cercare, leggere e, se lo permetti, creare o modificare.",
+ "Si attivano dalle impostazioni, alla voce Connettori: ognuno chiede l'accesso al tuo account. Per ogni azione puoi decidere se Claude deve chiederti conferma.",
+ "Funzionano con MCP (Model Context Protocol), uno standard aperto: chiunque può costruire un connettore, e se ne possono aggiungere di personalizzati indicando un indirizzo."],
+ex:[
+ {type:"choice",q:"Che cosa fa un connettore?",opts:["Collega Claude a un servizio esterno, così può leggere o agire lì","Aumenta la velocità di internet","Traduce Claude in altre lingue","Stampa le chat"],a:0,why:"Senza connettore Claude vede solo ciò che gli scrivi o alleghi. Con il connettore può andare a cercare nei tuoi strumenti."},
+ {type:"choice",q:"Che cosa serve per questa richiesta?",scene:[["tu","Trova nel mio Drive la programmazione di musica di quest'anno e fammi un riepilogo per il consiglio di classe."]],opts:["Niente: Claude lo sa già","Il connettore di Google Drive","Una skill per PowerPoint","La chat in incognito"],a:1,why:"Il file è nel tuo Drive: Claude ci arriva solo attraverso il connettore."},
+ {type:"match",q:"Abbina il connettore a un uso a scuola.",pairs:[["Google Drive","Cercare e leggere la programmazione"],["Google Calendar","Controllare le date dei consigli"],["Canva","Preparare una locandina"],["GitHub","Leggere il codice di uno strumento"]],why:"Ogni connettore porta Claude dentro uno strumento diverso."},
+ {type:"tf",s:"Una volta collegato un connettore, Claude agisce sempre senza chiederti niente.",a:false,why:"Decidi tu: per le azioni che modificano qualcosa, come creare o inviare, conviene lasciare la richiesta di conferma."},
+ {type:"fill",q:"Completa la frase.",text:"I connettori si basano su ___, uno standard aperto.",words:["MCP","HTML","PDF"],answer:"MCP",why:"Model Context Protocol: lo stesso standard funziona nella chat, nell'app desktop e in Claude Code."},
+ {type:"choice",q:"Il connettore vede anche le cartelle con i documenti degli alunni. Che cosa fai?",opts:["Niente, va bene così","Uso un account o cartelle senza dati degli alunni, e seguo le regole della scuola","Rinomino le cartelle","Lo uso solo di sera"],a:1,why:"Collegare un servizio vuol dire dare a Claude accesso a ciò che contiene: si sceglie con cura che cosa."}
+]},
+{id:"a2",title:"Ricerca e ragionamento",color:"rosso",tips:[
+ "Ricerca sul web: Claude cerca informazioni aggiornate e mette i link alle fonti, da aprire e controllare.",
+ "Ricerca approfondita: per domande complesse lavora più a lungo, consulta molte fonti e prepara un rapporto con le citazioni.",
+ "Ragionamento esteso: prima di rispondere Claude ragiona più a lungo. Serve per problemi difficili; è più lento. Puoi anche scegliere il modello: i più potenti sono più bravi nei compiti lunghi, i più veloci nelle cose semplici."],
+ex:[
+ {type:"match",q:"Abbina il compito allo strumento giusto.",pairs:[["Una data da verificare","Ricerca sul web"],["Un confronto tra metodi didattici, con fonti","Ricerca approfondita"],["Un problema di logica difficile","Ragionamento esteso"],["Riscrivere una circolare","Chat normale"]],why:"Non serve sempre la funzione più potente: si sceglie in base al compito."},
+ {type:"tf",s:"Con la ricerca sul web Claude indica le fonti, ma vanno comunque aperte e controllate.",a:true,why:"Le citazioni dicono da dove viene un'informazione: verificarla resta compito tuo."},
+ {type:"choice",q:"Vuoi un quadro aggiornato delle indicazioni sull'IA a scuola, con le fonti ufficiali. Che cosa usi?",opts:["Una chat normale senza ricerca","La ricerca approfondita, poi controlli le fonti citate","Una skill per Excel","Un artifact"],a:1,why:"Serve un'informazione recente e documentata: la ricerca approfondita mette insieme molte fonti."},
+ {type:"tf",s:"Il ragionamento esteso rende le risposte più veloci.",a:false,why:"Le rende più ponderate, non più veloci: Claude impiega più tempo prima di rispondere."},
+ {type:"choice",q:"Devi costruire uno strumento lungo e complicato. Quale modello scegli?",opts:["Il più veloce, sempre","Il più potente: è più lento ma regge i compiti lunghi","Uno a caso","Non si può scegliere"],a:1,why:"Per i lavori semplici va bene il più veloce; per quelli complessi conviene il più potente."}
+]},
+{id:"a3",title:"File veri e skill",color:"giallo",tips:[
+ "Claude può creare e modificare file da scaricare: documenti Word, fogli Excel con formule, presentazioni PowerPoint, PDF. Per farlo scrive ed esegue codice in un ambiente protetto.",
+ "Può analizzare dati: carichi un foglio di calcolo senza nomi e ottieni medie, grafici, tabelle.",
+ "Le skill sono pacchetti di istruzioni (e file) che insegnano a Claude un compito: ce ne sono di pronte e puoi crearne di tue, per esempio «verifiche nel formato della mia scuola»."],
+ex:[
+ {type:"choice",q:"Ti serve una griglia di valutazione da modificare in Word. Che cosa chiedi?",opts:["Di copiarla a mano dalla chat","Di creare il file .docx, che poi scarichi","Una foto della griglia","Un artifact da stampare"],a:1,why:"Claude può consegnarti il file vero, già impaginato."},
+ {type:"tf",s:"Claude può fare calcoli e grafici su un foglio Excel che carichi.",a:true,why:"Esegue il codice sui dati e ti restituisce risultati e grafici. Prima togli nomi e dati personali."},
+ {type:"match",q:"Abbina la funzione a che cosa ti dà.",pairs:[["Skill","Istruzioni per un compito che si ripete"],["Artifact","Uno strumento da provare subito"],["File creato","Un documento da scaricare"],["Progetto","Chat, istruzioni e file su un tema"]],why:"Quattro attrezzi diversi: conoscerli aiuta a scegliere quello giusto."},
+ {type:"choice",q:"Ogni mese prepari verifiche con la stessa intestazione e la stessa griglia. Che cosa ti fa risparmiare più tempo?",opts:["Riscrivere tutto ogni volta","Una skill con il formato della tua scuola","Fotografare la verifica vecchia","Cambiare formato ogni mese"],a:1,why:"Una skill fa ripetere a Claude lo stesso lavoro allo stesso modo, ogni volta."},
+ {type:"fill",q:"Completa la frase.",text:"Una skill è come una ___ che Claude segue quando serve.",words:["ricetta","password","fotografia"],answer:"ricetta",why:"Ingredienti e passaggi scritti una volta, usati ogni volta."},
+ {type:"tf",s:"Puoi caricare il registro con nomi e voti per calcolare le medie.",a:false,why:"Prima si toglie ogni dato personale: bastano i numeri, senza nomi."}
+]},
+{id:"a4",title:"Artifact che pensano",color:"verde",tips:[
+ "Un artifact può avere l'IA dentro: chi lo usa scrive e l'app risponde con Claude. Funziona però solo per chi accede con un account Claude, e usa la sua quota.",
+ "Puoi aprire l'artifact di un collega e chiedere a Claude di adattarlo alla tua classe.",
+ "Per la LIM senza rete conviene scaricare il file HTML: se lo strumento non usa servizi online, funziona anche offline."],
+ex:[
+ {type:"tf",s:"Un artifact con l'IA dentro va bene per gli studenti minorenni.",a:false,why:"Chi lo usa deve accedere con un account Claude, riservato ai maggiorenni. Per la classe servono strumenti senza IA dentro."},
+ {type:"choice",q:"Un collega ha pubblicato un gioco che ti piace. Come lo adatti alla tua classe?",opts:["Lo ricopi da capo","Lo apri e chiedi a Claude di personalizzarlo","Gli chiedi la password","Non si può"],a:1,why:"Partire da qualcosa che funziona è il modo più veloce per avere il tuo."},
+ {type:"tf",s:"Puoi chiedere a Claude di mostrarti il codice dell'artifact e spiegartelo riga per riga.",a:true,why:"È anche un ottimo modo per imparare come funziona uno strumento."},
+ {type:"choice",q:"Lo strumento deve funzionare sulla LIM anche senza internet. Che cosa fai?",opts:["Niente, funziona sempre","Scarichi il file HTML e lo apri dal computer, se non usa servizi online","Fai uno screenshot","Lo stampi"],a:1,why:"Un file HTML autonomo si apre nel browser anche offline."},
+ {type:"choice",q:"Quale idea ha senso come artifact con l'IA dentro?",opts:["Un quiz per la seconda primaria","Un assistente per i colleghi che riscrive le consegne in versione semplificata","Un gioco per i bambini a casa","Un timer"],a:1,why:"Gli utenti sono adulti con un account: l'IA dentro l'app è utile e permessa."}
+]},
+{id:"a5",title:"Memoria, stili, incognito",color:"blu",tips:[
+ "Memoria: Claude può ricordare il contesto delle chat passate e cercare nelle conversazioni precedenti. La vedi, la modifichi o la spegni dalle impostazioni.",
+ "Stili: scegli come risponde (più conciso, più spiegato) o crea uno stile tuo partendo da un tuo testo. Esiste anche un modo di rispondere che guida con domande invece di dare subito la soluzione.",
+ "Chat in incognito: non resta nella cronologia e non entra nella memoria. Utile per prove veloci."],
+ex:[
+ {type:"tf",s:"La memoria di Claude si può vedere, modificare o disattivare.",a:true,why:"Sei tu a decidere che cosa Claude ricorda."},
+ {type:"choice",q:"Vuoi che Claude scriva sempre con il tono delle tue circolari. Che cosa usi?",opts:["Lo ripeti in ogni chat","Uno stile personalizzato creato da un tuo testo","La chat in incognito","Un connettore"],a:1,why:"Lo stile si applica alle risposte senza doverlo ridire ogni volta."},
+ {type:"choice",q:"Fai una prova veloce che non vuoi resti nella cronologia. Che cosa apri?",opts:["Un progetto","Una chat in incognito","Una skill","Un artifact"],a:1,why:"L'incognito non lascia traccia nella cronologia e nella memoria."},
+ {type:"match",q:"Abbina la funzione a ciò che fa.",pairs:[["Memoria","Ricorda il contesto tra le chat"],["Stile","Decide il modo di scrivere"],["Incognito","Una chat che non resta salvata"],["Progetto","Istruzioni e file su un tema"]],why:"Quattro modi diversi per dare contesto a Claude."},
+ {type:"tf",s:"Un modo di rispondere che fa domande invece di dare la soluzione può aiutare chi sta imparando.",a:true,why:"È utile anche a te, per capire un argomento nuovo passo dopo passo."}
+]},
+{id:"a6",title:"Claude fuori dal browser",color:"rosso",tips:[
+ "App per computer e telefono: sul telefono parli con Claude a voce e fotografi al volo una pagina, una lapide, una lavagna.",
+ "Claude in Chrome è un'estensione con cui Claude usa il browser per te: apre pagine, compila, clicca. Per le azioni importanti chiede conferma.",
+ "Nell'app per computer Claude può anche lavorare su una cartella che gli indichi: legge, crea e riordina file per compiti lunghi. La funzione, chiamata Cowork, dipende dal piano."],
+ex:[
+ {type:"choice",q:"Vuoi che Claude riordini 40 file di verifiche in una cartella del computer e ne faccia un indice. Che cosa usi?",opts:["La chat sul telefono","L'app per computer, facendo lavorare Claude su quella cartella","La ricerca sul web","Un artifact"],a:1,why:"Per lavorare su file veri del computer serve l'app desktop, non la chat nel browser."},
+ {type:"tf",s:"Con Claude in Chrome conviene controllare ogni azione importante, come inviare un modulo.",a:true,why:"Claude agisce sul tuo browser e con i tuoi account: la conferma finale è tua."},
+ {type:"choice",q:"In gita vuoi trasformare la foto di una lapide in una scheda per la classe. Che cosa usi?",opts:["L'app sul telefono: foto e richiesta, subito","Aspetti di tornare a scuola","Claude Code","Un connettore"],a:0,why:"Il telefono è il modo più veloce per portare Claude fuori dall'aula."},
+ {type:"fill",q:"Completa la frase.",text:"Claude in ___ è l'estensione che usa il browser per te.",words:["Chrome","Word","Paint"],answer:"Chrome",why:"Si installa nel browser e Claude può navigare al posto tuo."}
+]}
+]},
+code:{name:"Claude Code",hello:"Claude Code è Claude che lavora sui file veri di un progetto. Ti mostro come si usa, anche senza essere programmatori.",units:[
+{id:"k1",title:"Che cos'è Claude Code",color:"lilla",tips:[
+ "Claude Code lavora direttamente sui file di un progetto: legge le cartelle, scrive codice, lancia comandi, prova e corregge da solo.",
+ "Si usa dal terminale, dall'app per computer (la scheda Code), dal web e dentro editor come VS Code.",
+ "Tu descrivi l'obiettivo; Claude propone un piano, modifica più file insieme e ti chiede il permesso per le azioni delicate."],
+ex:[
+ {type:"choice",q:"Che differenza c'è tra la chat e Claude Code?",opts:["Nessuna","Claude Code lavora sui file veri di un progetto e può eseguire comandi","Claude Code è solo per l'inglese","La chat è più potente"],a:1,why:"La chat costruisce un artifact alla volta; Claude Code lavora su un progetto intero."},
+ {type:"match",q:"Abbina la parola al suo significato.",pairs:[["Chat","Un artifact alla volta, nel browser"],["Claude Code","Un progetto intero con molti file"],["Terminale","Dove si scrivono i comandi"],["Repository","La cartella del progetto con la sua storia"]],why:"Quattro parole per orientarsi nel mondo del codice."},
+ {type:"tf",s:"Per usare Claude Code bisogna saper scrivere il codice da soli.",a:false,why:"Il codice lo scrive Claude. A te servono un obiettivo chiaro e la pazienza di provare."},
+ {type:"choice",q:"Quale lavoro è più adatto a Claude Code che alla chat?",opts:["Una domanda veloce","Il sito dell'orario della scuola, con molte pagine da aggiornare nel tempo","Un riassunto","Una mail"],a:1,why:"Più file, aggiornamenti continui, pubblicazione online: è il terreno di Claude Code."},
+ {type:"fill",q:"Completa la frase.",text:"Claude Code può ___ i comandi e vedere se il programma funziona.",words:["eseguire","stampare","fotografare"],answer:"eseguire",why:"Prova da solo quello che scrive, e se qualcosa non va lo corregge."}
+]},
+{id:"k2",title:"Lavorare sicuri",color:"verde",tips:[
+ "Permessi: Claude chiede prima di modificare file o lanciare comandi. Puoi approvare una volta o sempre, per le azioni di cui ti fidi.",
+ "Modalità piano: Claude prima esplora il progetto e scrive un piano, senza toccare niente. Lo leggi e lo approvi tu.",
+ "Con git ogni passo diventa un commit: se qualcosa va storto si torna alla versione precedente."],
+ex:[
+ {type:"choice",q:"Vuoi sapere che cosa farebbe Claude prima che tocchi i file. Che cosa usi?",opts:["La modalità piano","La chat in incognito","Un connettore","Niente, non si può"],a:0,why:"Il piano ti fa vedere la strada prima di partire."},
+ {type:"tf",s:"Conviene dare a Claude Code il permesso di fare qualsiasi cosa senza chiedere, fin dal primo giorno.",a:false,why:"Si parte chiedendo conferma; i permessi si allargano man mano che ti fidi."},
+ {type:"order",q:"Metti in ordine un buon modo di lavorare.",items:["Descrivi l'obiettivo","Leggi il piano proposto","Approva le modifiche","Prova il risultato","Fai il commit"],why:"Piano, modifiche, prova, salvataggio: così ogni passo è sotto controllo."},
+ {type:"choice",q:"Una modifica ha rotto il sito. Qual è la strada più sicura?",opts:["Cancellare tutto","Tornare al commit precedente con git","Aspettare","Riscrivere a mano"],a:1,why:"I commit sono i punti di salvataggio: si torna indietro in un attimo."},
+ {type:"tf",s:"Claude Code può creare i commit e aprire una pull request su GitHub.",a:true,why:"Può fare per te anche la parte di git, sempre chiedendo conferma."}
+]},
+{id:"k3",title:"CLAUDE.md, comandi e aiutanti",color:"giallo",tips:[
+ "CLAUDE.md è un file di istruzioni nella cartella del progetto: Claude lo legge all'inizio. Ci scrivi com'è fatto il progetto e le regole da rispettare.",
+ "I comandi con la barra, come /init, avviano azioni pronte. Puoi crearne di tuoi, anche sotto forma di skill.",
+ "Si può estendere: server MCP (come i connettori), sottoagenti per compiti in parallelo, hook che scattano da soli in un certo momento."],
+ex:[
+ {type:"choice",q:"Dove scrivi «In questo progetto usa sempre l'italiano e testi grandi»?",opts:["In una chat qualunque","Nel file CLAUDE.md del progetto","Nel nome della cartella","Da nessuna parte"],a:1,why:"Claude lo legge ogni volta che lavora su quel progetto."},
+ {type:"match",q:"Abbina la parola al suo significato.",pairs:[["CLAUDE.md","Le istruzioni del progetto per Claude"],["Comando con la barra","Un'azione pronta da richiamare"],["Sottoagente","Un aiutante per un compito a parte"],["Hook","Un'azione che scatta da sola"]],why:"Sono gli attrezzi per adattare Claude Code al tuo modo di lavorare."},
+ {type:"tf",s:"Claude Code può collegarsi a server MCP, come fa la chat con i connettori.",a:true,why:"Lo stesso standard: per esempio per leggere un calendario o un database."},
+ {type:"fill",q:"Completa la frase.",text:"Il file con le istruzioni per Claude Code si chiama ___",words:["CLAUDE.md","README.pdf","index.html"],answer:"CLAUDE.md",why:"Il comando /init può prepararne una prima versione partendo dal progetto."}
+]},
+{id:"k4",title:"Dal computer al web",color:"blu",tips:[
+ "Con Claude Code si lavora in una cartella del computer collegata a GitHub: commit per salvare, push per mandare online.",
+ "Se il repository usa GitHub Pages, dopo il push il sito si aggiorna da solo in pochi minuti.",
+ "In più persone: ognuno lavora su un branch e propone le modifiche con una pull request."],
+ex:[
+ {type:"order",q:"Aggiorna lo strumento online: metti in ordine.",items:["Apri la cartella del progetto con Claude Code","Chiedi la modifica","Provi il risultato sul computer","Commit e push su GitHub","GitHub Pages pubblica la nuova versione"],why:"Dal computer al sito, senza toccare il codice a mano."},
+ {type:"choice",q:"Che cosa fa il push?",opts:["Cancella il progetto","Manda i commit dal computer a GitHub","Stampa il codice","Crea un account"],a:1,why:"Commit salva sul computer, push porta i salvataggi online."},
+ {type:"tf",s:"Dopo un push, GitHub Pages aggiorna il sito in pochi minuti.",a:true,why:"Non devi ricaricare niente a mano: basta il push."},
+ {type:"choice",q:"Tre colleghi modificano lo stesso progetto. Come evitate di pestarvi i piedi?",opts:["Lavorate tutti sullo stesso file insieme","Ognuno lavora su un branch e propone una pull request","Vi passate una chiavetta","Uno solo lavora"],a:1,why:"Le modifiche si uniscono solo quando qualcuno le ha controllate."}
+]}
+]},
+github:{name:"GitHub",hello:"Sono sempre io, Claudio. Ora impariamo GitHub: la cartella online che ricorda tutto e trasforma i tuoi strumenti in siti.",units:[
+{id:"g1",title:"La cartella con la memoria",color:"lilla",tips:[
+ "Un repository è un progetto: una cartella online con i file e tutta la loro storia.",
+ "Ogni salvataggio si chiama commit e ha un messaggio che dice che cosa è cambiato.",
+ "Il README è il foglio che spiega il progetto a chi lo apre."],
+ex:[
+ {type:"choice",q:"Che cos'è un repository?",opts:["Un virus","Una chat di gruppo","Un progetto: una cartella online con i file e la loro storia","Un social network di foto"],a:2,why:"È la cartella del tuo strumento, con tutte le versioni."},
+ {type:"match",q:"Abbina la parola al suo significato.",pairs:[["Repository","La cartella del progetto"],["Commit","Un salvataggio con un messaggio"],["README","Il foglio che spiega il progetto"],["Cronologia","L'elenco di tutti i salvataggi"]],why:"Quattro parole e sai già orientarti su GitHub."},
+ {type:"tf",s:"Con GitHub puoi tornare a una versione vecchia di un file.",a:true,why:"Ogni commit resta nella cronologia: niente si perde."},
+ {type:"choice",q:"Quale messaggio di commit è più utile?",opts:["modifiche","ok","aggiunto il livello 2 al gioco delle doppie","asdf"],a:2,why:"Tra tre mesi saprai subito che cosa era cambiato e quando."},
+ {type:"order",q:"Carica il primo strumento: metti in ordine.",items:["Crea un account su GitHub","Crea un nuovo repository","Scegli Add file, poi Upload files","Scrivi il messaggio e fai il commit"],why:"Quattro passi e il tuo strumento è al sicuro online."},
+ {type:"fill",q:"Completa la frase.",text:"Ogni salvataggio su GitHub si chiama ___.",words:["commit","selfie","backup"],answer:"commit",why:"Commit: un salvataggio con il suo messaggio."}
+]},
+{id:"g2",title:"Pubblicare con GitHub Pages",color:"blu",tips:[
+ "GitHub Pages trasforma un repository in un sito, gratis, con un indirizzo da condividere.",
+ "La pagina principale deve chiamarsi index.html. Si attiva da Settings, poi Pages, scegliendo il ramo main.",
+ "Gli studenti aprono il sito senza account. Su un repository pubblico non vanno mai dati degli alunni."],
+ex:[
+ {type:"choice",q:"A che cosa serve GitHub Pages?",opts:["A stampare pagine","A trasformare un repository in un sito con un indirizzo da condividere","A scrivere email","A fare videochiamate"],a:1,why:"È il modo più semplice per dare uno strumento a tutta la scuola."},
+ {type:"fill",q:"Completa la regola.",text:"La pagina principale del sito deve chiamarsi ___",words:["index.html","home.doc","sito.pdf"],answer:"index.html",why:"È il file che il browser apre per primo."},
+ {type:"order",q:"Pubblica il sito: metti in ordine.",items:["Metti il file index.html nel repository","Apri Settings, poi Pages","Scegli il ramo main e salva","Aspetta qualche minuto","Apri il link nomeutente.github.io/nome-repository"],why:"Da quel momento il link funziona per chiunque."},
+ {type:"tf",s:"Con GitHub Pages gli studenti aprono lo strumento senza un account Claude.",a:true,why:"È una normale pagina web: basta il link."},
+ {type:"tf",s:"In un repository pubblico può andare tutto, anche i dati degli alunni.",a:false,why:"Pubblico vuol dire visibile a chiunque: solo materiali senza dati personali."},
+ {type:"choice",q:"Come porti su GitHub uno strumento fatto con Claude?",opts:["Fai uno screenshot","Scarichi il file HTML o copi il codice, e lo carichi come index.html","Mandi il link a GitHub via email","Non si può"],a:1,why:"Il codice dell'artifact è un file HTML: GitHub lo pubblica così com'è."}
+]},
+{id:"g3",title:"Lavorare insieme",color:"verde",tips:[
+ "Per far lavorare un collega sul tuo repository lo aggiungi come collaboratore: la password non si dà mai.",
+ "Una issue è una segnalazione o un'idea da discutere.",
+ "Un branch è una strada parallela per provare modifiche; con una pull request si propone di unirle."],
+ex:[
+ {type:"choice",q:"Vuoi che un collega possa modificare il tuo repository. Che cosa fai?",opts:["Gli dai la tua password","Lo aggiungi come collaboratore nelle impostazioni","Gli mandi una foto dello schermo","Non si può"],a:1,why:"Ognuno entra con il suo account: più sicuro e si vede chi ha fatto cosa."},
+ {type:"match",q:"Abbina la parola al suo significato.",pairs:[["Issue","Una segnalazione o un'idea da discutere"],["Fork","La tua copia del progetto di un altro"],["Branch","Una strada parallela per provare modifiche"],["Pull request","La proposta di unire le modifiche"]],why:"Sono gli attrezzi per lavorare in tanti senza pestarsi i piedi."},
+ {type:"tf",s:"Una issue serve a segnalare un problema o a proporre un miglioramento.",a:true,why:"Come un post-it alla fiera: «io lo userei per…»."},
+ {type:"choice",q:"Un collega vuole migliorare il tuo gioco senza toccare la versione che usi in classe. Che cosa fa?",opts:["Cancella il file e lo riscrive","Lavora su un branch e poi apre una pull request","Modifica direttamente il sito","Aspetta le vacanze"],a:1,why:"La versione in classe resta intatta finché tu non accetti le modifiche."},
+ {type:"tf",s:"Claude può aiutarti a scrivere il README e i messaggi di commit.",a:true,why:"Descrivi il progetto e chiedigli un README chiaro per i colleghi."},
+ {type:"fill",q:"Completa la regola.",text:"La password di GitHub non si ___ mai a nessuno.",words:["dà","cambia","ricorda"],answer:"dà",why:"Per collaborare esistono i collaboratori, non le password condivise."}
+]}
+]}
+};
+/* ---------- schermate disegnate per la guida (schemi semplificati) ---------- */
+const W=t=>`<div class="wbar"><i></i><i></i><i></i><span>${t}</span></div>`;
+const SHOTS={
+c1:{t:"claude.ai · una chat",h:`<div class="s-chat"><div class="s-msg me">Crea un timer da 5 minuti per la mia classe. <i class="mk">1</i></div><div class="s-msg ai"><b>✦</b>Ecco il timer: un quadrante grande che scorre, con il pulsante Avvia. <i class="mk">2</i></div><div class="s-input"><span class="s-ph">Scrivi a Claude…</span><i class="mk">3</i><span class="s-send">↑</span></div></div>`,
+ cap:["La tua richiesta, scritta in italiano come la diresti a un collega.","La risposta di Claude, che compare parola dopo parola.","Qui scrivi il messaggio successivo: la conversazione continua."]},
+c2:{t:"claude.ai · chat e cronologia",h:`<div class="s-split2"><div class="s-side"><div class="s-new">+ Nuova chat<i class="mk">4</i></div><div class="s-it on">Timer per la classe</div><div class="s-it">Gioco delle doppie</div></div><div class="s-chat"><div class="s-msg me">Crea un timer da 5 minuti.<div class="s-tools">✎ Modifica<i class="mk">1</i></div></div><div class="s-msg ai"><b>✦</b>Ecco il timer…<div class="s-tools">Copia · ↻ Riprova<i class="mk">2</i></div></div><div class="s-input"><span class="s-ph">Fai diventare rosso lo sfondo negli ultimi 10 secondi</span><i class="mk">3</i><span class="s-send">↑</span></div></div></div>`,
+ cap:["La matita sotto un tuo messaggio: lo correggi e la conversazione riparte da lì.","Riprova: Claude scrive un'altra versione della stessa risposta.","Una richiesta precisa alla volta, nella stessa chat.","Nuova chat: quando cambi argomento."]},
+c3:{t:"claude.ai · allegare file",h:`<div class="s-chat"><div class="s-files"><span class="s-file"><em>PDF</em>racconto.pdf</span><span class="s-file"><em class="img">JPG</em>lavagna.jpg</span><i class="mk">2</i></div><div class="s-input"><span class="s-btn">+</span><i class="mk">1</i><span class="s-ph">Crea 5 domande di comprensione su questo racconto</span><span class="s-send">↑</span></div></div>`,
+ cap:["Il pulsante + (o la graffetta): allega file e immagini. Puoi anche trascinarli nella chat.","I file allegati compaiono sopra il messaggio, prima di inviarlo."],note:"Mai foto, nomi o documenti degli alunni."},
+c4:{t:"claude.ai · un artifact aperto",h:`<div class="s-split"><div class="s-chat"><div class="s-msg me">Crea una tastiera di cinque note.</div><div class="s-msg ai"><b>✦</b>Ecco la tastiera.<div class="s-card">▣ Tastiera di cinque note<i class="mk">1</i></div></div></div><div class="s-panel"><div class="s-phd"><b>Tastiera di cinque note</b><span class="s-ver">‹ v3 ›</span><i class="mk">2</i><span class="s-pill">Pubblica</span><i class="mk">3</i></div><div class="s-tabs"><span class="on">Anteprima</span><span>Codice</span></div><div class="s-keys"><span></span><span></span><span></span><span></span><span></span></div></div></div>`,
+ cap:["Nella chat, la scheda dell'artifact: toccala per aprirlo accanto.","Le versioni: con le frecce torni a una versione precedente.","Pubblica o condividi: ottieni il link da aprire sulla LIM. Da qui puoi anche copiare il codice o scaricare il file."]},
+c5:{t:"claude.ai · un progetto",h:`<div class="s-ptitle">Corso IDEA<sup>IA</sup><span class="s-pill">+ Nuova chat</span></div><div class="s-pgrid"><div class="s-list"><div class="s-it">Timer per la classe</div><div class="s-it">Metronomo della poesia</div><div class="s-it">Gioco delle doppie<i class="mk">3</i></div></div><div class="s-col"><div class="s-box"><b>Istruzioni</b><i class="mk">1</i><p>Lavoro con una seconda media. Testi grandi, italiano semplice, prima una versione minima.</p></div><div class="s-box"><b>Conoscenza del progetto</b><i class="mk">2</i><p><span class="s-file"><em>PDF</em>scheda-progetto.pdf</span></p></div></div></div>`,
+ cap:["Istruzioni: valgono in tutte le chat del progetto.","Conoscenza: i file che Claude può consultare in ogni chat del progetto.","Le chat del progetto, tutte con le stesse istruzioni e gli stessi file."]},
+c6:{t:"claude.ai · il prompt del progettista",h:`<div class="s-input big">Crea uno strumento <span class="hl">per una terza primaria</span><i class="mk">1</i> che aiuti a <span class="hl">fondere le sillabe</span><i class="mk">2</i>. Si userà <span class="hl">sulla LIM</span><i class="mk">3</i>. Chi lo usa <span class="hl">tocca due sillabe e sente la parola</span><i class="mk">4</i>. Parti da una <span class="hl">versione minima</span><i class="mk">5</i>.</div>`,
+ cap:["Per chi.","A che cosa serve.","Dove si usa.","Che cosa fa chi lo usa, e che cosa vede o sente.","Da dove partire."]},
+c7:{t:"claude.ai · due modi di chiedere",h:`<div class="s-chat"><div class="s-msg me ko">Mario, 3ªB, ha la dislessia: crea un lettore facilitato.</div><i class="mk" style="align-self:flex-end">1</i><div class="s-msg me ok">Un alunno di terza che legge con fatica le parole lunghe: crea un lettore facilitato.</div><i class="mk" style="align-self:flex-end">2</i></div>`,
+ cap:["No: nome, classe e diagnosi sono dati personali.","Sì: il bisogno basta per progettare bene."]},
+g1:{t:"github.com · un repository",h:`<div class="s-ghtop"><b>nomeutente / gioco-doppie</b><div class="s-tabs"><span class="on">Code</span><span>Issues</span><span>Pull requests</span><span>Settings</span></div></div><div class="s-ghbar"><span class="s-pill">main ▾</span><span class="s-pill">Add file ▾</span><i class="mk">1</i><div class="s-menu"><span>Create new file</span><span class="on">Upload files</span></div><i class="mk">2</i></div><div class="s-rows"><div><b>index.html</b><span>aggiunto il livello 2</span><i class="mk">3</i></div><div><b>README.md</b><span>spiegazione del gioco</span></div></div><div class="s-field"><b>Commit changes</b><span class="s-line">aggiunto il livello 2 al gioco delle doppie</span><i class="mk">4</i></div>`,
+ cap:["Add file: il menu per aggiungere file al repository.","Upload files: trascini qui il file HTML dello strumento.","Accanto a ogni file, il messaggio del suo ultimo commit.","Il messaggio del commit: scrivi che cosa è cambiato, poi premi Commit changes."]},
+g2:{t:"github.com · Settings, Pages",h:`<div class="s-ghtop"><b>nomeutente / gioco-doppie</b><div class="s-tabs"><span>Code</span><span>Issues</span><span class="on">Settings</span><i class="mk">1</i></div></div><div class="s-pgrid"><div class="s-list"><div class="s-it">General</div><div class="s-it">Collaborators</div><div class="s-it on">Pages<i class="mk">2</i></div></div><div class="s-col"><div class="s-box"><b>Build and deployment</b><p>Source <span class="s-pill">Deploy from a branch ▾</span></p><p>Branch <span class="s-pill">main ▾</span><span class="s-pill">/ (root) ▾</span><span class="s-pill dark">Save</span><i class="mk">3</i></p></div><div class="s-box live">Your site is live at <u>nomeutente.github.io/gioco-doppie</u><i class="mk">4</i></div></div></div>`,
+ cap:["Settings: le impostazioni del repository.","Pages, nel menu a sinistra.","Source «Deploy from a branch», ramo main, cartella / (root), poi Save.","Dopo qualche minuto compare il link del sito: è quello da dare agli studenti."]},
+g3:{t:"github.com · lavorare insieme",h:`<div class="s-ghtop"><b>nomeutente / gioco-doppie</b><div class="s-tabs"><span>Code</span><span>Issues</span><i class="mk">2</i><span>Pull requests</span><i class="mk">3</i><span class="on">Settings</span></div></div><div class="s-pgrid"><div class="s-list"><div class="s-it">General</div><div class="s-it on">Collaborators<i class="mk">1</i></div><div class="s-it">Pages</div></div><div class="s-col"><div class="s-box"><b>Manage access</b><p><span class="s-pill dark">Add people</span>nome utente o email del collega</p></div></div></div>`,
+ cap:["Settings, Collaborators, Add people: inviti un collega, che entra con il suo account.","Issues: segnalazioni e idee, come i post-it alla fiera.","Pull requests: le proposte di modifica, da approvare prima che entrino."]}
+};
+const TG=on=>`<span class="s-tg${on?" on":""}"><i></i></span>`;
+Object.assign(SHOTS,{
+a1:{t:"claude.ai · impostazioni, connettori",h:`<div class="s-pgrid"><div class="s-list"><div class="s-it">Generale</div><div class="s-it">Profilo</div><div class="s-it on">Connettori<i class="mk">1</i></div></div><div class="s-col"><div class="s-row"><b>Google Drive</b><span>collegato</span>${TG(true)}</div><div class="s-row"><b>Google Calendar</b><span>collegato</span>${TG(true)}</div><div class="s-row"><b>Notion</b><span class="s-pill">Collega</span><i class="mk">2</i></div><div class="s-row"><b>Cerca nella directory…</b><span class="s-pill">+ Personalizzato</span><i class="mk">3</i></div></div></div><div class="s-ask"><b>Claude vuole usare Google Drive: cerca file</b><span class="s-pill">Consenti una volta</span><span class="s-pill dark">Consenti sempre</span><i class="mk">4</i></div>`,
+ cap:["Nelle impostazioni, la voce Connettori.","Un servizio da collegare: chiede l'accesso al tuo account.","La directory con tutti i connettori, e quelli personalizzati da indirizzo.","Durante la chat Claude chiede il permesso: decidi tu se una volta o sempre."]},
+a2:{t:"claude.ai · strumenti della chat",h:`<div class="s-chat"><div class="s-menu" style="margin-left:0;align-self:flex-start"><span>${TG(true)} Ricerca sul web<i class="mk">1</i></span><span class="on">${TG(true)} Ricerca approfondita<i class="mk">2</i></span><span>${TG(false)} Ragionamento esteso<i class="mk">3</i></span></div><div class="s-input"><span class="s-btn">⚙</span><span class="s-ph">Indicazioni sull'IA a scuola: che cosa dicono le fonti ufficiali?</span><span class="s-pill">Modello ▾</span><i class="mk">4</i><span class="s-send">↑</span></div></div>`,
+ cap:["Ricerca sul web: informazioni aggiornate con i link alle fonti.","Ricerca approfondita: più tempo, molte fonti, un rapporto con citazioni.","Ragionamento esteso: Claude riflette di più prima di rispondere.","La scelta del modello: più potente o più veloce."]},
+a3:{t:"claude.ai · un file creato da Claude",h:`<div class="s-chat"><div class="s-msg me">Crea una griglia di valutazione per il tema argomentativo, in Word.</div><div class="s-msg ai"><b>✦</b>Ecco la griglia con cinque indicatori e i descrittori per livello.<div class="s-card"><span class="s-file"><em>DOCX</em>griglia-tema.docx</span><span class="s-pill">Scarica</span><i class="mk">1</i></div></div></div><div class="s-row" style="margin-top:8px"><b>Skill · Verifiche della mia scuola</b><span>intestazione, griglia, formato A4</span>${TG(true)}<i class="mk">2</i></div>`,
+ cap:["Il file vero, pronto da scaricare e modificare.","Una skill attiva: Claude la usa da solo quando il compito la richiede."]},
+a4:{t:"claude.ai · un artifact con l'IA dentro",h:`<div class="s-panel"><div class="s-phd"><b>Semplificatore di consegne</b><span class="s-pill">Personalizza</span><i class="mk">3</i></div><div class="sb2"><div class="s-note">Questa app usa Claude: per usarla serve accedere con un account<i class="mk">1</i></div><div class="s-input"><span class="s-ph">Incolla una consegna da semplificare</span><span class="s-send">↑</span></div><div class="s-msg ai" style="margin-top:6px"><b>✦</b>Versione semplificata: leggi il testo. Sottolinea i verbi.<i class="mk">2</i></div></div></div>`,
+ cap:["L'app chiede di accedere: per questo non è adatta ai minorenni.","Le risposte arrivano da Claude, dentro l'app.","Personalizza: parti dall'app di un collega e adattala."]},
+a5:{t:"claude.ai · impostazioni e nuova chat",h:`<div class="s-col"><div class="s-row"><b>Memoria</b><span>ricorda il contesto delle chat</span>${TG(true)}<i class="mk">1</i></div><div class="s-row"><b>Stile</b><span class="s-pill">Il mio stile: circolari ▾</span><i class="mk">2</i></div><div class="s-row"><b>Nuova chat</b><span class="s-pill">◐ Incognito</span><i class="mk">3</i></div></div>`,
+ cap:["La memoria: la vedi, la modifichi o la spegni.","Lo stile delle risposte, anche uno tuo.","L'incognito: la chat non resta nella cronologia."]},
+a6:{t:"Claude fuori dal browser",h:`<div class="s-split"><div class="s-panel"><div class="s-phd"><b>Telefono</b></div><div class="sb2"><div class="s-file"><em class="img">FOTO</em>lapide.jpg</div><div class="s-input" style="margin-top:6px"><span class="s-ph">A voce: fanne una scheda per la terza</span><span class="s-send">↑</span></div><i class="mk">1</i></div></div><div class="s-col"><div class="s-panel"><div class="s-phd"><b>Claude in Chrome</b><i class="mk">2</i></div><div class="sb2" style="font-size:12px">Apro il modulo e lo compilo. Prima di inviarlo ti chiedo conferma.</div></div><div class="s-panel"><div class="s-phd"><b>App per computer · cartella «Verifiche»</b><i class="mk">3</i></div><div class="sb2" style="font-size:12px">Ho rinominato 40 file e creato indice.xlsx.</div></div></div></div>`,
+ cap:["Sul telefono: foto e voce, ovunque.","Claude in Chrome usa il browser per te e chiede conferma prima delle azioni importanti.","Nell'app per computer lavora su una cartella che gli indichi."]},
+k1:{t:"Claude Code · nel terminale",h:`<div class="s-term"><div><span class="p">~/orario-scuola $</span> claude<i class="mk">1</i></div><div class="d">✦ Claude Code · cartella orario-scuola</div><div><span class="p">&gt;</span> Aggiungi la classe 3C all'orario e controlla che non ci siano sovrapposizioni<i class="mk">2</i></div><div class="d">● Leggo dati/orario.json e app.js…</div><div class="d">● Modifico 2 file · lancio il controllo · 0 sovrapposizioni<i class="mk">3</i></div></div>`,
+ cap:["Si apre nella cartella del progetto, dal terminale o dalla scheda Code dell'app.","L'obiettivo, scritto in italiano.","Claude legge i file, li modifica e prova da solo il risultato."]},
+k2:{t:"Claude Code · permessi e piano",h:`<div class="s-term"><div class="d">⏸ Modalità piano<i class="mk">1</i></div><div>Piano: 1) aggiungere 3C in orario.json 2) aggiornare la legenda 3) verificare le aule</div><div class="ask">Vuoi che modifichi dati/orario.json?<span class="b">1 Sì</span><span class="b">2 Sì, sempre per questo file</span><span class="b">3 No</span><i class="mk">2</i></div><div><span class="p">$</span> git commit -m "aggiunta la classe 3C"<i class="mk">3</i></div></div>`,
+ cap:["Modalità piano: Claude propone, non tocca niente finché non approvi.","La richiesta di permesso prima di una modifica.","Il commit: un punto di salvataggio a cui tornare."]},
+k3:{t:"Claude Code · il file CLAUDE.md",h:`<div class="s-term"><div class="d"># CLAUDE.md<i class="mk">1</i></div><div>- Progetto: orario della scuola, pubblicato con GitHub Pages</div><div>- Scrivi i testi in italiano semplice</div><div>- Prima di ogni modifica ai dati, fai una copia</div><div style="margin-top:6px"><span class="p">&gt;</span> /init<i class="mk">2</i></div></div>`,
+ cap:["Le istruzioni del progetto: Claude le legge all'inizio di ogni sessione.","Un comando con la barra: /init prepara una prima versione di CLAUDE.md."]},
+k4:{t:"Dal computer al web",h:`<div class="s-term"><div><span class="p">$</span> git push<i class="mk">1</i></div><div class="d">→ github.com/nomeutente/orario-scuola</div></div><div class="s-box live" style="margin-top:8px">GitHub Pages · nuova versione pubblicata su nomeutente.github.io/orario-scuola<i class="mk">2</i></div>`,
+ cap:["Il push manda i commit dal computer a GitHub.","GitHub Pages pubblica da solo la nuova versione del sito."]}
+});
+const MK=n=>`<i class="mk">${n}</i>`;
+function shotHTML(id){const s=SHOTS[id];if(!s)return"";
+  return `<p class="shotlabel">Schermata disegnata · l'aspetto reale può cambiare un po'</p><div class="shot">${W(s.t)}<div class="sb">${s.h}</div></div><ol class="shotcap">${s.cap.map((c,i)=>`<li>${MK(i+1)}<span>${esc(c)}</span></li>`).join("")}</ol>${s.note?`<p class="shotnote">${esc(s.note)}</p>`:""}`}
+const KIND={choice:"Scegli la risposta giusta",tf:"Vero o falso?",fill:"Completa la frase",order:"Metti in ordine",match:"Abbina le coppie"};
+
+/* ---------- stato ---------- */
+const KEY="lucciola-v1";
+let S={xp:0,done:{},streak:{n:0,last:""},sound:true,course:"claude"};
+try{Object.assign(S,JSON.parse(localStorage.getItem(KEY)||"{}"))}catch(e){}
+if(!COURSES[S.course])S.course="basi";
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}};
+const $=id=>document.getElementById(id);
+const esc=t=>String(t).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+const today=()=>{const d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")};
+const reduce=matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+/* ---------- la lucciola ---------- */
+function lucciola(mood="happy"){
+  const mouth=mood==="sad"?'<path d="M53 48Q60 42.5 67 48" style="fill:none;stroke:#F3EAF0;stroke-width:2.4;stroke-linecap:round"/>'
+    :mood==="wow"?'<ellipse cx="60" cy="46.5" rx="3.4" ry="4" style="fill:#F3EAF0"/>'
+    :'<path d="M52.5 44Q60 51.5 67.5 44" style="fill:none;stroke:#F3EAF0;stroke-width:2.4;stroke-linecap:round"/>';
+  const brow=mood==="sad"?'<path d="M48 27.5l8 2.4M72 27.5l-8 2.4" style="stroke:#F3EAF0;stroke-width:2;stroke-linecap:round"/>':"";
+  return `<svg class="mascot" viewBox="0 0 120 120" aria-hidden="true"><g class="bob">
+  <circle class="halo" cx="60" cy="82" r="34" style="fill:#F6D58E;opacity:.22"/>
+  <ellipse cx="38" cy="54" rx="20" ry="10" transform="rotate(-28 38 54)" style="fill:#C8A5D8;opacity:.55"/>
+  <ellipse cx="82" cy="54" rx="20" ry="10" transform="rotate(28 82 54)" style="fill:#C8A5D8;opacity:.55"/>
+  <ellipse cx="60" cy="81" rx="18" ry="22" style="fill:#F6D58E"/>
+  <path d="M44 76h32M45 86h30" style="stroke:#E2B866;stroke-width:2.2"/>
+  <ellipse cx="60" cy="59" rx="16" ry="11" style="fill:#4A3560"/>
+  <path d="M52 25Q46 11 37 9M68 25Q74 11 83 9" style="fill:none;stroke:#2A2045;stroke-width:3;stroke-linecap:round"/>
+  <circle cx="37" cy="9" r="3.6" style="fill:#F2B97F"/><circle cx="83" cy="9" r="3.6" style="fill:#F2B97F"/>
+  <circle cx="60" cy="38" r="17.5" style="fill:#2A2045"/>
+  <circle cx="53" cy="35.5" r="5.6" style="fill:#fff"/><circle cx="67" cy="35.5" r="5.6" style="fill:#fff"/>
+  <circle cx="54.2" cy="36.6" r="2.7" style="fill:#17142C"/><circle cx="68.2" cy="36.6" r="2.7" style="fill:#17142C"/>
+  <circle cx="46.5" cy="43" r="3" style="fill:#EA9B8C;opacity:.7"/><circle cx="73.5" cy="43" r="3" style="fill:#EA9B8C;opacity:.7"/>
+  ${brow}${mouth}</g></svg>`;
+}
+
+/* ---------- suoni ---------- */
+let AC=null;
+function tone(seq){
+  if(!S.sound)return;
+  try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();const t0=AC.currentTime;
+    seq.forEach(([f,at,dur,type])=>{const o=AC.createOscillator(),g=AC.createGain();o.type=type||"sine";o.frequency.value=f;g.gain.setValueAtTime(0,t0+at);g.gain.linearRampToValueAtTime(.16,t0+at+.015);g.gain.exponentialRampToValueAtTime(.0008,t0+at+dur);o.connect(g).connect(AC.destination);o.start(t0+at);o.stop(t0+at+dur+.05)})}catch(e){}
+}
+const sGood=()=>tone([[784,0,.16],[1175,.09,.3]]);
+const sBad=()=>tone([[196,0,.28,"triangle"],[164,.1,.3,"triangle"]]);
+const sDone=()=>tone([[523,0,.2],[659,.12,.2],[784,.24,.2],[1047,.36,.5]]);
+const ICON_ON='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4Z"/><path d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" style="fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round"/></svg>';
+const ICON_OFF='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4Z"/><path d="M16.5 9.5l5 5M21.5 9.5l-5 5" style="fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round"/></svg>';
+function renderSound(){$("sound").innerHTML=S.sound?ICON_ON:ICON_OFF;$("sound").setAttribute("aria-label",S.sound?"Suoni attivi: tocca per spegnerli":"Suoni spenti: tocca per accenderli")}
+$("sound").onclick=()=>{S.sound=!S.sound;save();renderSound();if(S.sound)sGood()};
+
+/* ---------- home ---------- */
+const ICONS={
+  star:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 1.5C12.6 8 16 11.4 22.5 12 16 12.6 12.6 16 12 22.5 11.4 16 8 12.6 1.5 12 8 11.4 11.4 8 12 1.5Z"/></svg>',
+  check:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9.5 16.2 5.3 12l-1.8 1.8 6 6 11-11-1.8-1.8z"/></svg>',
+  book:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4.5A2.5 2.5 0 0 1 6.5 2H20v16H6.5a1 1 0 0 0 0 2H20v2H6.5A2.5 2.5 0 0 1 4 19.5Z"/></svg>',
+  chest:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4v2H3Zm0 3h7v2h4v-2h7v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z"/></svg>'
+};
+const OFFS=[0,-62,-90,-62,0,62,90,62];
+function render(){
+  const C=COURSES[S.course];
+  document.querySelectorAll(".course").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.course===S.course)));
+  $("xp").textContent=S.xp;
+  $("streak").textContent=streakNow();
+  renderSound();
+  $("m-home").innerHTML=lucciola("happy");
+  const total=C.units.length,doneN=C.units.filter(u=>S.done[u.id]).length;
+  $("hello").innerHTML=`<b>${doneN===0?"Ciao, sono Claudio!":doneN===total?"Sentiero completato!":"Bentornata, bentornato!"}</b>${doneN===total?"Hai acceso tutte le lucciole di questo corso. Il ripasso è sempre aperto.":esc(C.hello)}`;
+  $("goalbar").style.width=(doneN/total*100)+"%";
+  $("goaltxt").textContent=`${doneN} su ${total}`;
+  const nextU=C.units.find(u=>!S.done[u.id]);
+  let html="",k=0;
+  C.units.forEach((u,i)=>{
+    const done=!!S.done[u.id],isNext=nextU&&nextU.id===u.id;
+    html+=`<section class="unit c-${u.color}">
+      <div class="banner"><div class="txt"><small>${esc(C.name)} · Unità ${i+1}</small><h2>${esc(u.title)}</h2></div><button class="guidebtn" data-guide="${u.id}">${ICONS.book}Guida</button></div>
+      <div class="path"><div class="node-wrap" style="--off:${OFFS[k++%OFFS.length]}px">
+        ${isNext?'<span class="startbub">Inizia</span>':""}
+        <button class="node ${done?"done":""} ${isNext?"next":""}" data-lesson="${u.id}" aria-label="${esc(u.title)}: ${done?"completata, ripeti":"inizia la lezione"}">${done?ICONS.check:ICONS.star}</button>
+        <span class="node-label">${u.ex.length} esercizi${done?" · fatta":""}</span>
+      </div></div>
+    </section>`;
+  });
+  const allDone=!nextU;
+  html+=`<section class="unit c-giallo"><div class="path"><div class="node-wrap" style="--off:${OFFS[k++%OFFS.length]}px">
+      ${allDone?'<span class="startbub">Ripasso</span>':""}
+      <button class="node special ${allDone?"next":""}" data-review="1" aria-label="Ripasso: otto domande a caso">${ICONS.chest}</button>
+      <span class="node-label">Ripasso · 8 domande a caso</span></div></div>
+    <div class="trophy">${trophySVG(allDone)}<span>${allDone?"Tutte le lucciole sono accese":"In fondo al sentiero, il trofeo"}</span></div></section>`;
+  $("path").innerHTML=html;
+}
+function trophySVG(on){return `<svg viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="28" r="26" style="fill:#F6D58E;opacity:${on?.25:.06}"/><path d="M18 10h28v10a14 14 0 0 1-28 0Z" style="fill:${on?"#F2B97F":"#4A3D66"}"/><path d="M18 14H10a8 8 0 0 0 8 10M46 14h8a8 8 0 0 1-8 10" style="fill:none;stroke:${on?"#F2B97F":"#4A3D66"};stroke-width:3"/><rect x="28" y="34" width="8" height="10" style="fill:${on?"#C98F55":"#3B3056"}"/><rect x="20" y="44" width="24" height="8" rx="2" style="fill:${on?"#C98F55":"#3B3056"}"/></svg>`}
+function streakNow(){const y=new Date();y.setDate(y.getDate()-1);const ys=y.getFullYear()+"-"+String(y.getMonth()+1).padStart(2,"0")+"-"+String(y.getDate()).padStart(2,"0");return (S.streak.last===today()||S.streak.last===ys)?S.streak.n:0}
+
+document.querySelector(".courses").addEventListener("click",e=>{const b=e.target.closest(".course");if(!b)return;S.course=b.dataset.course;save();render();window.scrollTo({top:0,behavior:reduce?"auto":"smooth"})});
+$("path").addEventListener("click",e=>{
+  const g=e.target.closest("[data-guide]");if(g){openGuide(g.dataset.guide);return}
+  const n=e.target.closest("[data-lesson]");if(n){const u=COURSES[S.course].units.find(x=>x.id===n.dataset.lesson);if(S.done[u.id])startLesson(u.id,u.ex,u.color);else openGuide(u.id,true);return}
+  if(e.target.closest("[data-review]"))startReview();
+});
+
+/* ---------- guida e impostazioni ---------- */
+function openSheet(cls,html){const c=$("sheetcard");c.className="card "+cls;c.innerHTML=html;$("sheet").hidden=false;const b=c.querySelector("button");b&&b.focus()}
+function closeSheet(){$("sheet").hidden=true}
+function openGuide(id,before){
+  const u=COURSES[S.course].units.find(x=>x.id===id);
+  openSheet("c-"+u.color,`<small>${before?"Prima di cominciare":"Guida"} · ${esc(COURSES[S.course].name)}</small><h2 id="sheettitle">${esc(u.title)}</h2><ul>${u.tips.map(t=>`<li>${esc(t)}</li>`).join("")}</ul>${shotHTML(u.id)}<div class="row"><button class="btn-line" data-close>${before?"Più tardi":"Chiudi"}</button><button class="go" data-start="${u.id}">${before?"Inizia la lezione":"Fai la lezione"}</button></div>`);
+  $("sheetcard").scrollTop=0;
+}
+$("sheet").addEventListener("click",e=>{
+  if(e.target===$("sheet")||e.target.closest("[data-close]")){closeSheet();return}
+  const s=e.target.closest("[data-start]");if(s){closeSheet();const u=COURSES[S.course].units.find(x=>x.id===s.dataset.start);startLesson(u.id,u.ex,u.color);return}
+  if(e.target.closest("[data-reset]")){S.xp=0;S.done={};S.streak={n:0,last:""};save();closeSheet();render();toast("Progressi azzerati")}
+});
+$("menu").onclick=()=>openSheet("c-lilla",`<small>Impostazioni</small><h2 id="sheettitle">I tuoi progressi</h2><ul><li>Punti: ${S.xp}. Lezioni completate: ${Object.keys(S.done).length}.</li><li>I progressi restano solo in questo browser, su questo dispositivo.</li><li>Sulla LIM del corso, azzera i progressi prima che arrivi la classe successiva.</li></ul><div class="row"><button class="btn-line" data-close>Chiudi</button><button class="go" data-reset style="background:var(--ko);box-shadow:0 5px 0 var(--ko-d)">Azzera tutto</button></div>`);
+let toastT;function toast(t){const el=$("toast");el.textContent=t;el.hidden=false;clearTimeout(toastT);toastT=setTimeout(()=>el.hidden=true,1800)}
+
+/* ---------- lezione ---------- */
+let L=null;
+function show(v){["v-home","v-lesson","v-done"].forEach(id=>$(id).hidden=id!==v);window.scrollTo(0,0)}
+function startLesson(id,exs,color){
+  L={id,color,queue:exs.map(x=>({...x})),total:exs.length,i:0,right:0,mistakes:0,state:"ask",pick:null};
+  $("v-lesson").className="view c-"+color;$("quit").classList.remove("on");
+  show("v-lesson");renderEx();
+}
+function startReview(){
+  const C=COURSES[S.course];let pool=C.units.filter(u=>S.done[u.id]);if(!pool.length)pool=C.units;
+  const all=shuffle(pool.flatMap(u=>u.ex.map(x=>({...x,color:u.color}))));
+  startLesson("ripasso-"+S.course,all.slice(0,8),"giallo");
+}
+function setProgress(){const p=L.right/L.total*100;$("progfill").style.width=p+"%";$("progbug").style.left=`max(17px, min(calc(100% - 17px), ${p}%))`;$("prog").setAttribute("aria-valuenow",Math.round(p))}
+function renderEx(){
+  const ex=L.queue[L.i];L.state="ask";L.pick=null;
+  $("progbug").innerHTML=lucciola("happy");setProgress();
+  $("lfoot").className="lfoot";$("fb").innerHTML="";const go=$("go");go.textContent="Controlla";go.disabled=true;
+  let h=`<p class="kind">${KIND[ex.type]}${ex.retry?" · di nuovo":""}</p>`;
+  if(ex.scene)h+=`<div class="scene">${ex.scene.map(([w,t])=>`<div class="msg ${w==="tu"?"tu":"cl"}"><small>${w==="tu"?"Tu":"Claude"}</small>${esc(t)}</div>`).join("")}</div>`;
+  if(ex.type==="tf"){
+    h+=`<div class="qrow">${lucciola("wow")}<p class="q">Questa frase è vera o falsa?</p></div><p class="stmt">${esc(ex.s)}</p>
+      <div class="opts two" id="opts"><button class="opt big" data-v="1"><span class="k">1</span>Vero</button><button class="opt big" data-v="0"><span class="k">2</span>Falso</button></div>`;
+  }else if(ex.type==="choice"){
+    L.order=shuffle(ex.opts.map((_,i)=>i));
+    h+=`<div class="qrow">${lucciola("happy")}<p class="q">${esc(ex.q)}</p></div><div class="opts" id="opts">${L.order.map((oi,n)=>`<button class="opt" data-v="${oi}"><span class="k">${n+1}</span><span>${esc(ex.opts[oi])}</span></button>`).join("")}</div>`;
+  }else if(ex.type==="fill"){
+    const [a,b]=ex.text.split("___");
+    h+=`<div class="qrow">${lucciola("happy")}<p class="q">${esc(ex.q)}</p></div><p class="sentence">${esc(a)}<button class="slot" id="slot" aria-label="Spazio vuoto: tocca per svuotare"></button>${esc(b||"")}</p>
+      <div class="chips" id="bank">${shuffle(ex.words).map((w,n)=>`<button class="chip" data-w="${esc(w)}"><b class="sr">${n+1} </b>${esc(w)}</button>`).join("")}</div>`;
+  }else if(ex.type==="order"){
+    let sh=shuffle(ex.items);if(sh.every((x,i)=>x===ex.items[i]))sh=sh.slice(1).concat(sh[0]);
+    L.ans=[];
+    h+=`<div class="qrow">${lucciola("happy")}<p class="q">${esc(ex.q)}</p></div><p class="hint">Tocca i passi nell'ordine giusto. Tocca un passo già messo per toglierlo.</p>
+      <div class="answerline" id="ansline"></div><div class="chips" id="bank">${sh.map(x=>`<button class="chip" data-o="${esc(x)}">${esc(x)}</button>`).join("")}</div>`;
+  }else if(ex.type==="match"){
+    L.m={left:null,ok:0,errs:0};
+    const R=shuffle(ex.pairs.map((p,i)=>i));
+    h+=`<div class="qrow">${lucciola("happy")}<p class="q">${esc(ex.q)}</p></div><div class="match"><div class="col">${ex.pairs.map((p,i)=>`<button class="opt" data-l="${i}">${esc(p[0])}</button>`).join("")}</div><div class="col">${R.map(i=>`<button class="opt" data-r="${i}">${esc(ex.pairs[i][1])}</button>`).join("")}</div></div>`;
+  }
+  $("lbody").innerHTML=h;
+}
+$("lbody").addEventListener("click",e=>{
+  if(!L||L.state!=="ask")return;const ex=L.queue[L.i];
+  if(ex.type==="tf"||ex.type==="choice"){const b=e.target.closest(".opt");if(!b)return;document.querySelectorAll("#opts .opt").forEach(o=>o.classList.toggle("sel",o===b));L.pick=b.dataset.v;$("go").disabled=false}
+  else if(ex.type==="fill"){
+    const c=e.target.closest(".chip");const slot=$("slot");
+    if(c){document.querySelectorAll("#bank .chip").forEach(x=>x.classList.remove("used"));c.classList.add("used");slot.textContent=c.dataset.w;L.pick=c.dataset.w;$("go").disabled=false}
+    else if(e.target.closest("#slot")){slot.textContent="";L.pick=null;document.querySelectorAll("#bank .chip").forEach(x=>x.classList.remove("used"));$("go").disabled=true}
+  }else if(ex.type==="order"){
+    const c=e.target.closest(".chip");if(!c)return;
+    if(c.closest("#bank")){L.ans.push(c.dataset.o);c.classList.add("used")}
+    else{const v=c.dataset.o;L.ans=L.ans.filter(x=>x!==v);document.querySelectorAll("#bank .chip").forEach(x=>{if(x.dataset.o===v)x.classList.remove("used")})}
+    $("ansline").innerHTML=L.ans.map((x,n)=>`<button class="chip" data-o="${esc(x)}"><b>${n+1}</b><span>${esc(x)}</span></button>`).join("");
+    $("go").disabled=L.ans.length!==ex.items.length;
+  }else if(ex.type==="match"){
+    const b=e.target.closest(".opt");if(!b||b.classList.contains("ok"))return;
+    if(b.dataset.l!==undefined){document.querySelectorAll("[data-l]").forEach(o=>o.classList.toggle("sel",o===b));L.m.left=b.dataset.l;return}
+    if(L.m.left===null){b.classList.add("shake");setTimeout(()=>b.classList.remove("shake"),400);return}
+    const lb=document.querySelector(`[data-l="${L.m.left}"]`);
+    if(b.dataset.r===L.m.left){[lb,b].forEach(o=>{o.classList.remove("sel");o.classList.add("ok");o.disabled=true});L.m.ok++;L.m.left=null;tone([[660+L.m.ok*90,0,.12]]);
+      if(L.m.ok===ex.pairs.length)resolve(true)}
+    else{L.m.errs++;[lb,b].forEach(o=>{o.classList.add("shake","bad");setTimeout(()=>o.classList.remove("shake","bad"),450)});sBad()}
+  }
+});
+function check(){
+  const ex=L.queue[L.i];let ok=false;
+  if(ex.type==="tf")ok=(L.pick==="1")===ex.a;
+  else if(ex.type==="choice")ok=Number(L.pick)===ex.a;
+  else if(ex.type==="fill")ok=L.pick===ex.answer;
+  else if(ex.type==="order")ok=L.ans.every((x,i)=>x===ex.items[i]);
+  resolve(ok);
+}
+function solution(ex){
+  if(ex.type==="tf")return ex.a?"Vero":"Falso";
+  if(ex.type==="choice")return ex.opts[ex.a];
+  if(ex.type==="fill")return ex.text.replace("___",ex.answer);
+  if(ex.type==="order")return ex.items.map((x,i)=>(i+1)+". "+x).join("  ");
+  return "";
+}
+function resolve(ok){
+  const ex=L.queue[L.i];L.state="shown";
+  if(ex.type==="match"&&L.m.errs>0)L.mistakes++;
+  if(ex.type==="tf"||ex.type==="choice"){document.querySelectorAll("#opts .opt").forEach(o=>{o.disabled=true;const right=ex.type==="tf"?(o.dataset.v==="1")===ex.a:Number(o.dataset.v)===ex.a;if(right)o.classList.add("good");else if(o.classList.contains("sel"))o.classList.add("bad")})}
+  if(ex.type==="order")$("ansline").classList.add(ok?"good":"bad");
+  if(ok){L.right++;sGood()}else{L.mistakes++;L.queue.push({...ex,retry:true});sBad()}
+  setProgress();
+  $("progbug").innerHTML=lucciola(ok?"happy":"sad");
+  $("lfoot").className="lfoot "+(ok?"good":"bad");
+  const praise=["Giusto!","Esatto!","Bravissima, bravissimo!","Perfetto!","Proprio così!"];
+  $("fb").innerHTML=`<span class="ic">${ok?'<svg viewBox="0 0 24 24"><path d="M9.5 16.2 5.3 12l-1.8 1.8 6 6 11-11-1.8-1.8z" style="fill:#2A6858"/></svg>':'<svg viewBox="0 0 24 24"><path d="M6.4 5 12 10.6 17.6 5 19 6.4 13.4 12 19 17.6 17.6 19 12 13.4 6.4 19 5 17.6 10.6 12 5 6.4Z" style="fill:#A3493C"/></svg>'}</span>
+    <div><h3>${ok?praise[Math.floor(Math.random()*praise.length)]:"Quasi."}</h3>${ok?"":`<p class="sol">Risposta giusta: ${esc(solution(ex))}</p>`}<p>${esc(ex.why)}</p>${ok?"":"<p>La ritroverai alla fine della lezione.</p>"}</div>`;
+  const go=$("go");go.disabled=false;go.textContent="Continua";go.focus({preventScroll:true});
+}
+function next(){L.i++;if(L.i>=L.queue.length)finish();else{renderEx();window.scrollTo(0,0)}}
+$("go").onclick=()=>{if(!L)return;if(L.state==="ask"&&!$("go").disabled)check();else if(L.state==="shown")next()};
+function finish(){
+  const perfect=L.mistakes===0,gained=10+(perfect?5:0);
+  S.xp+=gained;S.done[L.id]=true;
+  const t=today();if(S.streak.last!==t){S.streak.n=streakNow()+1;S.streak.last=t}
+  save();sDone();
+  const acc=Math.round(L.total/(L.total+L.mistakes)*100);
+  $("donebox").className="done c-giallo";
+  $("donebox").innerHTML=`${lucciola("wow")}<h1>${perfect?"Senza un errore!":"Lezione <em>completata</em>"}</h1><p>${perfect?"Hai acceso una lucciola al primo colpo.":"Un'altra lucciola si è accesa sul sentiero."}</p>
+    <div class="tiles"><div class="tile c-giallo"><small>Punti</small><b>+${gained}</b></div><div class="tile c-verde"><small>Precisione</small><b>${acc}%</b></div><div class="tile c-rosso"><small>Giorni di fila</small><b>${S.streak.n}</b></div></div>
+    <button class="go" id="back">Continua</button>`;
+  show("v-done");$("back").focus();
+  $("back").onclick=()=>{L=null;render();show("v-home")};
+}
+$("close").onclick=()=>{$("quit").classList.add("on");$("stay").focus()};
+$("stay").onclick=()=>$("quit").classList.remove("on");
+$("leave").onclick=()=>{L=null;render();show("v-home")};
+
+
+/* ---------- installa e condividi ---------- */
+const APP_URL_PUBBLICA="https://chiaraleto97-blip.github.io/claudio/";  /* l'indirizzo su GitHub Pages, quando l'app è pubblicata */
+function appURL(){
+  const hosted=location.protocol==="https:"&&window.self===window.top;
+  if(hosted||/^(localhost|127\.0\.0\.1)$/.test(location.hostname))return location.href.split("#")[0].split("?")[0];
+  return APP_URL_PUBBLICA;
+}
+let installEvt=null;
+window.addEventListener("beforeinstallprompt",e=>{e.preventDefault();installEvt=e});
+window.addEventListener("appinstalled",()=>{installEvt=null;toast("Claudio è installato")});
+const standalone=()=>matchMedia("(display-mode: standalone)").matches||navigator.standalone===true;
+function openInstall(){
+  const url=appURL();
+  const how=`<ul class="how"><li><b>Android</b><span>Apri il link con Chrome, poi menu ⋮ e «Installa app» (o «Aggiungi a schermata Home»).</span></li><li><b>iPhone, iPad</b><span>Apri il link con Safari, tocca Condividi e poi «Aggiungi alla schermata Home».</span></li><li><b>Computer</b><span>Con Chrome o Edge: l'icona di installazione nella barra dell'indirizzo, oppure menu e «Installa Claudio».</span></li></ul>`;
+  const body=url
+    ?`<div class="qrwrap"><div class="qrbox" id="qrbox" aria-label="Codice QR dell'app"></div><div class="qrside"><p>Inquadra il codice con la fotocamera del telefono, oppure condividi il link.</p><span class="qrlink" id="qrlink">${esc(url)}</span><button class="btn-line" id="copylink" style="flex:none;padding:8px 14px">Copia il link</button></div></div>`
+    :`<p class="waitnote">Il codice QR comparirà qui quando l'app sarà pubblicata su GitHub Pages. Da questa pagina non si può installare: si installa dall'indirizzo pubblico.</p>`;
+  const act=standalone()?`<p class="waitnote" style="background:#E1F0EA">Stai già usando Claudio come app installata.</p>`
+    :installEvt?`<button class="go" id="doinstall" style="width:100%;margin-bottom:12px">Installa adesso su questo dispositivo</button>`:"";
+  openSheet("c-giallo",`<small>Installa e condividi</small><h2 id="sheettitle">Claudio sul telefono, come un'app</h2>${body}${act}${how}<p class="shotnote" style="margin:-4px 0 16px">Ogni dispositivo tiene i suoi progressi. L'app funziona anche senza rete dopo la prima apertura.</p><div class="row"><button class="go" data-close>Fatto</button></div>`);
+  if(url){
+    const box=$("qrbox");
+    if(typeof QRCode!=="undefined"){try{new QRCode(box,{text:url,width:400,height:400,colorDark:"#2A2045",colorLight:"#FFFFFF",correctLevel:QRCode.CorrectLevel.M})}catch(e){box.textContent="QR non disponibile"}}
+    else box.textContent="Serve la connessione per disegnare il QR";
+    $("copylink").onclick=()=>{try{navigator.clipboard.writeText(url).then(()=>toast("Link copiato"),()=>selectLink())}catch(e){selectLink()}};
+  }
+  const di=$("doinstall");if(di)di.onclick=async()=>{const ev=installEvt;installEvt=null;ev.prompt();try{await ev.userChoice}catch(e){}closeSheet()};
+}
+function selectLink(){const r=document.createRange();r.selectNodeContents($("qrlink"));const sel=getSelection();sel.removeAllRanges();sel.addRange(r);toast("Link selezionato: premi Ctrl+C")}
+$("install").onclick=openInstall;
+if(location.hash==="#installa")setTimeout(openInstall,300);
+
+/* tastiera: numeri per scegliere, Invio per controllare e continuare, Esc per uscire */
+document.addEventListener("keydown",e=>{
+  if(!$("sheet").hidden){if(e.key==="Escape")closeSheet();return}
+  if($("v-lesson").hidden||!L)return;
+  if(e.key==="Escape"){$("quit").classList.toggle("on");return}
+  if(e.key==="Enter"&&!e.target.closest("button")){e.preventDefault();$("go").click();return}
+  const n=Number(e.key);if(n>=1&&n<=9&&L.state==="ask"){
+    const list=[...document.querySelectorAll("#opts .opt, #bank .chip:not(.used)")];
+    if(list[n-1]){list[n-1].click()}
+  }
+});
+
+/* paesaggio */
+function rng(seed){return()=>{seed|=0;seed=seed+0x6D2B79F5|0;let t=Math.imul(seed^seed>>>15,1|seed);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+const f1=n=>Math.round(n*10)/10;
+function pine(x,base,h,w){const t=h*.12,y0=base-t;let d=`M${f1(x-w*.07)} ${f1(base)}h${f1(w*.14)}v${f1(-t)}h${f1(-w*.14)}Z`;[[1,0],[.78,.3],[.55,.56]].forEach(([k,o])=>{const yb=y0-h*o,ww=w*k/2,ht=h*.48;d+=`M${f1(x)} ${f1(yb-ht)}L${f1(x+ww)} ${f1(yb)}H${f1(x-ww)}Z`});return d}
+function treeline(r,x0,x1,base,hmin,hmax,wk){let d="";for(let x=x0;x<x1;){const h=hmin+r()*(hmax-hmin);d+=pine(x,base+r()*1.2,h,h*wk);x+=h*wk*(.42+r()*.35)}return d}
+(()=>{const r=rng(7);let h="";
+  for(let i=0;i<90;i++){const tw=r()<.35;h+=`<circle cx="${(r()*100).toFixed(2)}%" cy="${(r()*r()*62).toFixed(2)}%" r="${(.4+r()*r()*1.4).toFixed(2)}"${tw?` class="tw" style="--d:${(2.5+r()*4).toFixed(1)}s;--dl:${(-r()*6).toFixed(1)}s"`:` opacity="${(.15+r()*.5).toFixed(2)}"`}/>`}
+  $("sky").innerHTML=h;
+  const fr=rng(11);let f=`<path d="M0 140 Q180 100 360 125 T720 115 T1080 125 T1440 105 V240 H0Z" style="fill:#6B4266;opacity:.55"/>`;
+  f+=`<path d="${treeline(fr,-20,1470,170,32,56,.5)}" style="fill:#4A3058"/><rect y="169" width="1440" height="71" style="fill:#4A3058"/>`;
+  f+=`<path d="${treeline(fr,-30,1480,205,56,95,.44)}" style="fill:#2C2042"/><rect y="204" width="1440" height="36" style="fill:#2C2042"/>`;
+  f+=`<path d="${treeline(fr,-40,1500,245,85,145,.42)}" style="fill:#17122A"/>`;
+  for(let i=0;i<18;i++)f+=`<circle class="fly" cx="${(fr()*1440).toFixed(0)}" cy="${(140+fr()*90).toFixed(0)}" r="${(1.2+fr()*1.6).toFixed(1)}" style="--d:${(4+fr()*5).toFixed(1)}s;--dl:${(-fr()*8).toFixed(1)}s;--fx:${(fr()*24-12).toFixed(0)}px;--fy:${(-fr()*18).toFixed(0)}px"/>`;
+  $("forest").innerHTML=f;
+})();
+
+{const h=location.hash.slice(1);if(COURSES[h])S.course=h}
+render();
+</script>
+
+<script>
+if("serviceWorker" in navigator){window.addEventListener("load",()=>{navigator.serviceWorker.register("sw.js").catch(()=>{})})}
+</script>

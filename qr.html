@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="it">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Installa Claudio</title>
+<link rel="icon" href="icone/icona-192.png">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,650;1,9..144,400&family=Bricolage+Grotesque:opsz,wght@12..96,800&display=swap">
+<style>
+/* Locandina da stampare o da proiettare: il QR per installare Claudio. A schermo sul tavolo notturno, in stampa su carta chiara. */
+:root{--bg:#17142C;--ink:#F3EAF0;--paper:#F7F1EE;--paper-ink:#2A2045;--muted:#6C5F77;--giallo:#F2B97F;--rosso:#EA9B8C;--lilla:#C8A5D8;
+  --f-serif:"Fraunces",Georgia,serif;--f-body:"Atkinson Hyperlegible",Verdana,sans-serif;--f-display:"Bricolage Grotesque","Arial Narrow",sans-serif;color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;background:linear-gradient(to bottom,#14122A,#35284F 60%,#8C4F63);color:var(--ink);font-family:var(--f-body);display:grid;place-items:center;padding:24px 16px}
+.poster{width:min(100%,640px);background:var(--paper);color:var(--paper-ink);border-radius:24px;padding:36px 36px 30px;text-align:center;box-shadow:0 30px 60px -30px #000}
+.poster img.icon{width:96px;height:96px;border-radius:22px}
+.brand{font-family:var(--f-display);font-weight:800;letter-spacing:.12em;text-transform:uppercase;font-size:.8rem;color:var(--muted);margin:14px 0 4px}
+.brand sup{color:#A3493C}
+h1{font-family:var(--f-serif);font-weight:500;font-size:clamp(2.2rem,8vw,3.4rem);line-height:.95;margin:0 0 6px;letter-spacing:-.02em}
+h1 em{font-style:italic;color:#A3493C}
+.sub{margin:0 0 22px;color:var(--muted)}
+#qr{width:min(70vw,300px);margin:0 auto 14px;padding:12px;background:#fff;border-radius:18px;box-shadow:0 0 0 2px #DCD2C3}
+#qr img,#qr canvas{width:100%!important;height:auto!important;display:block}
+.url{font-family:ui-monospace,Consolas,monospace;font-size:.95rem;word-break:break-all;margin:0 0 22px}
+.how{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;text-align:left}
+.how div{border-top:3px solid var(--giallo);padding-top:8px;font-size:.92rem;line-height:1.4}
+.how b{display:block;font-family:var(--f-display);font-weight:800;text-transform:uppercase;letter-spacing:.08em;font-size:.75rem;margin-bottom:3px}
+.warn{background:#FBE8D3;border-radius:12px;padding:12px;margin:0 0 18px}
+@media (max-width:520px){.how{grid-template-columns:minmax(0,1fr)}.poster{padding:28px 20px}}
+@page{size:A4;margin:12mm}
+@media print{body{background:#fff;padding:0;min-height:0;display:block}.poster{box-shadow:none;width:100%;border-radius:0;background:#fff}#qr{width:95mm}}
+</style>
+<div class="poster">
+  <img class="icon" src="icone/icona-192.png" alt="">
+  <p class="brand">Corso IDEA<sup>IA</sup> per docenti</p>
+  <h1>Installa <em>Claudio</em></h1>
+  <p class="sub">Lezioni brevi per imparare Claude e GitHub, sul telefono come un'app.</p>
+  <div id="qr" aria-label="Codice QR per aprire Claudio"></div>
+  <p class="url" id="url"></p>
+  <div class="how">
+    <div><b>Android</b>Apri con Chrome, poi menu ⋮ e «Installa app».</div>
+    <div><b>iPhone, iPad</b>Apri con Safari, tocca Condividi e «Aggiungi alla schermata Home».</div>
+    <div><b>Computer</b>Chrome o Edge: icona di installazione nella barra dell'indirizzo.</div>
+  </div>
+</div>
+<script>
+const app=new URL("./",location.href).href;
+const ok=location.protocol.startsWith("http");
+document.getElementById("url").textContent=ok?app:"";
+if(!ok){document.getElementById("qr").outerHTML='<p class="warn">Apri questa locandina dall\'indirizzo pubblico dell\'app (…/qr.html): il QR viene creato da lì.</p>'}
+else if(typeof QRCode!=="undefined"){new QRCode(document.getElementById("qr"),{text:app,width:600,height:600,colorDark:"#2A2045",colorLight:"#FFFFFF",correctLevel:QRCode.CorrectLevel.M})}
+else{document.getElementById("qr").textContent="Serve la connessione per disegnare il QR."}
+</script>
