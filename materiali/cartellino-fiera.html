@@ -1,0 +1,324 @@
+<!doctype html>
+<html lang="it">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cartellino della fiera</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,650;1,9..144,400;1,9..144,600&family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&display=swap">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+/* Stesso mondo delle Carte delle idee. A sinistra il modulo sul tavolo notturno, a destra il cartellino A4: carta pergamena con in alto una fascia di cielo, la luna con il numero della postazione, il bosco. Unità relative alla larghezza del cartellino, così è identico a schermo e su carta. */
+:root{
+  --bg:#17142C; --bg-2:#261E40; --ink:#F3EAF0; --muted:#B9A9C4; --line:#3B3056;
+  --night:#1D1735; --night-2:#2A2045;
+  --paper:#F7F1EE; --paper-2:#FFFDF8; --paper-ink:#2A2045; --paper-muted:#6C5F77; --paper-line:#DCD2C3;
+  --blu:#9EA6E2; --rosso:#EA9B8C; --giallo:#F2B97F; --verde:#88C0AF; --lilla:#C8A5D8;
+  --blu-d:#404894; --rosso-d:#A3493C; --giallo-d:#8A5217; --verde-d:#2A6858;
+  --shadow:rgba(0,0,0,.7); --focus:#F2B97F;
+  --f-display:"Bricolage Grotesque","Arial Narrow",system-ui,sans-serif;
+  --f-serif:"Fraunces",Georgia,"Times New Roman",serif;
+  --f-body:"Atkinson Hyperlegible",Verdana,system-ui,sans-serif;
+  color-scheme:dark;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#17142C}}
+:root[data-theme="dark"]{--bg:#17142C}
+*{box-sizing:border-box}
+html{background:var(--bg)}
+body{margin:0;background:linear-gradient(to bottom,#14122A 0%,#1F1A3C 34%,#35284F 58%,#5C3760 78%,#8C4F63 92%,#B86E66 100%) fixed,var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.5;padding:28px 16px 64px;position:relative;min-height:100vh;overflow-x:hidden}
+:focus-visible{outline:3px solid var(--focus);outline-offset:2px}
+button{font:inherit;cursor:pointer}
+.sky{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:0}
+.sky circle{fill:#FFF3E6}
+.sky .tw{animation:twinkle var(--d,4s) ease-in-out infinite;animation-delay:var(--dl,0s)}
+@keyframes twinkle{0%,100%{opacity:.15}50%{opacity:.95}}
+.forest{position:fixed;left:0;right:0;bottom:0;width:100%;height:clamp(140px,26vh,260px);pointer-events:none;z-index:0}
+.fly{fill:#F6D58E;animation:fly var(--d,6s) ease-in-out infinite;animation-delay:var(--dl,0s)}
+@keyframes fly{0%,100%{opacity:0;transform:translate(0,0)}40%{opacity:.9}60%{opacity:.8;transform:translate(var(--fx,8px),var(--fy,-10px))}}
+@media (prefers-reduced-motion: reduce){.sky .tw,.fly{animation:none}}
+.s-concetto{--suit:var(--blu);--suit-d:var(--blu-d)} .s-superpotere{--suit:var(--rosso);--suit-d:var(--rosso-d)} .s-contesto{--suit:var(--giallo);--suit-d:var(--giallo-d)} .s-chi{--suit:var(--verde);--suit-d:var(--verde-d)}
+.brand-ia{font-family:var(--f-display);font-weight:800;letter-spacing:-.01em;text-transform:none}
+.brand-ia sup{font-size:.6em;color:var(--rosso);margin-left:1px}
+
+.layout{position:relative;z-index:1;max-width:1240px;margin:0 auto;display:grid;grid-template-columns:minmax(0,400px) minmax(0,1fr);gap:30px;align-items:start}
+@media (max-width:900px){.layout{grid-template-columns:minmax(0,1fr)}}
+
+/* modulo */
+.form{display:flex;flex-direction:column;gap:16px}
+.form-head h1{font-family:var(--f-serif);font-weight:500;font-size:2.4rem;line-height:.95;letter-spacing:-.025em;margin:0 0 8px}
+.form-head h1 em{font-style:italic;font-weight:400;background:linear-gradient(100deg,var(--giallo),var(--rosso) 45%,var(--lilla));-webkit-background-clip:text;background-clip:text;color:transparent;padding-right:.06em}
+.form-head p{margin:0;color:var(--muted);font-size:.92rem}
+fieldset{margin:0;padding:18px;background:rgba(38,30,64,.82);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);border:0;border-radius:20px;display:grid;gap:11px;min-width:0}
+legend{float:left;width:100%;font-family:var(--f-serif);font-weight:650;font-size:1.2rem;padding:0;margin:0 0 2px}
+legend + *{clear:both}
+.f{display:flex;flex-direction:column;gap:4px;min-width:0}
+.lab{font-size:.82rem;font-weight:700}
+.lab em{font-style:normal;font-weight:400;color:var(--muted)}
+.two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px}
+.small-first{grid-template-columns:90px minmax(0,1fr)}
+input[type="text"],textarea{width:100%;font:inherit;font-size:.94rem;color:var(--ink);background:rgba(255,255,255,.06);border:1.5px solid var(--line);border-radius:10px;padding:7px 10px}
+textarea{resize:vertical;line-height:1.4}
+input::placeholder,textarea::placeholder{color:var(--muted);opacity:.7}
+input:focus,textarea:focus{border-color:var(--giallo);outline:none}
+.suit-lab{display:flex;align-items:center;gap:6px}
+.suit-lab svg{width:11px;height:11px;fill:var(--suit)}
+.chk{display:flex;gap:8px;align-items:flex-start;font-size:.92rem}
+.chk input{width:17px;height:17px;margin:2px 0 0;accent-color:var(--giallo);flex:none}
+.hint{margin:0;font-size:.82rem;color:var(--muted)}
+.btns{display:flex;flex-wrap:wrap;gap:8px;align-items:center;font-size:.86rem;color:var(--muted)}
+.btn{font-weight:700;font-size:.88rem;padding:8px 16px;border-radius:999px;border:2px solid var(--ink);background:transparent;color:var(--ink)}
+.btn-danger{border-color:var(--rosso);color:var(--rosso)}
+
+/* anteprima */
+.preview{position:sticky;top:calc(16px + env(safe-area-inset-top,0px))}
+.preview-note{margin:0 0 10px;font-size:.86rem;color:var(--muted)}
+.poster{container-type:inline-size;width:100%;max-width:760px;aspect-ratio:210/297;background:var(--paper);color:var(--paper-ink);border-radius:6px;overflow:hidden;margin:0 auto;box-shadow:0 0 0 1px rgba(0,0,0,.25),0 30px 60px -28px var(--shadow)}
+.pin{height:100%;display:flex;flex-direction:column}
+.ex{color:var(--paper-muted);font-style:italic}
+
+.p-band{position:relative;overflow:hidden;flex:none;padding:4.5cqw 6cqw 7.5cqw;background:linear-gradient(to bottom,#16132C 0%,#2E2450 30%,#5B4580 62%,#9A6A90 90%);color:var(--ink);-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.p-band .ex{color:#CBB9D6}
+.p-band .stars,.p-band .trees{position:absolute;left:0;width:100%}
+.p-band .stars{top:0;height:100%}
+.p-band .trees{bottom:-.2cqw;height:7cqw}
+.p-top{position:relative;display:flex;align-items:center;gap:1.6cqw;font-weight:700;text-transform:uppercase;letter-spacing:.14em;font-size:1.75cqw;color:#E7D6E6;margin-bottom:1.6cqw}
+.p-top .shapes{display:flex;gap:.8cqw}
+.p-top svg{width:2.3cqw;height:2.3cqw;fill:var(--suit)}
+.p-top .brand-ia{font-size:2.3cqw;letter-spacing:-.01em}
+.moon{position:absolute;right:5cqw;top:3.6cqw;width:15cqw;height:15cqw;border-radius:50%;background:#FCEBD8;color:var(--paper-ink);display:grid;place-items:center;text-align:center;box-shadow:0 0 0 2.2cqw rgba(252,235,216,.10),0 0 0 4.4cqw rgba(252,235,216,.05)}
+.moon small{display:block;font-family:var(--f-display);font-weight:700;font-size:1.45cqw;text-transform:uppercase;letter-spacing:.14em;color:var(--paper-muted);margin-bottom:-.6cqw}
+.moon b{font-family:var(--f-serif);font-weight:650;font-size:6.6cqw;line-height:1}
+.moon .ex{color:var(--paper-muted)}
+.p-name{position:relative;font-family:var(--f-serif);font-weight:500;font-size:6.8cqw;line-height:.98;letter-spacing:-.025em;margin:0;max-width:72%;text-wrap:balance;overflow-wrap:anywhere}
+.p-who{position:relative;margin:1.2cqw 0 0;font-size:2.5cqw;color:#E7D6E6;max-width:72%}
+
+.p-body{flex:1;min-height:0;display:flex;flex-direction:column;gap:2.2cqw;padding:3cqw 6cqw 5cqw}
+.p-idea{margin:0;font-family:var(--f-serif);font-size:3.1cqw;line-height:1.3;border-left:1cqw solid var(--rosso);padding-left:2.6cqw;overflow-wrap:anywhere}
+.p-label{margin:0 0 1cqw;font-family:var(--f-display);font-weight:700;text-transform:uppercase;letter-spacing:.13em;font-size:1.7cqw;color:var(--paper-muted)}
+.p-try{display:grid;grid-template-columns:minmax(0,1fr) 19cqw;gap:4cqw;align-items:stretch}
+.steps{list-style:none;margin:0;padding:0;display:grid;gap:1.5cqw;counter-reset:s}
+.steps li{display:flex;gap:2cqw;align-items:flex-start;font-size:2.8cqw;line-height:1.3;counter-increment:s;overflow-wrap:anywhere}
+.steps li::before{content:counter(s);flex:none;width:4.8cqw;height:4.8cqw;border-radius:50%;background:var(--paper-ink);color:var(--paper);font-family:var(--f-display);font-weight:800;font-size:2.6cqw;display:grid;place-items:center;margin-top:-.5cqw;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.qr-box{display:flex;flex-direction:column;align-items:center;gap:1cqw;text-align:center;font-size:1.8cqw;color:var(--paper-muted)}
+.qr{width:100%;aspect-ratio:1;display:grid;place-items:center;border:.3cqw dashed var(--paper-line);border-radius:1.4cqw;background:#fff}
+.qr.has{border:0;padding:1cqw;box-shadow:0 0 0 .3cqw var(--paper-line)}
+.qr img,.qr canvas{width:100%!important;height:auto!important}
+.qr .empty{padding:2cqw;font-size:1.7cqw}
+
+.p-cards{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1.6cqw}
+.mini{border-radius:1.4cqw;overflow:hidden;min-width:0;background:var(--paper-2);box-shadow:0 0 0 .25cqw var(--paper-line);-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.mini .k{display:flex;align-items:center;gap:.8cqw;font-family:var(--f-display);font-weight:700;text-transform:uppercase;letter-spacing:.09em;font-size:1.4cqw;color:var(--paper-ink);background:var(--suit);padding:1cqw 1.6cqw}
+.mini svg{width:1.6cqw;height:1.6cqw;fill:var(--suit-d)}
+.mini .v{font-family:var(--f-serif);font-weight:650;font-size:2.3cqw;line-height:1.1;padding:1.2cqw 1.6cqw 1.6cqw;overflow-wrap:anywhere}
+
+.p-behind{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:3.4cqw;background:rgba(200,165,216,.2);border-radius:1.8cqw;padding:2.6cqw 3cqw;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.p-prompt{margin:0;font-family:var(--f-serif);font-style:italic;font-size:2.05cqw;line-height:1.4;display:-webkit-box;-webkit-line-clamp:5;-webkit-box-orient:vertical;overflow:hidden;overflow-wrap:anywhere}
+.p-prompt::before{content:"«"}
+.p-prompt::after{content:"»"}
+.p-facts{display:flex;flex-direction:column;gap:1.6cqw;font-size:2.1cqw;line-height:1.3;min-width:0}
+.p-facts .big{font-family:var(--f-serif);font-weight:650;font-size:6cqw;line-height:.9;color:var(--rosso-d)}
+.p-facts .big small{font-family:var(--f-body);font-weight:700;font-size:2cqw;margin-left:1cqw;color:var(--paper-ink)}
+.p-facts p{margin:0;overflow-wrap:anywhere}
+
+.badges{display:flex;flex-wrap:wrap;gap:1.2cqw}
+.badge{display:inline-flex;align-items:center;gap:1cqw;border:.3cqw solid var(--verde-d);color:var(--verde-d);border-radius:99cqw;padding:.6cqw 1.8cqw;font-size:1.8cqw;font-weight:700}
+.badge svg{width:2cqw;height:2cqw;fill:currentColor}
+
+.p-postit{flex:1;min-height:7cqw;border:.35cqw dashed var(--paper-line);border-radius:1.8cqw;display:flex;align-items:flex-start;gap:2cqw;padding:2.2cqw 2.8cqw;font-size:2.3cqw;color:var(--paper-muted)}
+.p-postit b{color:var(--paper-ink);font-family:var(--f-serif);font-weight:650;font-size:3cqw}
+
+/* stampa: solo il cartellino, su un A4 verticale */
+@page{size:A4 portrait;margin:8mm}
+@media print{
+  html,body{background:#fff!important;padding:0;min-height:0}
+  .sky,.forest,.form,.preview-note{display:none!important}
+  .layout{display:block;max-width:none}
+  .preview{position:static}
+  .poster{width:194mm;max-width:none;height:281mm;aspect-ratio:auto;box-shadow:none;border-radius:0;margin:0}
+  .ex{visibility:hidden}
+}
+</style>
+
+<svg class="sky" id="sky" aria-hidden="true"></svg>
+<svg class="forest" id="forest" viewBox="0 0 1440 260" preserveAspectRatio="xMidYMax slice" aria-hidden="true"></svg>
+
+<div class="layout">
+  <form class="form" id="form" autocomplete="off">
+    <div class="form-head">
+      <h1>Cartellino <em>della fiera</em></h1>
+      <p>Compilate i campi: il cartellino a destra si aggiorna. Si stampa su un A4 verticale dal file «03 Cartellino della fiera» aperto nel browser, con Ctrl+P.</p>
+    </div>
+
+    <fieldset>
+      <legend>Lo strumento</legend>
+      <div class="two small-first">
+        <label class="f"><span class="lab">Postazione</span><input type="text" id="postazione" placeholder="4"></label>
+        <label class="f"><span class="lab">Nome dello strumento</span><input type="text" id="nome" placeholder="Il metronomo della poesia"></label>
+      </div>
+      <label class="f"><span class="lab">Chi l'ha fatto</span><input type="text" id="autori" placeholder="Gruppo 3"></label>
+      <label class="f"><span class="lab">Disciplina e classe</span><input type="text" id="disciplina" placeholder="Italiano e Musica · seconda secondaria"></label>
+      <label class="f"><span class="lab">L'idea in una frase</span><textarea id="idea" rows="2" placeholder="Gli accenti dell'endecasillabo diventano battiti: la classe li sente, li vede e li batte con le mani."></textarea></label>
+    </fieldset>
+
+    <fieldset>
+      <legend>Per chi lo prova</legend>
+      <label class="f"><span class="lab">Passo 1</span><input type="text" id="passo1" placeholder="Scegli un verso dall'elenco."></label>
+      <label class="f"><span class="lab">Passo 2</span><input type="text" id="passo2" placeholder="Premi Play e guarda le sillabe accendersi."></label>
+      <label class="f"><span class="lab">Passo 3</span><input type="text" id="passo3" placeholder="Batti le mani sugli accenti, insieme alla LIM."></label>
+      <label class="f"><span class="lab">Link allo strumento <em>diventa un QR</em></span><input type="text" id="link" placeholder="https://claude.ai/artifact/…" inputmode="url"></label>
+      <p class="hint">Perché i visitatori lo aprano dal telefono, il link va condiviso: nella pagina dell'artifact, Condividi.</p>
+    </fieldset>
+
+    <fieldset>
+      <legend>Dietro le quinte</legend>
+      <div class="two" id="cardfields"></div>
+      <label class="f"><span class="lab">Il primo prompt</span><textarea id="prompt" rows="4" placeholder="Crea uno strumento interattivo chiamato «Il metronomo della poesia» per una seconda della secondaria. L'idea: gli accenti dell'endecasillabo diventano battiti…"></textarea></label>
+      <div class="two">
+        <label class="f"><span class="lab">Quante versioni</span><input type="text" id="versioni" placeholder="7"></label>
+        <label class="f"><span class="lab">Quanto tempo <em>circa</em></span><input type="text" id="tempo" placeholder="2 ore"></label>
+      </div>
+      <label class="f"><span class="lab">La sorpresa <em>che cosa non ci aspettavamo</em></span><textarea id="sorpresa" rows="2" placeholder="Gli studenti hanno cominciato a scrivere versi propri per sentirli suonare."></textarea></label>
+    </fieldset>
+
+    <fieldset>
+      <legend>Per tutti</legend>
+      <div id="access" style="display:grid;gap:6px"></div>
+    </fieldset>
+
+    <div class="btns" id="reset-area"></div>
+  </form>
+
+  <div class="preview">
+    <p class="preview-note">Anteprima. Il testo in corsivo sbiadito è un esempio e non viene stampato.</p>
+    <div class="poster" id="poster"><div class="pin">
+      <div class="p-band">
+        <svg class="stars" id="p-stars" aria-hidden="true"></svg>
+        <div class="p-top"><span class="shapes" id="p-shapes"></span><span class="brand-ia">IDEA<sup>IA</sup></span><span>· Fiera degli strumenti</span></div>
+        <div class="moon"><span><small>postazione</small><b id="p-postazione"></b></span></div>
+        <h2 class="p-name" id="p-nome"></h2>
+        <p class="p-who" id="p-who"></p>
+        <svg class="trees" id="p-trees" viewBox="0 0 760 28" preserveAspectRatio="none" aria-hidden="true"></svg>
+      </div>
+      <div class="p-body">
+        <p class="p-idea" id="p-idea"></p>
+        <div class="p-try">
+          <div>
+            <p class="p-label">Prova così</p>
+            <ol class="steps" id="p-steps"></ol>
+          </div>
+          <div class="qr-box"><div class="qr" id="p-qr"></div><span>Inquadra e provalo dal telefono</span></div>
+        </div>
+        <div>
+          <p class="p-label">È nato da queste carte</p>
+          <div class="p-cards" id="p-cards"></div>
+        </div>
+        <div>
+          <p class="p-label">Dietro le quinte</p>
+          <div class="p-behind">
+            <p class="p-prompt" id="p-prompt"></p>
+            <div class="p-facts" id="p-facts"></div>
+          </div>
+        </div>
+        <div class="badges" id="p-badges"></div>
+        <div class="p-postit"><span><b>Io lo userei per…</b><br>Lasciate qui un post-it.</span></div>
+      </div>
+    </div></div>
+  </div>
+</div>
+
+<datalist id="dl-concetto"></datalist>
+<datalist id="dl-superpotere"></datalist>
+<datalist id="dl-contesto"></datalist>
+<datalist id="dl-chi"></datalist>
+
+<script>
+const SHAPES={
+  square:'<rect x="2.5" y="2.5" width="19" height="19"/>',
+  circle:'<circle cx="12" cy="12" r="9.5"/>',
+  triangle:'<path d="M12 2 22.5 21.5H1.5Z"/>',
+  person:'<circle cx="12" cy="6.8" r="4.6"/><path d="M2.5 22.5a9.5 9.5 0 0 1 19 0Z"/>'
+};
+const svg=s=>`<svg viewBox="0 0 24 24" aria-hidden="true">${SHAPES[s]}</svg>`;
+const SUITS=[
+  {k:"concetto",label:"Concetto",shape:"square",ex:"La metrica della poesia",items:["Il ritmo e la pulsazione","Leggere le note","Acuto, grave, intervalli","Il timbro degli strumenti","La forma di un brano","Il canto a più voci","Piano, forte, accelerando","Improvvisare","La metrica della poesia","Le figure retoriche","La struttura della fiaba","L'analisi logica","Fondere le sillabe","Doppie e accenti","Il riassunto","Il testo argomentativo","Capire un testo","Leggere ad alta voce","La linea del tempo","Cause e conseguenze","Le fonti storiche","Orientarsi sulla carta","Leggere un paesaggio","La prospettiva","Il colore e i suoi accordi","Leggere un'opera d'arte","Luce e ombra","La composizione","La pronuncia inglese","Le prime parole","L'inglese parlato","Regole condivise","Cittadinanza digitale","Dare un nome alle emozioni","Lavorare insieme","Imparare a memoria"]},
+  {k:"superpotere",label:"Superpotere",shape:"circle",ex:"Suona",items:["Suona","Vede","Ascolta","Parla","Si tocca","Gioca","Simula","Genera","Racconta","Su misura","Ricorda","Traduce","Disegna","Scandisce","Svela","Esplora"]},
+  {k:"contesto",label:"Contesto",shape:"triangle",ex:"Sulla LIM, davanti a tutti",items:["Sulla LIM, davanti a tutti","Su un tablet, da soli","A coppie","In movimento","Nell'aula di musica","A casa","Nei primi cinque minuti","Per chiudere la lezione","Al museo o in gita","Nell'angolo della calma","Nel lavoro a gruppi","Allo spettacolo di fine anno","In biblioteca","All'aperto","Con un'altra classe","In un'ora di supplenza","Prima di una verifica","Al colloquio con le famiglie"]},
+  {k:"chi",label:"Chi",shape:"person",ex:"Tutta la classe",items:["Tutta la classe","Chi legge con fatica","Chi non usa la parola","Chi è appena arrivato in Italia","Chi fatica a stare fermo","Chi usa poco le mani","Chi si agita con i cambiamenti","Chi vede poco","Chi sente poco","Chi è già avanti","Chi non ama parlare in pubblico","Chi non sa ancora leggere","Chi ha paura di sbagliare","Chi pensa per immagini","Chi è stato spesso assente","Chi si stanca presto","Chi ha un talento nascosto","Una classe molto rumorosa"]}
+];
+const ACCESS=[
+  ["grande","Testi grandi"],["senzaudio","Anche senza audio"],["voce","Istruzioni a voce"],
+  ["tasto","Un solo tasto"],["tempo","Senza fretta"],["calma","Modalità calma"]
+];
+const CHECK='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9.5 16.2 5.3 12l-1.8 1.8 6 6 11-11-1.8-1.8z"/></svg>';
+
+document.getElementById("cardfields").innerHTML=SUITS.map(s=>`<label class="f s-${s.k}"><span class="lab suit-lab">${svg(s.shape)}${s.label}</span><input type="text" id="carta-${s.k}" list="dl-${s.k}" placeholder="${s.ex}"></label>`).join("");
+SUITS.forEach(s=>{document.getElementById("dl-"+s.k).innerHTML=s.items.map(i=>`<option value="${i.replace(/"/g,"&quot;")}"></option>`).join("")});
+document.getElementById("access").innerHTML=ACCESS.map(([k,l])=>`<label class="chk"><input type="checkbox" id="acc-${k}"><span>${l}</span></label>`).join("");
+document.getElementById("p-shapes").innerHTML=SUITS.map(s=>`<span class="s-${s.k}">${svg(s.shape)}</span>`).join("");
+
+const fields=[...document.querySelectorAll("#form input[id],#form textarea[id]")];
+const $=id=>document.getElementById(id);
+const esc=t=>t.replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const show=id=>{const e=$(id),v=e.value.trim();return v?esc(v):`<span class="ex">${esc(e.placeholder)}</span>`};
+
+let qrTimer,lastLink=null;
+function renderQR(){
+  const link=$("link").value.trim(),box=$("p-qr");
+  if(link===lastLink)return;lastLink=link;
+  box.innerHTML="";box.classList.toggle("has",!!link);
+  if(!link){box.innerHTML=`<span class="empty">Qui comparirà il QR del link</span>`;return}
+  if(typeof QRCode==="undefined"){box.innerHTML=`<span class="empty">Il QR non si è caricato: serve la connessione a internet.</span>`;box.classList.remove("has");return}
+  try{new QRCode(box,{text:link,width:512,height:512,colorDark:"#2A2045",colorLight:"#FFFFFF",correctLevel:QRCode.CorrectLevel.M})}
+  catch(e){box.innerHTML=`<span class="empty">Link troppo lungo per il QR.</span>`;box.classList.remove("has")}
+}
+function render(){
+  $("p-postazione").innerHTML=show("postazione");
+  $("p-nome").innerHTML=show("nome");
+  $("p-who").innerHTML=`${show("autori")} · ${show("disciplina")}`;
+  $("p-idea").innerHTML=show("idea");
+  $("p-steps").innerHTML=["passo1","passo2","passo3"].map(id=>`<li><span>${show(id)}</span></li>`).join("");
+  $("p-cards").innerHTML=SUITS.map(s=>`<div class="mini s-${s.k}"><div class="k">${svg(s.shape)}${s.label}</div><div class="v">${show("carta-"+s.k)}</div></div>`).join("");
+  $("p-prompt").innerHTML=show("prompt");
+  $("p-facts").innerHTML=`<div><div class="big">${show("versioni")}<small>versioni</small></div></div><p><b>Tempo:</b> ${show("tempo")}</p><p><b>La sorpresa:</b> ${show("sorpresa")}</p>`;
+  const acc=ACCESS.filter(([k])=>$("acc-"+k).checked);
+  $("p-badges").innerHTML=acc.length?`<span class="p-label" style="margin:0;align-self:center">Per tutti</span>`+acc.map(([,l])=>`<span class="badge">${CHECK}${l}</span>`).join(""):"";
+  clearTimeout(qrTimer);qrTimer=setTimeout(renderQR,250);
+}
+
+const KEY="cartellino-fiera-v1";
+function save(){const d={};fields.forEach(f=>d[f.id]=f.type==="checkbox"?f.checked:f.value);try{localStorage.setItem(KEY,JSON.stringify(d))}catch(e){}}
+function load(){let d={};try{d=JSON.parse(localStorage.getItem(KEY)||"{}")}catch(e){}fields.forEach(f=>{if(!(f.id in d))return;if(f.type==="checkbox")f.checked=!!d[f.id];else f.value=d[f.id]})}
+$("form").addEventListener("input",()=>{save();render()});
+$("form").addEventListener("change",()=>{save();render()});
+$("form").addEventListener("submit",e=>e.preventDefault());
+
+const area=$("reset-area");
+function resetIdle(){area.innerHTML=`<button type="button" class="btn btn-danger" id="reset">Svuota il cartellino</button><span>Si salva da solo, in questo browser.</span>`;$("reset").onclick=resetAsk}
+function resetAsk(){
+  area.innerHTML=`<span>Si cancella tutto.</span><button type="button" class="btn btn-danger" id="yes">Sì, svuota</button><button type="button" class="btn" id="no">Annulla</button>`;
+  $("no").onclick=resetIdle;
+  $("yes").onclick=()=>{fields.forEach(f=>{if(f.type==="checkbox")f.checked=false;else f.value=""});try{localStorage.removeItem(KEY)}catch(e){}render();resetIdle()};
+  $("no").focus();
+}
+resetIdle();
+load();render();renderQR();
+
+/* il paesaggio notturno, come nelle carte */
+function rng(seed){return()=>{seed|=0;seed=seed+0x6D2B79F5|0;let t=Math.imul(seed^seed>>>15,1|seed);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+const f1=n=>Math.round(n*10)/10;
+function pine(x,base,h,w){const t=h*.12,y0=base-t;let d=`M${f1(x-w*.07)} ${f1(base)}h${f1(w*.14)}v${f1(-t)}h${f1(-w*.14)}Z`;[[1,0],[.78,.3],[.55,.56]].forEach(([k,o])=>{const yb=y0-h*o,ww=w*k/2,ht=h*.48;d+=`M${f1(x)} ${f1(yb-ht)}L${f1(x+ww)} ${f1(yb)}H${f1(x-ww)}Z`});return d}
+function treeline(r,x0,x1,base,hmin,hmax,wk){let d="";for(let x=x0;x<x1;){const h=hmin+r()*(hmax-hmin);d+=pine(x,base+r()*1.2,h,h*wk);x+=h*wk*(.42+r()*.35)}return d}
+(()=>{const r=rng(7);let h="";
+  for(let i=0;i<90;i++){const tw=r()<.35;h+=`<circle cx="${(r()*100).toFixed(2)}%" cy="${(r()*r()*62).toFixed(2)}%" r="${(.4+r()*r()*1.4).toFixed(2)}"${tw?` class="tw" style="--d:${(2.5+r()*4).toFixed(1)}s;--dl:${(-r()*6).toFixed(1)}s"`:` opacity="${(.15+r()*.5).toFixed(2)}"`}/>`}
+  $("sky").innerHTML=h;
+  const fr=rng(11);let f=`<path d="M0 150 Q180 110 360 135 T720 125 T1080 135 T1440 115 V260 H0Z" style="fill:#6B4266;opacity:.55"/>`;
+  f+=`<path d="${treeline(fr,-20,1470,185,36,62,.5)}" style="fill:#4A3058"/><rect y="184" width="1440" height="76" style="fill:#4A3058"/>`;
+  f+=`<path d="${treeline(fr,-30,1480,225,62,105,.44)}" style="fill:#2C2042"/><rect y="224" width="1440" height="36" style="fill:#2C2042"/>`;
+  f+=`<path d="${treeline(fr,-40,1500,265,95,160,.42)}" style="fill:#17122A"/>`;
+  for(let i=0;i<18;i++)f+=`<circle class="fly" cx="${(fr()*1440).toFixed(0)}" cy="${(150+fr()*100).toFixed(0)}" r="${(1.2+fr()*1.6).toFixed(1)}" style="--d:${(4+fr()*5).toFixed(1)}s;--dl:${(-fr()*8).toFixed(1)}s;--fx:${(fr()*24-12).toFixed(0)}px;--fy:${(-fr()*18).toFixed(0)}px"/>`;
+  $("forest").innerHTML=f;
+  const sr=rng(23);let st="";for(let i=0;i<46;i++)st+=`<circle cx="${(sr()*100).toFixed(1)}%" cy="${(sr()*75).toFixed(1)}%" r="${(.5+sr()*1.2).toFixed(1)}" style="fill:#FFF3E6;opacity:${(.25+sr()*.6).toFixed(2)}"/>`;
+  $("p-stars").innerHTML=st;
+  const tr=rng(5);$("p-trees").innerHTML=`<path d="${treeline(tr,-10,780,29,12,26,.42)}" style="fill:var(--paper)"/>`;
+})();
+</script>

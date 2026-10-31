@@ -1,0 +1,226 @@
+<!doctype html>
+<html lang="it">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Passaporto della fiera</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,650;1,9..144,400;1,9..144,600&family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&display=swap">
+<style>
+/* Stesso mondo delle Carte delle idee. Un A4 orizzontale da piegare a metà: a destra la copertina con il cielo, la luna-timbro del corso e il bosco, poi le caselle per i timbri; a sinistra il retro con le idee e i voti. */
+:root{
+  --bg:#17142C; --bg-2:#261E40; --ink:#F3EAF0; --muted:#B9A9C4; --line:#3B3056;
+  --night:#1D1735; --night-2:#2A2045;
+  --paper:#F7F1EE; --paper-2:#FFFDF8; --paper-ink:#2A2045; --paper-muted:#6C5F77; --paper-line:#D3C7B6;
+  --blu:#9EA6E2; --rosso:#EA9B8C; --giallo:#F2B97F; --verde:#88C0AF; --lilla:#C8A5D8;
+  --blu-d:#404894; --rosso-d:#A3493C; --giallo-d:#8A5217; --verde-d:#2A6858;
+  --shadow:rgba(0,0,0,.7); --focus:#F2B97F;
+  --f-display:"Bricolage Grotesque","Arial Narrow",system-ui,sans-serif;
+  --f-serif:"Fraunces",Georgia,"Times New Roman",serif;
+  --f-body:"Atkinson Hyperlegible",Verdana,system-ui,sans-serif;
+  color-scheme:dark;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#17142C}}
+:root[data-theme="dark"]{--bg:#17142C}
+*{box-sizing:border-box}
+html{background:var(--bg)}
+body{margin:0;background:linear-gradient(to bottom,#14122A 0%,#1F1A3C 34%,#35284F 58%,#5C3760 78%,#8C4F63 92%,#B86E66 100%) fixed,var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.5;padding:28px 16px 64px;position:relative;min-height:100vh;overflow-x:hidden}
+:focus-visible{outline:3px solid var(--focus);outline-offset:2px}
+.sky{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:0}
+.sky circle{fill:#FFF3E6}
+.sky .tw{animation:twinkle var(--d,4s) ease-in-out infinite;animation-delay:var(--dl,0s)}
+@keyframes twinkle{0%,100%{opacity:.15}50%{opacity:.95}}
+.forest{position:fixed;left:0;right:0;bottom:0;width:100%;height:clamp(140px,26vh,260px);pointer-events:none;z-index:0}
+.fly{fill:#F6D58E;animation:fly var(--d,6s) ease-in-out infinite;animation-delay:var(--dl,0s)}
+@keyframes fly{0%,100%{opacity:0;transform:translate(0,0)}40%{opacity:.9}60%{opacity:.8;transform:translate(var(--fx,8px),var(--fy,-10px))}}
+@media (prefers-reduced-motion: reduce){.sky .tw,.fly{animation:none}}
+.s-concetto{--suit:var(--blu);--suit-d:var(--blu-d)} .s-superpotere{--suit:var(--rosso);--suit-d:var(--rosso-d)} .s-contesto{--suit:var(--giallo);--suit-d:var(--giallo-d)} .s-chi{--suit:var(--verde);--suit-d:var(--verde-d)}
+.wrap{position:relative;z-index:1;max-width:1180px;margin:0 auto}
+
+.settings{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr) minmax(0,1.4fr) minmax(0,.7fr);gap:14px 18px;background:rgba(38,30,64,.82);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);border-radius:22px;padding:20px 22px;margin-bottom:22px;align-items:start}
+@media (max-width:900px){.settings{grid-template-columns:minmax(0,1fr)}}
+.settings h1{grid-column:1/-1;font-family:var(--f-serif);font-weight:500;font-size:2.4rem;line-height:.95;letter-spacing:-.025em;margin:0}
+.settings h1 em{font-style:italic;font-weight:400;background:linear-gradient(100deg,var(--giallo),var(--rosso) 45%,var(--lilla));-webkit-background-clip:text;background-clip:text;color:transparent;padding-right:.06em}
+.settings .intro{grid-column:1/-1;margin:-4px 0 0;color:var(--muted);font-size:.92rem}
+.f{display:flex;flex-direction:column;gap:4px;min-width:0}
+.lab{font-size:.82rem;font-weight:700}
+.lab em{font-style:normal;font-weight:400;color:var(--muted)}
+input[type="text"],textarea,select{width:100%;font:inherit;font-size:.94rem;color:var(--ink);background:rgba(255,255,255,.06);border:1.5px solid var(--line);border-radius:10px;padding:7px 10px}
+select option{background:var(--night);color:var(--ink)}
+textarea{resize:vertical;line-height:1.4}
+input::placeholder,textarea::placeholder{color:var(--muted);opacity:.7}
+input:focus,textarea:focus,select:focus{border-color:var(--giallo);outline:none}
+
+/* il foglio */
+.sheet{container-type:inline-size;width:100%;aspect-ratio:297/210;background:var(--paper);color:var(--paper-ink);border-radius:6px;overflow:hidden;display:grid;grid-template-columns:1fr 1fr;position:relative;box-shadow:0 0 0 1px rgba(0,0,0,.25),0 30px 60px -28px var(--shadow)}
+.sheet::after{content:"";position:absolute;left:50%;top:2cqw;bottom:2cqw;border-left:.15cqw dashed var(--paper-line);z-index:2}
+.fold{position:absolute;left:50%;top:.6cqw;transform:translateX(-50%);font-size:.9cqw;color:var(--paper-muted);background:var(--paper);padding:.1cqw .8cqw;border-radius:99px;text-transform:uppercase;letter-spacing:.12em;z-index:3}
+.panel{display:flex;flex-direction:column;gap:1.5cqw;min-height:0;padding:3.4cqw 3.6cqw 3cqw}
+.label{margin:0;font-family:var(--f-display);font-weight:700;text-transform:uppercase;letter-spacing:.13em;font-size:1cqw;color:var(--paper-muted)}
+.h{font-family:var(--f-serif);font-weight:650;margin:0;letter-spacing:-.015em}
+
+/* retro (a sinistra) */
+.ideas{display:grid;gap:.9cqw}
+.idea{display:grid;grid-template-columns:auto minmax(0,1fr);gap:.6cqw 1.2cqw;align-items:end}
+.idea .st{font-size:1.3cqw;white-space:nowrap}
+.idea .st span{display:inline-block;width:4cqw;border-bottom:.15cqw solid var(--paper-ink);margin-left:.6cqw}
+.idea .ln{border-bottom:.12cqw solid var(--paper-line);height:2.8cqw}
+.idea .ln.full{grid-column:1/-1}
+.votes{display:grid;gap:.6cqw}
+.vote{display:grid;grid-template-columns:3.4cqw minmax(0,1fr) 6.5cqw;gap:1.2cqw;align-items:center;font-size:1.45cqw}
+.vote .ic{width:3.4cqw;height:3.4cqw;border-radius:50%;display:grid;place-items:center;background:var(--suit);-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.vote .ic svg{width:1.6cqw;height:1.6cqw;fill:var(--suit-d)}
+.vote b{font-family:var(--f-serif);font-weight:650;font-size:1.7cqw;display:block;line-height:1.1}
+.vote small{color:var(--paper-muted);font-size:1.15cqw}
+.vote .box{height:3.6cqw;border:.18cqw solid var(--paper-ink);border-radius:.8cqw;position:relative;background:var(--paper-2)}
+.vote .box::before{content:"n.";position:absolute;left:.6cqw;top:.2cqw;font-size:.95cqw;color:var(--paper-muted)}
+.note{margin:auto 0 0;font-size:1.2cqw;color:var(--paper-muted);border-top:.12cqw solid var(--paper-line);padding-top:1cqw}
+
+/* copertina (a destra) */
+.cover{padding:0;gap:0}
+.cband{position:relative;overflow:hidden;flex:none;padding:3cqw 3.6cqw 4.6cqw;background:linear-gradient(to bottom,#16132C 0%,#2E2450 30%,#5B4580 64%,#9A6A90 92%);color:var(--ink);-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.cband .stars,.cband .trees{position:absolute;left:0;width:100%}
+.cband .stars{top:0;height:100%}
+.cband .trees{bottom:-.1cqw;height:4.2cqw}
+.shapes{position:relative;display:flex;gap:.7cqw;margin-bottom:1.1cqw}
+.shapes svg{width:1.6cqw;height:1.6cqw;fill:var(--suit)}
+.title{position:relative;font-family:var(--f-serif);font-weight:500;font-size:5.2cqw;line-height:.9;letter-spacing:-.03em;margin:0}
+.title em{font-style:italic;font-weight:400;color:var(--giallo)}
+.event{position:relative;margin:.9cqw 0 0;font-size:1.45cqw;font-weight:700;color:#F1DDEA}
+.event span{font-weight:400;color:#D5C2D8}
+.seal{position:absolute;right:3.2cqw;top:2.6cqw;width:9.6cqw;height:9.6cqw;border-radius:50%;background:#FCEBD8;color:var(--paper-ink);display:grid;place-items:center;text-align:center;transform:rotate(-10deg);box-shadow:0 0 0 1.3cqw rgba(252,235,216,.10),0 0 0 2.6cqw rgba(252,235,216,.05)}
+.seal b{display:block;font-family:var(--f-display);font-weight:800;font-size:2.15cqw;letter-spacing:-.02em;line-height:1}
+.seal b sup{font-size:.55em;color:var(--rosso-d)}
+.seal small{display:block;font-size:.95cqw;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--paper-muted);margin-top:.3cqw;line-height:1.15}
+.cbody{flex:1;min-height:0;display:flex;flex-direction:column;gap:1.4cqw;padding:1.6cqw 3.6cqw 3cqw}
+.name{display:flex;align-items:flex-end;gap:1cqw;font-size:1.4cqw;font-weight:700}
+.name span{flex:1;border-bottom:.15cqw solid var(--paper-ink);height:2.4cqw}
+.stamps{flex:1;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1cqw;min-height:0}
+.stamp{border:.15cqw dashed var(--paper-line);border-radius:1.2cqw;padding:.7cqw .9cqw;display:flex;flex-direction:column;gap:.3cqw;min-height:0;overflow:hidden;background:var(--paper-2)}
+.stamp .n{font-family:var(--f-serif);font-weight:650;font-style:italic;font-size:1.8cqw;line-height:1;color:var(--rosso-d)}
+.stamp .nm{font-size:1.02cqw;line-height:1.15;color:var(--paper-muted);overflow-wrap:anywhere}
+.how{margin:0;font-size:1.15cqw;color:var(--paper-muted)}
+
+@page{size:A4 landscape;margin:0}
+@media print{
+  html,body{background:#fff!important;padding:0;min-height:0}
+  .sky,.forest,.settings{display:none!important}
+  .wrap{max-width:none}
+  .sheet{width:297mm;height:209mm;aspect-ratio:auto;box-shadow:none;border-radius:0}
+  .panel{padding:10mm 11mm 9mm}
+  .cover{padding:0}
+  .cband{padding:9mm 11mm 13mm}
+  .cbody{padding:5mm 11mm 9mm}
+}
+</style>
+
+<svg class="sky" id="sky" aria-hidden="true"></svg>
+<svg class="forest" id="forest" viewBox="0 0 1440 260" preserveAspectRatio="xMidYMax slice" aria-hidden="true"></svg>
+
+<div class="wrap">
+  <form class="settings" id="form" autocomplete="off">
+    <h1>Passaporto <em>della fiera</em></h1>
+    <p class="intro">Per chi organizza: impostate la fiera, poi stampate un A4 orizzontale per ogni visitatore dal file «04 Passaporto della fiera» aperto nel browser (Ctrl+P) e piegatelo a metà.</p>
+    <label class="f"><span class="lab">Nome della fiera</span><input type="text" id="evento" value="Fiera degli strumenti"></label>
+    <label class="f"><span class="lab">Data e luogo</span><input type="text" id="quando" placeholder="es. 12 dicembre · aula magna"></label>
+    <label class="f"><span class="lab">Le postazioni <em>una per riga, nell'ordine dei numeri</em></span><textarea id="postazioni" rows="3" placeholder="Il metronomo della poesia&#10;Dentro il quadro&#10;Agenda visiva parlante"></textarea></label>
+    <label class="f"><span class="lab">Caselle</span><select id="quante"></select></label>
+  </form>
+
+  <div class="sheet" id="sheet">
+    <span class="fold">piega qui</span>
+
+    <div class="panel">
+      <div>
+        <p class="label">Le idee che mi porto via</p>
+        <h2 class="h" style="font-size:2.6cqw;margin-top:.4cqw">Io lo userei per…</h2>
+      </div>
+      <div class="ideas" id="ideas"></div>
+      <div>
+        <p class="label">I miei voti</p>
+        <h2 class="h" style="font-size:2.6cqw;margin:.4cqw 0 1.2cqw">Scrivi il numero della postazione</h2>
+        <div class="votes" id="votes"></div>
+      </div>
+      <p class="note">A fine fiera consegna il passaporto: i voti decidono i premi. Le idee, invece, tienile tu.</p>
+    </div>
+
+    <div class="panel cover">
+      <div class="cband">
+        <svg class="stars" id="c-stars" aria-hidden="true"></svg>
+        <div class="shapes" id="shapes"></div>
+        <h2 class="title">Passa<em>porto</em></h2>
+        <p class="event" id="p-event"></p>
+        <div class="seal"><span><b>IDEA<sup>IA</sup></b><small>corso per<br>docenti</small></span></div>
+        <svg class="trees" id="c-trees" viewBox="0 0 440 18" preserveAspectRatio="none" aria-hidden="true"></svg>
+      </div>
+      <div class="cbody">
+        <div class="name">Nome<span></span></div>
+        <div class="stamps" id="stamps"></div>
+        <p class="how">Prova lo strumento di ogni postazione: chi l'ha costruito ti mette un timbro o una firma nella casella.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const SHAPES={
+  square:'<rect x="2.5" y="2.5" width="19" height="19"/>',
+  circle:'<circle cx="12" cy="12" r="9.5"/>',
+  triangle:'<path d="M12 2 22.5 21.5H1.5Z"/>',
+  person:'<circle cx="12" cy="6.8" r="4.6"/><path d="M2.5 22.5a9.5 9.5 0 0 1 19 0Z"/>'
+};
+const svg=s=>`<svg viewBox="0 0 24 24" aria-hidden="true">${SHAPES[s]}</svg>`;
+const $=id=>document.getElementById(id);
+const esc=t=>t.replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+const PREMI=[
+  ["Il più sorprendente","quello che non immaginavi si potesse fare","s-superpotere","circle"],
+  ["Lo uso domattina","quello che porteresti subito in classe","s-concetto","square"],
+  ["Semplice ma geniale","poca tecnica, grande idea","s-contesto","triangle"],
+  ["Nessuno escluso","quello pensato davvero per tutti","s-chi","person"],
+  ["Il più rumoroso","perché una fiera deve anche suonare","s-superpotere","circle"]
+];
+$("shapes").innerHTML=[["concetto","square"],["superpotere","circle"],["contesto","triangle"],["chi","person"]].map(([k,s])=>`<span class="s-${k}">${svg(s)}</span>`).join("");
+$("ideas").innerHTML=[1,2,3].map(()=>`<div class="idea"><span class="st">Postazione n.<span></span></span><span class="ln"></span><span class="ln full"></span></div>`).join("");
+$("votes").innerHTML=PREMI.map(([t,d,cls,sh])=>`<div class="vote ${cls}"><span class="ic">${svg(sh)}</span><span><b>${t}</b><small>${d}</small></span><span class="box"></span></div>`).join("");
+$("quante").innerHTML=[8,12,16].map(n=>`<option value="${n}">${n}</option>`).join("");
+$("quante").value="12";
+
+function render(){
+  const ev=$("evento").value.trim()||"Fiera degli strumenti";
+  const q=$("quando").value.trim();
+  $("p-event").innerHTML=`${esc(ev)}${q?` <span>· ${esc(q)}</span>`:""}`;
+  const names=$("postazioni").value.split("\n").map(s=>s.trim());
+  const named=names.filter(Boolean).length;
+  let n=Number($("quante").value);
+  if(named>n){n=named<=12?12:16;$("quante").value=String(n)}
+  $("stamps").innerHTML=Array.from({length:n},(_,i)=>`<div class="stamp"><span class="n">${i+1}</span><span class="nm">${esc(names[i]||"")}</span></div>`).join("");
+}
+const KEY="passaporto-fiera-v1";
+const fields=["evento","quando","postazioni","quante"];
+function save(){const d={};fields.forEach(id=>d[id]=$(id).value);try{localStorage.setItem(KEY,JSON.stringify(d))}catch(e){}}
+function load(){let d={};try{d=JSON.parse(localStorage.getItem(KEY)||"{}")}catch(e){}fields.forEach(id=>{if(d[id]!=null)$(id).value=d[id]})}
+$("form").addEventListener("input",()=>{render();save()});
+$("form").addEventListener("change",()=>{render();save()});
+$("form").addEventListener("submit",e=>e.preventDefault());
+load();render();
+
+/* il paesaggio notturno, come nelle carte */
+function rng(seed){return()=>{seed|=0;seed=seed+0x6D2B79F5|0;let t=Math.imul(seed^seed>>>15,1|seed);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+const f1=n=>Math.round(n*10)/10;
+function pine(x,base,h,w){const t=h*.12,y0=base-t;let d=`M${f1(x-w*.07)} ${f1(base)}h${f1(w*.14)}v${f1(-t)}h${f1(-w*.14)}Z`;[[1,0],[.78,.3],[.55,.56]].forEach(([k,o])=>{const yb=y0-h*o,ww=w*k/2,ht=h*.48;d+=`M${f1(x)} ${f1(yb-ht)}L${f1(x+ww)} ${f1(yb)}H${f1(x-ww)}Z`});return d}
+function treeline(r,x0,x1,base,hmin,hmax,wk){let d="";for(let x=x0;x<x1;){const h=hmin+r()*(hmax-hmin);d+=pine(x,base+r()*1.2,h,h*wk);x+=h*wk*(.42+r()*.35)}return d}
+(()=>{const r=rng(7);let h="";
+  for(let i=0;i<90;i++){const tw=r()<.35;h+=`<circle cx="${(r()*100).toFixed(2)}%" cy="${(r()*r()*62).toFixed(2)}%" r="${(.4+r()*r()*1.4).toFixed(2)}"${tw?` class="tw" style="--d:${(2.5+r()*4).toFixed(1)}s;--dl:${(-r()*6).toFixed(1)}s"`:` opacity="${(.15+r()*.5).toFixed(2)}"`}/>`}
+  $("sky").innerHTML=h;
+  const fr=rng(11);let f=`<path d="M0 150 Q180 110 360 135 T720 125 T1080 135 T1440 115 V260 H0Z" style="fill:#6B4266;opacity:.55"/>`;
+  f+=`<path d="${treeline(fr,-20,1470,185,36,62,.5)}" style="fill:#4A3058"/><rect y="184" width="1440" height="76" style="fill:#4A3058"/>`;
+  f+=`<path d="${treeline(fr,-30,1480,225,62,105,.44)}" style="fill:#2C2042"/><rect y="224" width="1440" height="36" style="fill:#2C2042"/>`;
+  f+=`<path d="${treeline(fr,-40,1500,265,95,160,.42)}" style="fill:#17122A"/>`;
+  for(let i=0;i<18;i++)f+=`<circle class="fly" cx="${(fr()*1440).toFixed(0)}" cy="${(150+fr()*100).toFixed(0)}" r="${(1.2+fr()*1.6).toFixed(1)}" style="--d:${(4+fr()*5).toFixed(1)}s;--dl:${(-fr()*8).toFixed(1)}s;--fx:${(fr()*24-12).toFixed(0)}px;--fy:${(-fr()*18).toFixed(0)}px"/>`;
+  $("forest").innerHTML=f;
+  const sr=rng(29);let st="";for(let i=0;i<40;i++)st+=`<circle cx="${(sr()*100).toFixed(1)}%" cy="${(sr()*72).toFixed(1)}%" r="${(.5+sr()*1.1).toFixed(1)}" style="fill:#FFF3E6;opacity:${(.25+sr()*.6).toFixed(2)}"/>`;
+  $("c-stars").innerHTML=st;
+  const tr=rng(3);$("c-trees").innerHTML=`<path d="${treeline(tr,-6,450,19,8,17,.42)}" style="fill:var(--paper)"/>`;
+})();
+</script>

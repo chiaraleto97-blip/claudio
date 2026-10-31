@@ -1,0 +1,747 @@
+<!doctype html>
+<html lang="it">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Carte delle idee</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,650;1,9..144,400;1,9..144,600&family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&display=swap">
+<style>
+/* Un mazzo vero su un tavolo di carta: inchiostri da risografia (blu, rosso, giallo, verde) che si sovrappongono,
+   forme alla Munari, ogni carta con la sua piccola composizione generata. Le carte restano color crema anche al buio, come oggetti fisici. */
+:root{
+  --bg:#17142C; --bg-2:#261E40; --ink:#F3EAF0; --muted:#B9A9C4; --line:#3B3056;
+  --night:#1D1735; --night-2:#2A2045;
+  --paper:#F4EEE2; --paper-ink:#221E33; --paper-muted:#635C72; --paper-line:#DCD2C3;
+  --blu:#9EA6E2; --rosso:#EA9B8C; --giallo:#F2B97F; --verde:#88C0AF; --lilla:#C8A5D8;
+  --blu-d:#404894; --rosso-d:#A3493C; --giallo-d:#8A5217; --verde-d:#2A6858;
+  --on-stage:#F3EAF0; --stage-muted:#BBA9C6; --stage-line:rgba(242,185,127,.20);
+  --shadow:rgba(0,0,0,.75); --focus:#F2B97F; --grain:.5;
+  --f-display:"Bricolage Grotesque","Arial Narrow",system-ui,sans-serif;
+  --f-serif:"Fraunces",Georgia,"Times New Roman",serif;
+  --f-body:"Atkinson Hyperlegible",Verdana,system-ui,sans-serif;
+  color-scheme:dark;
+}
+/* il tavolo è di notte in entrambi i temi: le carte restano color pergamena */
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#17142C}}
+:root[data-theme="dark"]{--bg:#17142C}
+
+*{box-sizing:border-box}
+html{background:var(--bg)}
+body{margin:0;background:linear-gradient(to bottom,#14122A 0%,#1F1A3C 34%,#35284F 58%,#5C3760 78%,#8C4F63 92%,#B86E66 100%) fixed,var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.5;padding:30px 16px 64px;position:relative;min-height:100vh;overflow-x:hidden}
+body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;opacity:var(--grain);mix-blend-mode:overlay;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1.1 -.35'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+.wrap{max-width:1200px;margin:0 auto;position:relative;z-index:1}
+:focus-visible{outline:3px solid var(--focus);outline-offset:3px}
+button{font:inherit;cursor:pointer}
+.defs{position:absolute;width:0;height:0;overflow:hidden}
+.sky{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:0}
+.sky circle{fill:#FFF3E6}
+.sky .tw{animation:twinkle var(--d,4s) ease-in-out infinite;animation-delay:var(--dl,0s)}
+@keyframes twinkle{0%,100%{opacity:.15}50%{opacity:.95}}
+.spot{position:fixed;inset:0;pointer-events:none;z-index:0;background:radial-gradient(circle 32vmax at var(--px,50%) var(--py,30%),rgba(242,185,127,.09),rgba(242,185,127,0) 70%)}
+.forest{position:fixed;left:0;right:0;bottom:0;width:100%;height:clamp(150px,30vh,300px);pointer-events:none;z-index:0}
+.fly{fill:#F6D58E;animation:fly var(--d,6s) ease-in-out infinite;animation-delay:var(--dl,0s)}
+@keyframes fly{0%,100%{opacity:0;transform:translate(0,0)}40%{opacity:.9}60%{opacity:.8;transform:translate(var(--fx,8px),var(--fy,-10px))}}
+
+.s-concetto{--suit:var(--blu);--suit-d:var(--blu-d)}
+.s-superpotere{--suit:var(--rosso);--suit-d:var(--rosso-d)}
+.s-contesto{--suit:var(--giallo);--suit-d:var(--giallo-d)}
+.s-chi{--suit:var(--verde);--suit-d:var(--verde-d)}
+
+/* ---------- testata ---------- */
+.top{display:flex;flex-wrap:wrap;gap:22px 32px;align-items:flex-end;justify-content:space-between;margin-bottom:34px}
+.brand{display:flex;gap:18px;align-items:center;min-width:0}
+.cluster{width:clamp(74px,12vw,118px);flex:none;overflow:visible}
+.cluster{filter:drop-shadow(0 0 10px rgba(205,189,235,.35))}
+h1{font-family:var(--f-serif);font-weight:500;font-size:clamp(2.6rem,7.4vw,5rem);line-height:.9;letter-spacing:-.025em;margin:0}
+h1 em{font-style:italic;font-weight:400;padding-right:.08em;background:linear-gradient(100deg,var(--giallo),var(--rosso) 45%,var(--lilla));-webkit-background-clip:text;background-clip:text;color:transparent}
+h1 .spark{display:inline-block;font-size:.38em;vertical-align:.95em;color:var(--giallo);animation:twinkle 3.2s ease-in-out infinite}
+.formula{margin:.9rem 0 0;display:flex;flex-wrap:wrap;gap:6px;align-items:center;color:var(--muted);font-size:.95rem}
+.chip{display:inline-flex;align-items:center;gap:6px;padding:4px 11px 4px 8px;border-radius:999px;background:var(--paper);color:var(--paper-ink);font-weight:700;font-size:.88rem;box-shadow:0 0 0 1px var(--line)}
+.chip svg{width:13px;height:13px;fill:var(--suit-d)}
+.formula .times{font-weight:700;opacity:.55}
+.brand-ia{font-family:var(--f-display);font-weight:800;color:var(--ink);letter-spacing:-.01em}
+.brand-ia sup{font-size:.6em;color:var(--rosso);margin-left:1px}
+.tabs{display:flex;gap:4px;background:var(--bg-2);border-radius:999px;padding:5px;flex-wrap:wrap}
+.tab{font-weight:700;border:0;background:transparent;color:var(--muted);padding:9px 18px;border-radius:999px;transition:background .2s,color .2s}
+.tab:hover{color:var(--ink)}
+.tab[aria-selected="true"]{background:var(--ink);color:var(--bg)}
+.view{display:none}
+.view.active{display:block}
+
+/* ---------- la carta ---------- */
+.card{container-type:inline-size;position:relative;display:flex;flex-direction:column;aspect-ratio:63/88;min-width:0;
+  background:var(--paper);color:var(--paper-ink);border-radius:14px;overflow:hidden;
+  box-shadow:0 0 0 1px rgba(0,0,0,.25),0 22px 40px -20px var(--shadow),0 0 46px -14px color-mix(in srgb,var(--suit) 55%,transparent);
+  --fs-t:max(19px,8.3cqw);--fs-d:max(14px,5.1cqw);--fs-x:max(12.5px,4.4cqw);--fs-f:max(10.5px,3.5cqw);
+  transform:perspective(900px) rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg));transition:transform .35s cubic-bezier(.2,.8,.2,1)}
+.card.hot{transition:transform .08s linear}
+.card::after{content:"";position:absolute;inset:0;pointer-events:none;opacity:0;transition:opacity .3s;
+  background:radial-gradient(circle at var(--mx,50%) var(--my,30%),rgba(255,255,255,.45),rgba(255,255,255,0) 48%);mix-blend-mode:soft-light}
+.card.hot::after{opacity:1}
+.card.face::before{content:"";position:absolute;inset:max(5px,2.2cqw);border:1px solid rgba(74,53,96,.26);border-radius:9px;pointer-events:none;z-index:3}
+.art{position:relative;height:56cqw;flex:none;overflow:hidden;background:linear-gradient(to bottom,#3A2F66 0%,#5B4580 28%,#9A6A90 54%,var(--suit) 78%)}
+.card.face{--forest:#4A3560;--paper:#F7F1EE;--paper-ink:#2A2045;--paper-muted:#6C5F77;--paper-line:rgba(42,32,69,.16);background:linear-gradient(to bottom,#E6DAE6 0,var(--paper) 46%)}
+.art::after{content:"";position:absolute;inset:0;pointer-events:none;mix-blend-mode:multiply;opacity:.28;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 -.4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+.gen{position:absolute;inset:0;width:100%;height:100%;display:block}
+.idx{position:absolute;z-index:2;top:4cqw;left:4cqw;display:flex;flex-direction:column;align-items:center;gap:1cqw;
+  background:rgba(30,23,51,.72);color:#FCEBD8;padding:2cqw 2.1cqw 2.3cqw;border-radius:2.2cqw;box-shadow:inset 0 0 0 1px rgba(252,235,216,.25);
+  font-family:var(--f-display);font-weight:800;font-size:max(11px,5.2cqw);line-height:1;font-variant-numeric:tabular-nums}
+.idx svg{width:max(8px,3.4cqw);height:max(8px,3.4cqw);fill:var(--suit)}
+.tag{position:absolute;z-index:2;left:4cqw;top:max(46px,19cqw);background:rgba(252,235,216,.92);color:#2A2045;font-weight:700;
+  font-size:max(10.5px,3.7cqw);padding:.9cqw 2.6cqw;border-radius:99px;letter-spacing:.01em}
+.cbody{display:flex;flex-direction:column;gap:2.4cqw;flex:1;padding:5cqw 5.5cqw 3cqw}
+.card h3{color:#2A2045;font-family:var(--f-serif);font-weight:650;font-size:var(--fs-t);line-height:1.04;letter-spacing:-.012em;margin:0;text-wrap:balance}
+.card .d{margin:0;font-size:var(--fs-d);line-height:1.38;color:#3D3350}
+.card .x{margin:auto 0 0;font-size:var(--fs-x);line-height:1.32;color:var(--paper-muted);border-top:1.5px dashed var(--paper-line);padding-top:2.2cqw}
+.card .x b{display:block;font-size:.82em;text-transform:uppercase;letter-spacing:.1em;color:var(--suit-d)}
+.cfoot{display:flex;align-items:center;gap:1.6cqw;padding:0 5.5cqw 4cqw;font-size:var(--fs-f);font-weight:700;text-transform:uppercase;letter-spacing:.11em;color:var(--paper-muted)}
+.cfoot svg{width:1.05em;height:1.05em;fill:var(--suit-d);flex:none}
+.cfoot .num{margin-left:auto;font-variant-numeric:tabular-nums;letter-spacing:.04em}
+.lines{flex:1;min-height:60px;background:repeating-linear-gradient(to bottom,transparent 0 9cqw,var(--paper-line) 9cqw calc(9cqw + 1.5px))}
+.card.back{background:var(--night)}
+.card.back svg{position:absolute;inset:0;width:100%;height:100%}
+
+/* ---------- pesca ---------- */
+.table{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:26px 22px}
+@media (max-width:900px){.table{grid-template-columns:repeat(2,minmax(0,1fr));gap:24px 18px}}
+@media (max-width:520px){
+  .brand{flex-direction:column;align-items:flex-start;gap:10px}
+  .cluster{width:64px}
+  .tab{padding:8px 13px;font-size:.92rem}
+  .slot-label span{display:none}
+  .card{--fs-t:max(15.5px,8.3cqw);--fs-d:max(12.5px,5.1cqw);--fs-x:max(11.5px,4.4cqw);--fs-f:max(9.5px,3.5cqw)}
+  .table{gap:22px 14px}
+}
+.slot{display:flex;flex-direction:column;gap:12px;min-width:0}
+.slot-label{display:flex;align-items:center;gap:7px;margin:0;font-weight:700;font-size:.82rem;text-transform:uppercase;letter-spacing:.1em;color:var(--muted)}
+.slot-label svg{width:13px;height:13px;fill:var(--suit)}
+.slot-label span{margin-left:auto;font-weight:400;text-transform:none;letter-spacing:0}
+.stack{position:relative;isolation:isolate;margin-bottom:10px;transition:transform .3s cubic-bezier(.2,.8,.2,1)}
+.stack::before,.stack::after{content:"";position:absolute;inset:0;border-radius:14px;z-index:-1;background:var(--night)!important;box-shadow:inset 0 0 0 1.5px color-mix(in srgb,var(--suit) 55%,transparent),0 10px 18px -12px var(--shadow)}
+.stack::before{background:var(--suit);transform:translate(6px,8px) rotate(2.2deg)}
+.stack::after{background:color-mix(in srgb,var(--suit) 72%,var(--suit-d));transform:translate(-5px,11px) rotate(-2.6deg)}
+.flip{perspective:1300px}
+.inner{position:relative;transform-style:preserve-3d;transition:transform .55s cubic-bezier(.2,.9,.25,1.15)}
+.inner.down{transform:rotateY(180deg);transition:transform .3s cubic-bezier(.5,0,.8,.4)}
+.front,.back-face{backface-visibility:hidden;-webkit-backface-visibility:hidden}
+.front>.card{height:100%}
+.back-face{position:absolute;inset:0;transform:rotateY(180deg)}
+.back-face .card{height:100%;aspect-ratio:auto}
+.stamp{position:absolute;z-index:5;top:-10px;right:-10px;display:none;font-family:var(--f-display);font-weight:800;font-size:.9rem;text-transform:uppercase;letter-spacing:.12em;
+  background:var(--paper);color:var(--paper-ink);border:2.5px solid var(--paper-ink);padding:3px 10px;border-radius:7px;transform:rotate(9deg);box-shadow:3px 3px 0 var(--suit)}
+.slot.locked .stack{transform:translateY(-8px)}
+.reveal{all:unset;display:block;width:100%;height:100%;box-sizing:border-box;cursor:pointer;border-radius:14px}
+.reveal:focus-visible{outline:3px solid var(--focus);outline-offset:4px}
+.reveal .card{transition:box-shadow .3s,transform .3s}
+.reveal:hover .card{transform:translateY(-4px);box-shadow:0 0 0 1px rgba(0,0,0,.3),0 0 60px -6px color-mix(in srgb,var(--suit) 70%,transparent)}
+.slot.hidden .stack{animation:breathe 3.6s ease-in-out infinite}
+.slot.hidden:nth-child(2) .stack{animation-delay:-.9s}.slot.hidden:nth-child(3) .stack{animation-delay:-1.8s}.slot.hidden:nth-child(4) .stack{animation-delay:-2.7s}
+@keyframes breathe{50%{filter:drop-shadow(0 0 18px color-mix(in srgb,var(--suit) 45%,transparent))}}
+.slot.hidden .slot-actions{opacity:.6;pointer-events:none}
+.slot.locked .stamp{display:block;animation:stamp .35s cubic-bezier(.2,.9,.3,1.3)}
+.slot.locked .front .card{box-shadow:0 0 0 3px var(--suit),0 26px 36px -20px var(--shadow)}
+@keyframes stamp{from{transform:rotate(9deg) scale(1.8);opacity:0}to{transform:rotate(9deg) scale(1);opacity:1}}
+.slot-actions{display:flex;gap:6px}
+.btn-small{flex:1;font-size:.86rem;font-weight:700;padding:8px 8px;border:1.5px solid rgba(243,234,240,.32);background:rgba(29,23,53,.88);-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);color:var(--ink);border-radius:10px;transition:border-color .15s,background .15s}
+.btn-small:hover{border-color:var(--ink)}
+.btn-small[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+
+.question{position:relative;overflow:hidden;margin:44px 0 0;background:linear-gradient(160deg,rgba(242,185,127,.10),rgba(29,23,53,.72) 55%);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);border:1px solid var(--stage-line);box-shadow:inset 0 1px 0 rgba(255,255,255,.06);color:var(--on-stage);border-radius:26px;padding:34px clamp(20px,4.5vw,52px) 30px}
+.question .deco{position:absolute;right:-30px;top:-30px;width:clamp(150px,22vw,250px);opacity:.95;pointer-events:none}
+.question .deco{opacity:.9}
+.label{position:relative;text-transform:uppercase;letter-spacing:.14em;font-size:.76rem;font-weight:700;color:var(--stage-muted);margin:0 0 14px}
+.q{position:relative;font-family:var(--f-serif);font-weight:400;font-size:clamp(1.45rem,3.4vw,2.5rem);line-height:1.24;letter-spacing:-.012em;margin:0;max-width:40ch;text-wrap:pretty}
+.q .h{font-weight:600;font-style:italic;background:linear-gradient(var(--suit),var(--suit)) 0 92%/100% .24em no-repeat;-webkit-box-decoration-break:clone;box-decoration-break:clone;padding:0 .04em}
+.q .h svg{width:.48em;height:.48em;fill:var(--suit);margin-right:.18em;vertical-align:.12em}
+.q.pop .h,.q .h.new{animation:sweep .9s cubic-bezier(.2,.8,.2,1) backwards}
+.q .h.veil{font-style:normal;background:none;color:var(--suit);letter-spacing:.3em;animation:veil 2.4s ease-in-out infinite}
+@keyframes veil{50%{opacity:.35}}
+.q.pop .h:nth-of-type(2){animation-delay:.12s}.q.pop .h:nth-of-type(3){animation-delay:.24s}.q.pop .h:nth-of-type(4){animation-delay:.36s}
+@keyframes sweep{from{background-size:0% .24em}to{background-size:100% .24em}}
+
+.actions{position:relative;display:flex;flex-wrap:wrap;gap:12px 14px;align-items:center;margin-top:28px;padding-top:22px;border-top:1px solid var(--stage-line)}
+.btn{font-weight:700;font-size:1.02rem;padding:12px 24px;border-radius:999px;border:2px solid var(--on-stage);transition:transform .12s,box-shadow .12s}
+.btn-primary{background:var(--paper);color:var(--paper-ink);border-color:var(--paper);box-shadow:0 0 26px -4px var(--giallo)}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 0 38px 0 var(--giallo)}
+.btn-primary:active{transform:translateY(1px)}
+.btn-ghost{background:transparent;color:var(--on-stage)}
+.btn-ghost:hover{transform:translateY(-1px)}
+.hint{color:var(--stage-muted);font-size:.86rem}
+kbd{font-family:var(--f-body);font-size:.8rem;border:1px solid var(--stage-line);border-bottom-width:3px;border-radius:6px;padding:1px 7px;color:var(--on-stage)}
+.toast{color:var(--giallo);font-weight:700;font-size:.92rem}
+
+.lower{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:20px;margin-top:22px}
+@media (max-width:760px){.lower{grid-template-columns:minmax(0,1fr)}}
+.panel{background:rgba(38,30,64,.82);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);border-radius:20px;padding:22px 24px;min-width:0}
+.panel h2{font-family:var(--f-serif);font-weight:650;font-size:1.35rem;letter-spacing:-.01em;margin:0 0 4px}
+.panel .sub{margin:0 0 16px;color:var(--muted);font-size:.92rem}
+.filter{margin:0;padding:0;list-style:none;display:grid;gap:10px;counter-reset:f}
+.filter li{display:flex;gap:12px;align-items:baseline;counter-increment:f}
+.filter li::before{content:counter(f);flex:none;display:grid;place-items:center;width:28px;height:28px;border-radius:50%;background:var(--ink);color:var(--bg);font-family:var(--f-display);font-weight:800;font-size:.95rem;transform:translateY(6px)}
+.saved{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.saved li{display:flex;gap:10px;align-items:flex-start;padding:11px 13px;background:var(--paper);color:var(--paper-ink);border-radius:12px;box-shadow:0 0 0 1px var(--line)}
+.saved .combo{flex:1;min-width:0;display:flex;flex-wrap:wrap;gap:4px 14px;font-size:.9rem}
+.saved .combo span{display:inline-flex;align-items:center;gap:6px}
+.saved .combo svg{width:11px;height:11px;fill:var(--suit-d);flex:none}
+.saved button{border:0;background:transparent;color:var(--paper-muted);font-size:.85rem;text-decoration:underline;padding:2px 4px}
+.empty{color:var(--muted);font-size:.92rem;margin:0}
+
+/* ---------- tutte le carte ---------- */
+.printbar{display:flex;flex-wrap:wrap;gap:10px 14px;align-items:center;padding:16px 20px;background:var(--bg-2);border-radius:18px;margin-bottom:40px}
+.printbar p{margin:0;flex:1 1 280px;color:var(--muted);font-size:.92rem}
+.printbar p b{color:var(--ink)}
+.btn-line{font-weight:700;font-size:.92rem;padding:9px 16px;border-radius:999px;border:2px solid var(--ink);background:transparent;color:var(--ink)}
+.btn-line.solid{background:var(--ink);color:var(--bg)}
+.btn-line:hover{transform:translateY(-1px)}
+.suit-section{margin-bottom:56px}
+.suit-head{display:flex;flex-wrap:wrap;align-items:center;gap:6px 16px;margin-bottom:20px}
+.suit-head .tile{width:46px;height:46px;border-radius:12px;background:var(--suit);display:grid;place-items:center;flex:none}
+.suit-head .tile svg{width:22px;height:22px;fill:var(--suit-d)}
+.suit-head h2{font-family:var(--f-serif);font-weight:500;font-size:clamp(1.7rem,3.4vw,2.3rem);letter-spacing:-.025em;margin:0;line-height:1}
+.suit-head p{margin:0;color:var(--muted);flex-basis:100%;padding-left:62px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,215px),1fr));gap:24px 20px}
+@media (max-width:520px){.grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:16px 12px}.suit-head p{padding-left:0}}
+.enter .grid .card{animation:deal .55s cubic-bezier(.2,.8,.2,1) backwards;animation-delay:calc(var(--i,0) * 18ms)}
+@keyframes deal{from{opacity:0;transform:translateY(22px) rotate(-3deg) scale(.96)}}
+
+/* ---------- regole ---------- */
+.rules{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:40px}
+@media (max-width:820px){.rules{grid-template-columns:minmax(0,1fr)}}
+.prose{max-width:66ch}
+.prose h2{font-family:var(--f-serif);font-weight:500;font-size:2rem;letter-spacing:-.025em;margin:0 0 14px}
+.prose h3{font-family:var(--f-serif);font-weight:650;font-size:1.25rem;margin:30px 0 10px}
+.prose ol,.prose ul{padding-left:1.3em;display:grid;gap:9px}
+.prose ol li::marker{font-family:var(--f-display);font-weight:800}
+.prose p{margin:0 0 10px}
+.suits{display:grid;gap:12px;align-content:start}
+.suit-row{display:flex;gap:16px;align-items:center;padding:14px 18px 14px 14px;background:var(--paper);color:var(--paper-ink);border-radius:16px;box-shadow:0 0 0 1px var(--line)}
+.suit-row .tile{width:52px;height:52px;border-radius:12px;background:var(--suit);display:grid;place-items:center;flex:none}
+.suit-row .tile svg{width:24px;height:24px;fill:var(--suit-d)}
+.suit-row b{display:block;font-family:var(--f-serif);font-size:1.2rem;font-weight:650}
+.suit-row span{color:var(--paper-muted);font-size:.93rem}
+.note{margin-top:24px;padding:16px 18px;border-radius:14px;background:var(--bg-2);border-left:5px solid var(--verde);font-size:.94rem}
+
+.foot{margin-top:56px;padding-top:18px;border-top:1px solid var(--line);color:var(--muted);font-size:.86rem;display:flex;gap:10px;align-items:center}
+.foot svg{width:44px;flex:none}
+
+#print{display:none}
+
+@media (prefers-reduced-motion: reduce){
+  .inner,.inner.down,.card,.stack{transition:none}
+  .q.pop .h,.q .h.new,.enter .grid .card,.slot.locked .stamp,.sky .tw,.fly,.slot.hidden .stack,h1 .spark,.q .h.veil{animation:none}
+}
+
+/* ---------- stampa: 63 × 88 mm, nove per foglio A4, fronte-retro opzionale ---------- */
+@page{size:A4;margin:10mm}
+@media print{
+  :root:root:root{--paper:#FFFDF8;--paper-ink:#111;--paper-muted:#444;--paper-line:#C9C0AE;color-scheme:light}
+  html,body{background:#fff!important;padding:0;min-height:0}
+  body::before,.sky,.spot,.forest{display:none!important}
+  .wrap{display:none!important}
+  #print{display:block}
+  .sheet{display:grid;grid-template-columns:repeat(3,63mm);grid-auto-rows:88mm;justify-content:center;break-after:page;page-break-after:always}
+  .sheet:last-child{break-after:auto;page-break-after:auto}
+  .cell{position:relative;width:63mm;height:88mm}
+  .sheet.fronts .cell{outline:.25mm dashed #999;outline-offset:-.12mm}
+  .cell .card{width:63mm;height:88mm;aspect-ratio:auto;border-radius:0;box-shadow:none;transform:none;
+    --fs-t:8.1cqw;--fs-d:5cqw;--fs-x:4.3cqw;--fs-f:3.3cqw;
+    -webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .card::after,.art::after{display:none}
+  .cell .card{box-shadow:none}
+  .idx{font-size:5.2cqw}.idx svg{width:3.4cqw;height:3.4cqw}.tag{font-size:3.6cqw}
+}
+</style>
+
+<svg class="defs" aria-hidden="true" focusable="false">
+  <defs>
+    <pattern id="ht-k" width="2.6" height="2.6" patternUnits="userSpaceOnUse" patternTransform="rotate(30)"><circle cx="1.3" cy="1.3" r=".62" style="fill:var(--paper-ink)"/></pattern>
+    <radialGradient id="halo"><stop offset="0" style="stop-color:var(--suit);stop-opacity:.35"/><stop offset="1" style="stop-color:var(--suit);stop-opacity:0"/></radialGradient>
+    <pattern id="ht-p" width="2.6" height="2.6" patternUnits="userSpaceOnUse" patternTransform="rotate(30)"><circle cx="1.3" cy="1.3" r=".7" style="fill:var(--paper)"/></pattern>
+  </defs>
+</svg>
+
+<div class="wrap">
+  <header class="top">
+    <div class="brand">
+      <svg class="cluster" viewBox="0 0 120 100" aria-hidden="true">
+        <path d="M30 60 72 36 88 76 34 20" style="fill:none;stroke:var(--lilla);stroke-width:.8;opacity:.55;stroke-dasharray:2 2"/>
+        <rect x="18" y="48" width="24" height="24" rx="1" style="fill:var(--blu)" transform="rotate(-10 30 60)"/>
+        <circle cx="72" cy="36" r="14" style="fill:var(--rosso)"/>
+        <path d="M88 62 101 86H75Z" style="fill:var(--giallo)"/>
+        <g style="fill:var(--verde)"><circle cx="34" cy="14" r="5.5"/><path d="M24 30a10 10 0 0 1 20 0Z"/></g>
+        <path d="M104 12Q104 18 110 18Q104 18 104 24Q104 18 98 18Q104 18 104 12Z" style="fill:var(--giallo)"/>
+        <path d="M10 88Q10 92 14 92Q10 92 10 96Q10 92 6 92Q10 92 10 88Z" style="fill:var(--lilla)"/>
+        <circle cx="56" cy="88" r="1.4" style="fill:#EEE9F7"/><circle cx="112" cy="50" r="1" style="fill:#EEE9F7"/><circle cx="6" cy="34" r="1" style="fill:#EEE9F7"/>
+      </svg>
+      <div>
+        <h1>Carte delle <em>idee</em><span class="spark" aria-hidden="true">✦</span></h1>
+        <p class="formula" id="formula"></p>
+      </div>
+    </div>
+    <nav class="tabs" role="tablist" aria-label="Sezioni">
+      <button class="tab" role="tab" id="t-pesca" aria-controls="v-pesca" aria-selected="true">Pesca</button>
+      <button class="tab" role="tab" id="t-tutte" aria-controls="v-tutte" aria-selected="false">Tutte le carte</button>
+      <button class="tab" role="tab" id="t-regole" aria-controls="v-regole" aria-selected="false">Come si gioca</button>
+    </nav>
+  </header>
+
+  <section class="view active" id="v-pesca" role="tabpanel" aria-labelledby="t-pesca">
+    <div class="table" id="table"></div>
+
+    <div class="question">
+      <svg class="deco" viewBox="0 0 200 200" aria-hidden="true">
+        <path d="M40 40 92 70 150 46 176 110 120 150 92 70" style="fill:none;stroke:var(--lilla);stroke-width:.7;opacity:.5"/>
+        <g style="fill:#EEE9F7"><circle cx="40" cy="40" r="2"/><circle cx="92" cy="70" r="2.6"/><circle cx="150" cy="46" r="1.8"/><circle cx="176" cy="110" r="2.2"/><circle cx="120" cy="150" r="1.6"/></g>
+        <path d="M150 90Q150 102 162 102Q150 102 150 114Q150 102 138 102Q150 102 150 90Z" style="fill:var(--giallo)"/>
+        <circle cx="70" cy="140" r="16" style="fill:var(--lilla);opacity:.18"/><circle cx="76" cy="135" r="14" style="fill:var(--night)"/>
+      </svg>
+      <p class="label">✦ La domanda che le carte ti fanno</p>
+      <p class="q" id="q" aria-live="polite"></p>
+      <div class="actions">
+        <button class="btn btn-primary" id="pesca">Gira le carte</button>
+        <button class="btn btn-ghost" id="salva">Metti da parte</button>
+        <span class="hint">Tocca un mazzo per girarne una · <kbd>Spazio</kbd> per pescare · «Tieni» blocca una carta</span>
+        <span class="toast" id="toast" role="status"></span>
+      </div>
+    </div>
+
+    <div class="lower">
+      <div class="panel">
+        <h2>Il filtro</h2>
+        <p class="sub">Un'idea passa se risponde bene a tutte e tre.</p>
+        <ol class="filter">
+          <li>Che cosa fa che la lavagna o il libro non possono fare?</li>
+          <li>Chi lo usa, e con quale gesto?</li>
+          <li>Si capisce come si usa in un minuto?</li>
+        </ol>
+      </div>
+      <div class="panel">
+        <h2>Combinazioni messe da parte</h2>
+        <p class="sub">Restano in questo browser, su questo dispositivo.</p>
+        <ul class="saved" id="saved"></ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="view" id="v-tutte" role="tabpanel" aria-labelledby="t-tutte">
+    <div class="printbar">
+      <p><b>Stampa il mazzo.</b> A4, nove carte per foglio, formato carta da gioco 63 × 88 mm. Per il fronte-retro stampa «sul lato lungo».</p>
+      <button class="btn-line solid" id="print-fr">Stampa fronte-retro</button>
+      <button class="btn-line" id="print-f">Solo fronti</button>
+    </div>
+    <div class="all" id="all"></div>
+  </section>
+
+  <section class="view" id="v-regole" role="tabpanel" aria-labelledby="t-regole">
+    <div class="rules">
+      <div class="prose">
+        <h2>Come si gioca</h2>
+        <ol>
+          <li><b>Pesca una carta per mazzo.</b> Se hai già in mente un argomento, scegli tu la carta Concetto e pesca le altre.</li>
+          <li><b>Leggi la domanda che si forma</b> e prova a rispondere: che strumento potrebbe essere? Hai cinque minuti. Valgono anche le idee assurde, spesso sono le migliori.</li>
+          <li><b>Se non arriva niente, ripesca una carta sola</b> e tieni le altre.</li>
+          <li><b>Fai tre giri.</b> Metti da parte le combinazioni che ti accendono qualcosa.</li>
+          <li><b>Passa l'idea migliore al filtro</b> delle tre domande.</li>
+          <li><b>Scrivila sulla scheda progetto.</b> È già il tuo primo prompt per Claude.</li>
+        </ol>
+
+        <h3>Varianti per i gruppi</h3>
+        <ul>
+          <li><b>Una carta a testa.</b> Ognuno pesca un mazzo diverso e difende la sua carta nella discussione.</li>
+          <li><b>Si parte da Chi.</b> Prima si sceglie per chi progettare, poi si pesca il resto.</li>
+          <li><b>Scambio.</b> Il gruppo passa la sua combinazione migliore al gruppo vicino, che deve trovarle un'idea diversa.</li>
+          <li><b>Carta jolly.</b> Ogni gruppo scrive una carta nuova, su una carta bianca, e la aggiunge al mazzo.</li>
+        </ul>
+
+        <p class="note"><b>Le carte Chi descrivono bisogni, non persone.</b> Quando scrivi a Claude, racconta che cosa serve («un alunno che fatica a leggere parole lunghe»). Non inserire nomi, diagnosi, certificazioni o foto degli alunni.</p>
+      </div>
+      <div class="suits" id="suits"></div>
+    </div>
+  </section>
+
+  <p class="foot"><svg viewBox="0 0 44 12" aria-hidden="true"><rect x="0" y="1" width="10" height="10" style="fill:var(--blu)"/><circle cx="17" cy="6" r="5" style="fill:var(--rosso)"/><path d="M28 1 33.5 11H22.5Z" style="fill:var(--giallo)"/><circle cx="39" cy="3.4" r="2.4" style="fill:var(--verde)"/><path d="M34.5 11a4.5 4.5 0 0 1 9 0Z" style="fill:var(--verde)"/></svg>Anche questo mazzo è uno strumento fatto parlando con Claude.</p>
+</div>
+
+<div id="print" aria-hidden="true"></div>
+<svg class="sky" id="sky" aria-hidden="true"></svg>
+<svg class="forest" id="forest" viewBox="0 0 1440 300" preserveAspectRatio="xMidYMax slice" aria-hidden="true"></svg>
+<div class="spot" id="spot" aria-hidden="true"></div>
+
+<script>
+const SHAPES={
+  square:'<rect x="2.5" y="2.5" width="19" height="19"/>',
+  circle:'<circle cx="12" cy="12" r="9.5"/>',
+  triangle:'<path d="M12 2 22.5 21.5H1.5Z"/>',
+  person:'<circle cx="12" cy="6.8" r="4.6"/><path d="M2.5 22.5a9.5 9.5 0 0 1 19 0Z"/>'
+};
+const svg=(s,cls)=>`<svg${cls?` class="${cls}"`:''} viewBox="0 0 24 24" aria-hidden="true">${SHAPES[s]}</svg>`;
+
+const SUITS={
+  concetto:{label:"Concetto",plural:"Concetti",shape:"square",ink:"blu",ask:"Che cosa è difficile da insegnare?",cards:[
+    {t:"Il ritmo e la pulsazione",a:"Musica",d:"Si sente nel corpo prima che sulla carta.",q:"sentire il ritmo e la pulsazione"},
+    {t:"Leggere le note",a:"Musica",d:"Tanti simboli sul pentagramma da riconoscere in fretta.",q:"leggere le note sul pentagramma"},
+    {t:"Acuto, grave, intervalli",a:"Musica",d:"Distanze che si sentono ma non si vedono.",q:"distinguere acuto, grave e intervalli"},
+    {t:"Il timbro degli strumenti",a:"Musica",d:"Riconoscere chi suona, a occhi chiusi.",q:"riconoscere il timbro degli strumenti"},
+    {t:"La forma di un brano",a:"Musica",d:"Strofa, ritornello, rondò: architetture che passano nel tempo.",q:"seguire la forma di un brano"},
+    {t:"La metrica della poesia",a:"Italiano",d:"Sillabe e accenti che sulla pagina restano fermi.",q:"sentire la metrica della poesia"},
+    {t:"Le figure retoriche",a:"Italiano",d:"Si imparano a memoria, raramente si sentono.",q:"riconoscere le figure retoriche"},
+    {t:"La struttura della fiaba",a:"Italiano",d:"Le stesse funzioni dentro storie sempre diverse.",q:"capire come è fatta una fiaba"},
+    {t:"L'analisi logica",a:"Italiano",d:"Un ragionamento astratto su frasi concrete.",q:"fare l'analisi logica"},
+    {t:"Fondere le sillabe",a:"Italiano · primaria",d:"Il passaggio dal suono alla parola scritta.",q:"fondere le sillabe"},
+    {t:"Doppie e accenti",a:"Italiano · primaria",d:"Si sentono poco, si sbagliano tanto.",q:"scrivere doppie e accenti"},
+    {t:"La linea del tempo",a:"Storia",d:"Secoli e millenni hanno proporzioni difficili da immaginare.",q:"immaginare la linea del tempo"},
+    {t:"Cause e conseguenze",a:"Storia",d:"Gli eventi sembrano un elenco, non una catena.",q:"collegare cause e conseguenze"},
+    {t:"Orientarsi sulla carta",a:"Geografia",d:"Dallo spazio vissuto allo spazio disegnato.",q:"orientarsi sulla carta geografica"},
+    {t:"La prospettiva",a:"Arte",d:"Una regola geometrica nascosta dentro un'immagine.",q:"capire la prospettiva"},
+    {t:"Il colore e i suoi accordi",a:"Arte",d:"Primari, complementari, caldi e freddi: relazioni, non nomi.",q:"accostare i colori"},
+    {t:"Leggere un'opera d'arte",a:"Arte",d:"Guardare davvero richiede tempo e buone domande.",q:"leggere un'opera d'arte"},
+    {t:"La pronuncia inglese",a:"Inglese",d:"Suoni che l'italiano non ha.",q:"pronunciare l'inglese"},
+    {t:"Le prime parole",a:"Inglese",d:"Tante parole, poche occasioni vere per usarle.",q:"imparare le prime parole in inglese"},
+    {t:"Dare un nome alle emozioni",a:"Trasversale",d:"Riconoscerle in sé e negli altri.",q:"dare un nome alle emozioni"},
+    {t:"Lavorare insieme",a:"Trasversale",d:"Ascoltare, aspettare il turno, decidere in gruppo.",q:"lavorare in gruppo"},
+    {t:"Il canto a più voci",a:"Musica",d:"Tenere la propria parte mentre gli altri cantano la loro.",q:"cantare a più voci"},
+    {t:"Piano, forte, accelerando",a:"Musica",d:"Dinamica e agogica: le parole dello spartito che cambiano tutto.",q:"capire dinamica e agogica"},
+    {t:"Improvvisare",a:"Musica",d:"Inventare sul momento, dentro poche regole.",q:"improvvisare con la musica"},
+    {t:"Il riassunto",a:"Italiano",d:"Decidere che cosa conta e che cosa si può lasciare.",q:"fare un riassunto"},
+    {t:"Il testo argomentativo",a:"Italiano · secondaria",d:"Una tesi, le prove, e chi la pensa diversamente.",q:"scrivere un testo argomentativo"},
+    {t:"Capire un testo",a:"Italiano",d:"Leggere tutte le parole non vuol dire aver capito.",q:"comprendere un testo"},
+    {t:"Leggere ad alta voce",a:"Italiano",d:"Pause, intonazione e il coraggio di farsi sentire.",q:"leggere ad alta voce"},
+    {t:"Le fonti storiche",a:"Storia",d:"Chi racconta, quando, e perché.",q:"leggere le fonti storiche"},
+    {t:"Leggere un paesaggio",a:"Geografia",d:"Che cosa ha fatto la natura e che cosa le persone.",q:"leggere un paesaggio"},
+    {t:"Luce e ombra",a:"Arte",d:"Il chiaroscuro fa diventare tonda una forma piatta.",q:"usare luce e ombra"},
+    {t:"La composizione",a:"Arte",d:"Dove mettere le cose dentro un'immagine, e perché.",q:"comporre un'immagine"},
+    {t:"L'inglese parlato",a:"Inglese",d:"Capire chi parla veloce, con un accento vero.",q:"capire l'inglese parlato"},
+    {t:"Regole condivise",a:"Educazione civica",d:"Capire perché esistono, non solo rispettarle.",q:"costruire regole condivise"},
+    {t:"Cittadinanza digitale",a:"Educazione civica",d:"Riconoscere una notizia falsa, proteggere i propri dati.",q:"muoversi con prudenza online"},
+    {t:"Imparare a memoria",a:"Trasversale",d:"Poesie, date, vocaboli: ripetere senza annoiarsi.",q:"imparare a memoria"}
+  ]},
+  superpotere:{label:"Superpotere",plural:"Superpoteri",shape:"circle",ink:"rosso",ask:"Che cosa sa fare lo strumento?",cards:[
+    {t:"Suona",d:"Note, ritmi e timbri prodotti dal browser, senza strumenti.",x:"Per esempio: il theremin, l'aula sonora.",p:"che suona"},
+    {t:"Vede",d:"Con la webcam riconosce mani, volto e posture.",x:"Per esempio: il direttore d'orchestra.",p:"che vede con la webcam"},
+    {t:"Ascolta",d:"Con il microfono misura volume e altezza, riconosce le parole.",x:"Per esempio: il semaforo del rumore.",p:"che ascolta con il microfono"},
+    {t:"Parla",d:"Legge ad alta voce, in molte lingue, alla velocità giusta.",x:"Per esempio: l'agenda visiva parlante.",p:"che parla"},
+    {t:"Si tocca",d:"Pezzi da spostare, ordinare e costruire, su LIM e tablet.",x:"Per esempio: l'analisi logica a colori.",p:"che si tocca e si trascina"},
+    {t:"Gioca",d:"Regole, livelli, punteggi, sfide. A tempo o senza.",x:"Per esempio: la caccia alla nota.",p:"che è un gioco"},
+    {t:"Simula",d:"Un piccolo mondo con le sue regole, da cambiare e osservare.",x:"Per esempio: la stanza in prospettiva che si ridisegna.",p:"che simula un piccolo mondo"},
+    {t:"Genera",d:"Combinazioni, esercizi e immagini sempre nuovi.",x:"Per esempio: il binomio fantastico.",p:"che genera infinite varianti"},
+    {t:"Racconta",d:"Una storia a bivi: scelte, conseguenze, finali diversi.",x:"Per esempio: mercante a Venezia, 1348.",p:"che racconta una storia a bivi"},
+    {t:"Su misura",d:"Pensato per una persona, una classe, una routine precisa.",x:"Per esempio: il comunicatore con i simboli scelti per un alunno.",p:"fatto su misura"},
+    {t:"Ricorda",d:"Tiene traccia dei progressi di ognuno, da una volta all'altra.",x:"Per esempio: il diario dei libri letti, con le stelle.",p:"che ricorda i progressi"},
+    {t:"Traduce",d:"Passa da una lingua all'altra, per iscritto o a voce.",x:"Per esempio: il dizionario visivo bilingue.",p:"che traduce"},
+    {t:"Disegna",d:"Trasforma parole, numeri o suoni in immagini.",x:"Per esempio: il Kandinsky sonoro.",p:"che disegna"},
+    {t:"Scandisce",d:"Conta, batte il tempo, avvisa: timer, metronomi, clessidre.",x:"Per esempio: il metronomo della poesia.",p:"che scandisce il tempo"},
+    {t:"Svela",d:"Mostra un pezzo alla volta: indizi, dettagli, livelli.",x:"Per esempio: dentro il quadro, con i dettagli da scoprire.",p:"che nasconde e svela"},
+    {t:"Esplora",d:"Una mappa, un quadro, un luogo da percorrere a piccoli passi.",x:"Per esempio: la mappa che cambia nel tempo.",p:"che si esplora come una mappa"}
+  ]},
+  contesto:{label:"Contesto",plural:"Contesti",shape:"triangle",ink:"giallo",ask:"Dove e quando si usa?",cards:[
+    {t:"Sulla LIM, davanti a tutti",d:"Grande, leggibile dal fondo dell'aula, pochi comandi.",p:"sulla LIM, davanti a tutti"},
+    {t:"Su un tablet, da soli",d:"Si usa senza spiegazioni, ognuno con il suo ritmo.",p:"su un tablet, ognuno da solo"},
+    {t:"A coppie",d:"Due ruoli diversi, uno schermo solo.",p:"a coppie"},
+    {t:"In movimento",d:"Si usa con il corpo, lontano dallo schermo.",p:"in palestra o in movimento"},
+    {t:"Nell'aula di musica",d:"Accanto agli strumenti veri, non al loro posto.",p:"nell'aula di musica"},
+    {t:"A casa",d:"Senza il docente accanto, magari con la famiglia.",p:"a casa"},
+    {t:"Nei primi cinque minuti",d:"Accende l'attenzione, poi lascia spazio alla lezione.",p:"nei primi cinque minuti di lezione"},
+    {t:"Per chiudere la lezione",d:"Fa capire al docente che cosa è rimasto.",p:"per chiudere la lezione"},
+    {t:"Al museo o in gita",d:"Sul telefono, all'aperto, con poca connessione.",p:"al museo o in gita"},
+    {t:"Nell'angolo della calma",d:"Lento, silenzioso, senza punteggi.",p:"nell'angolo della calma"},
+    {t:"Nel lavoro a gruppi",d:"Ognuno ha un compito, il risultato è comune.",p:"nel lavoro a gruppi"},
+    {t:"Allo spettacolo di fine anno",d:"Davanti alle famiglie: deve funzionare al primo colpo.",p:"allo spettacolo di fine anno"},
+    {t:"In biblioteca",d:"Silenzio, libri veri, un posto dove cercare.",p:"in biblioteca"},
+    {t:"All'aperto",d:"In cortile o in giardino, con il sole sullo schermo.",p:"all'aperto, in cortile"},
+    {t:"Con un'altra classe",d:"I grandi che insegnano ai piccoli, o il contrario.",p:"insieme a un'altra classe"},
+    {t:"In un'ora di supplenza",d:"Un'ora sola, una classe che non conosci.",p:"in un'ora di supplenza"},
+    {t:"Prima di una verifica",d:"Ripassare senza ansia, sapendo a che punto si è.",p:"prima di una verifica"},
+    {t:"Al colloquio con le famiglie",d:"Mostrare un percorso, non solo un voto.",p:"al colloquio con le famiglie"}
+  ]},
+  chi:{label:"Chi",plural:"Carte Chi",shape:"person",ink:"verde",ask:"Per chi lo progetti?",cards:[
+    {t:"Tutta la classe",d:"Progetta per tutti fin dall'inizio: nessuno resta fuori.",p:"tutta la classe"},
+    {t:"Chi legge con fatica",d:"Pensa a: voce, sillabe, caratteri grandi.",p:"chi legge con fatica"},
+    {t:"Chi non usa la parola",d:"Pensa a: simboli, immagini, un tocco per dire.",p:"chi non usa la parola per comunicare"},
+    {t:"Chi è appena arrivato in Italia",d:"Pensa a: immagini, lingua madre, audio.",p:"chi è appena arrivato in Italia"},
+    {t:"Chi fatica a stare fermo",d:"Pensa a: movimento, passi brevi, traguardi vicini.",p:"chi fatica a stare fermo e concentrato"},
+    {t:"Chi usa poco le mani",d:"Pensa a: un solo tasto grande, la voce, la webcam.",p:"chi ha difficoltà a usare le mani"},
+    {t:"Chi si agita con i cambiamenti",d:"Pensa a: anticipare, mostrare che cosa viene dopo.",p:"chi si agita quando qualcosa cambia"},
+    {t:"Chi vede poco",d:"Pensa a: contrasto forte, suoni, ingrandimento.",p:"chi vede poco"},
+    {t:"Chi sente poco",d:"Pensa a: tutto ciò che suona, reso anche visibile.",p:"chi sente poco"},
+    {t:"Chi è già avanti",d:"Pensa a: livelli aperti, sfide da inventare.",p:"chi è già avanti e si annoia"},
+    {t:"Chi non ama parlare in pubblico",d:"Pensa a: rispondere senza esporsi.",p:"chi non ama parlare in pubblico"},
+    {t:"Chi non sa ancora leggere",d:"Pensa a: icone, voce, colori al posto delle parole.",p:"chi non sa ancora leggere"},
+    {t:"Chi ha paura di sbagliare",d:"Pensa a: tentativi senza giudizio, errori che non si vedono.",p:"chi ha paura di sbagliare"},
+    {t:"Chi pensa per immagini",d:"Pensa a: schemi, colori, mappe al posto del testo.",p:"chi pensa per immagini"},
+    {t:"Chi è stato spesso assente",d:"Pensa a: recuperare da solo, ritrovare il filo.",p:"chi è stato spesso assente"},
+    {t:"Chi si stanca presto",d:"Pensa a: sessioni brevi, pause, obiettivi piccoli.",p:"chi si stanca presto"},
+    {t:"Chi ha un talento nascosto",d:"Pensa a: modi diversi di mostrare quello che sa.",p:"chi ha un talento che a scuola non si vede"},
+    {t:"Una classe molto rumorosa",d:"Pensa a: segnali visivi, silenzi che diventano un gioco.",p:"una classe molto rumorosa"}
+  ]}
+};
+const ORDER=["concetto","superpotere","contesto","chi"];
+const KINDS=["square","circle","triangle","person"];
+const pad=n=>String(n).padStart(2,"0");
+
+/* ---------- illustrazioni generative: ogni carta ha la sua, sempre la stessa ---------- */
+function hash(str){let h=2166136261;for(const ch of str){h^=ch.charCodeAt(0);h=Math.imul(h,16777619)}return h>>>0}
+function rng(seed){return()=>{seed|=0;seed=seed+0x6D2B79F5|0;let t=Math.imul(seed^seed>>>15,1|seed);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+const f1=n=>Math.round(n*10)/10;
+const star=(cx,cy,r,fill,op=1)=>`<path d="M${f1(cx)} ${f1(cy-r)}Q${f1(cx)} ${f1(cy)} ${f1(cx+r)} ${f1(cy)}Q${f1(cx)} ${f1(cy)} ${f1(cx)} ${f1(cy+r)}Q${f1(cx)} ${f1(cy)} ${f1(cx-r)} ${f1(cy)}Q${f1(cx)} ${f1(cy)} ${f1(cx)} ${f1(cy-r)}Z" style="fill:${fill}${op<1?`;opacity:${op}`:''}"/>`;
+function shp(kind,cx,cy,s,{fill,rot=0,blend=false,op=1,stroke=null}={}){
+  let el;
+  if(kind==="square")el=`<rect x="${f1(cx-s/2)}" y="${f1(cy-s/2)}" width="${f1(s)}" height="${f1(s)}"/>`;
+  else if(kind==="circle")el=`<circle cx="${f1(cx)}" cy="${f1(cy)}" r="${f1(s/2)}"/>`;
+  else if(kind==="triangle")el=`<path d="M${f1(cx)} ${f1(cy-s*.55)}L${f1(cx+s*.56)} ${f1(cy+s*.42)}H${f1(cx-s*.56)}Z"/>`;
+  else el=`<circle cx="${f1(cx)}" cy="${f1(cy-s*.28)}" r="${f1(s*.21)}"/><path d="M${f1(cx-s/2)} ${f1(cy+s/2)}A${f1(s/2)} ${f1(s/2)} 0 0 1 ${f1(cx+s/2)} ${f1(cy+s/2)}Z"/>`;
+  const st=stroke?`fill:none;stroke:${stroke};stroke-width:.7;stroke-dasharray:2.2 1.6`:`fill:${fill}`;
+  return `<g${rot?` transform="rotate(${rot} ${f1(cx)} ${f1(cy)})"`:''} style="${st}${blend?';opacity:.88':''}${op<1?`;opacity:${op}`:''}">${el}</g>`;
+}
+const tpl=(suit,i)=>{let t=hash(suit+"#"+i)%5;if(i>0&&t===tpl(suit,i-1))t=(t+2)%5;return t};
+function art(suit,i){
+  // piccoli paesaggi al crepuscolo, fratelli del dorso: cielo, una luna col simbolo del seme, il bosco
+  const r=rng(hash(suit+":"+i)),k=SUITS[suit].shape,M="#FCEBD8",F="var(--forest)";
+  const others=ORDER.filter(x=>x!==suit),O=`var(--${SUITS[others[Math.floor(r()*3)]].ink})`;
+  const t=tpl(suit,i);let g="";
+  for(let j=0;j<26;j++){const y=2+r()*34;g+=`<circle cx="${f1(r()*100)}" cy="${f1(y)}" r="${f1(.15+r()*.32)}" style="fill:#FFF3E6;opacity:${f1(Math.max(.1,.9-y/42))}"/>`}
+  const moon=(x,y,R)=>`<circle cx="${f1(x)}" cy="${f1(y)}" r="${f1(R*2.1)}" style="fill:${M};opacity:.06"/><circle cx="${f1(x)}" cy="${f1(y)}" r="${f1(R*1.45)}" style="fill:${M};opacity:.11"/><circle cx="${f1(x)}" cy="${f1(y)}" r="${f1(R)}" style="fill:${M}"/>`+shp(k,x,y+(k==="triangle"?R*.08:0),R*.86,{fill:"var(--suit-d)"});
+  const planet=()=>{const x=30+r()*62,y=6+r()*14,R=1.4+r()*1.6;return `<circle cx="${f1(x)}" cy="${f1(y)}" r="${f1(R*1.8)}" style="fill:${O};opacity:.18"/><circle cx="${f1(x)}" cy="${f1(y)}" r="${f1(R)}" style="fill:${O}"/>`};
+  let mx=34+r()*50,my;
+  if(t===0){my=20+r()*8;g+=moon(mx,my,7+r()*2.5)+planet()}
+  else if(t===1){ // costellazione di forme
+    const pts=Array.from({length:5},(_,j)=>[30+j*14+r()*8,7+r()*24]);
+    g+=`<path d="M${pts.map(p=>f1(p[0])+" "+f1(p[1])).join("L")}" style="fill:none;stroke:${M};stroke-width:.3;opacity:.55"/>`;
+    pts.forEach((p,j)=>g+=`<circle cx="${f1(p[0])}" cy="${f1(p[1])}" r="${j===2?4.6:3.2}" style="fill:${j===2?O:M};opacity:.13"/>`+shp(k,p[0],p[1],j===2?3.6:2+r()*1.6,{fill:j===2?O:M}));
+  }else if(t===2){my=14+r()*6;g+=moon(mx,my,5.5)}
+  else if(t===3){ // aurora
+    for(let j=0;j<3;j++){const y=10+j*7+r()*4;g+=`<path d="M-5 ${f1(y)}Q25 ${f1(y-8+r()*4)} 50 ${f1(y)}T105 ${f1(y-2)}" style="fill:none;stroke:${j===1?O:"var(--suit)"};stroke-width:${f1(2.5+r()*2.5)};stroke-linecap:round;opacity:.38"/>`}
+    my=9+r()*6;g+=moon(mx,my,4);
+  }else{ // stelle cadenti
+    for(let j=0;j<3;j++){const x=40+r()*55,y=4+r()*20,L=10+r()*10;g+=`<line x1="${f1(x)}" y1="${f1(y)}" x2="${f1(x-L)}" y2="${f1(y+L*.45)}" style="stroke:${M};stroke-width:.45;stroke-linecap:round;opacity:.6"/>`+star(x,y,1.3,M)}
+    my=22+r()*6;mx=30+r()*20;g+=moon(mx,my,4.6)+planet();
+  }
+  g+=`<path d="M0 45 Q20 39 40 43 T80 40 T100 42 V56 H0Z" style="fill:#B07E98;opacity:.55"/>`;
+  g+=`<path d="${treeline(r,-3,104,50,7,12,.5)}" style="fill:#8C6086"/><rect y="49.5" width="100" height="7" style="fill:#8C6086"/>`;
+  if(t===2){ // lago con il riflesso della luna
+    g+=`<rect y="49.6" width="100" height="7" style="fill:#6B5384"/>`;
+    for(let j=0;j<4;j++)g+=`<line x1="${f1(mx-5+j*1.5)}" y1="${f1(51+j*1.3)}" x2="${f1(mx+5-j*1.5)}" y2="${f1(51+j*1.3)}" style="stroke:${M};stroke-width:.45;opacity:${f1(.75-j*.15)}"/>`;
+    g+=`<path d="${treeline(r,-8,mx-14,58,14,24,.44)}${treeline(r,mx+16,110,58,14,24,.44)}" style="fill:${F}"/>`;
+  }else g+=`<path d="${treeline(r,-8,110,58,12,21,.44)}" style="fill:${F}"/>`;
+  for(let j=0;j<3;j++){const x=f1(6+r()*88),y=f1(48+r()*6),rr=.45+r()*.3;g+=`<circle cx="${x}" cy="${y}" r="${f1(rr*2.4)}" style="fill:var(--suit);opacity:.35"/><circle cx="${x}" cy="${y}" r="${f1(rr*.8)}" style="fill:#FFE7B0"/>`}
+  return `<svg class="gen" viewBox="0 0 100 56" preserveAspectRatio="xMidYMid slice" aria-hidden="true">${g}</svg>`;
+}
+
+/* ---------- carte: fronte, jolly, dorso ---------- */
+function cardHTML(suit,i,extra="",style=""){
+  const S=SUITS[suit],c=S.cards[i];
+  const tag=c.a?`<span class="tag">${c.a}</span>`:"";
+  const x=c.x?`<p class="x"><b>Per esempio</b>${c.x.replace(/^Per esempio:\s*/,"")}</p>`:"";
+  return `<article class="card face s-${suit} ${extra}"${style?` style="${style}"`:""}><div class="art">${art(suit,i)}<span class="idx">${pad(i+1)}${svg(S.shape)}</span>${tag}</div><div class="cbody"><h3>${c.t}</h3><p class="d">${c.d}</p>${x}</div><div class="cfoot">${svg(S.shape)}<span>${S.label}</span><span class="num">${pad(i+1)}/${pad(S.cards.length)}</span></div></article>`;
+}
+function blankHTML(suit,style=""){
+  const S=SUITS[suit];
+  const a=`<svg class="gen" viewBox="0 0 100 56" preserveAspectRatio="xMidYMid slice" aria-hidden="true">${shp(S.shape,50,26,30,{stroke:"#FCEBD8"})}${shp(S.shape,50,26,11,{fill:"var(--suit)"})}<path d="M0 48 Q25 42 50 46 T100 44 V56 H0Z" style="fill:var(--forest)"/></svg>`;
+  return `<article class="card face s-${suit} blank"${style?` style="${style}"`:""}><div class="art">${a}<span class="idx">✎${svg(S.shape)}</span><span class="tag">la tua carta</span></div><div class="cbody"><div class="lines"></div></div><div class="cfoot">${svg(S.shape)}<span>${S.label}</span><span class="num">jolly</span></div></article>`;
+}
+function pine(x,base,h,w){
+  // abete fatto di tre palchi sovrapposti + tronco
+  const t=h*.12,y0=base-t;let d=`M${f1(x-w*.07)} ${f1(base)}h${f1(w*.14)}v${f1(-t)}h${f1(-w*.14)}Z`;
+  [[1,0],[.78,.3],[.55,.56]].forEach(([k,o])=>{const yb=y0-h*o,ww=w*k/2,ht=h*.48;d+=`M${f1(x)} ${f1(yb-ht)}L${f1(x+ww)} ${f1(yb)}H${f1(x-ww)}Z`});
+  return d;
+}
+function treeline(r,x0,x1,base,hmin,hmax,wk){let d="";for(let x=x0;x<x1;){const h=hmin+r()*(hmax-hmin);d+=pine(x,base+r()*1.2,h,h*wk);x+=h*wk*(.42+r()*.35)}return d}
+let backN=0;
+function backHTML(suit){
+  const S=SUITS[suit],k=S.shape,C="var(--suit)",r=rng(hash("bosco:"+suit)),id="sk-"+suit+"-"+(++backN);
+  let g=`<defs><linearGradient id="${id}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#16132C"/><stop offset=".26" stop-color="#2E2450"/><stop offset=".46" stop-color="#6A3F68"/><stop offset=".64" style="stop-color:var(--suit)"/><stop offset="1" style="stop-color:var(--suit)"/></linearGradient></defs>`;
+  g+=`<rect width="63" height="88" fill="url(#${id})"/>`;
+  for(let j=0;j<34;j++){const y=4+r()*40;g+=`<circle cx="${f1(4+r()*55)}" cy="${f1(y)}" r="${f1(.15+r()*.35)}" style="fill:#FFF3E6;opacity:${f1(.9-y/55)}"/>`}
+  // luna con il simbolo del seme
+  g+=`<circle cx="31.5" cy="25" r="11" style="fill:#FFF3E6;opacity:.07"/><circle cx="31.5" cy="25" r="7.6" style="fill:#FFF3E6;opacity:.12"/><circle cx="31.5" cy="25" r="5.4" style="fill:#FCEBD8"/>`;
+  g+=shp(k,31.5,k==="triangle"?25.6:25,4.6,{fill:"var(--suit-d)"});
+  // colline e tre file di abeti, dalla più lontana alla più vicina
+  g+=`<path d="M0 60 Q14 52 26 57 T50 54 T63 56 V88 H0Z" style="fill:#8A5A78;opacity:.6"/>`;
+  g+=`<path d="${treeline(r,-2,66,63,6,10,.5)}" style="fill:#6B4468"/>`;
+  g+=`<path d="M0 66 H63 V88 H0Z" style="fill:#3E2A50"/><path d="${treeline(r,-3,66,70,10,16,.46)}" style="fill:#3E2A50"/>`;
+  g+=`<path d="M0 74 H63 V88 H0Z" style="fill:#1E1733"/><path d="${treeline(r,-6,70,80,17,28,.44)}" style="fill:#1E1733"/><path d="M0 79 H63 V88 H0Z" style="fill:#1E1733"/>`;
+  // lucciole nel colore del seme
+  for(let j=0;j<9;j++){const x=f1(5+r()*53),y=f1(58+r()*20),rr=.35+r()*.35;g+=`<circle cx="${x}" cy="${y}" r="${f1(rr*2.4)}" style="fill:${C};opacity:.3"/><circle cx="${x}" cy="${y}" r="${f1(rr*.8)}" style="fill:#FFE7B0"/>`}
+  g+=`<rect x="3" y="3" width="57" height="82" rx="2.6" style="fill:none;stroke:#FCEBD8;stroke-width:.35;opacity:.55"/>`;
+  g+=`<text x="31.5" y="82.2" text-anchor="middle" style="fill:#FCEBD8;font:italic 400 3.5px var(--f-serif);letter-spacing:.15px">Carte delle idee · <tspan style="fill:${C};font-style:normal;font-weight:700;font-family:var(--f-display);font-size:2.3px;letter-spacing:.5px">${S.label.toUpperCase()}</tspan></text>`;
+  return `<div class="card back s-${suit}"><svg viewBox="0 0 63 88" preserveAspectRatio="xMidYMid slice" aria-hidden="true">${g}</svg></div>`;
+}
+/* testata e legenda */
+document.getElementById("formula").innerHTML=ORDER.map(s=>`<span class="chip s-${s}">${svg(SUITS[s].shape)}${SUITS[s].label}</span>`).join('<span class="times">×</span>')+`<span>&nbsp;per inventare strumenti con Claude · corso <span class="brand-ia">IDEA<sup>IA</sup></span></span>`;
+document.getElementById("suits").innerHTML=ORDER.map(s=>`<div class="suit-row s-${s}"><span class="tile">${svg(SUITS[s].shape)}</span><div><b>${SUITS[s].label}</b><span>${SUITS[s].ask} · ${SUITS[s].cards.length} carte</span></div></div>`).join("");
+
+/* tutte le carte */
+let gi=0;
+document.getElementById("all").innerHTML=ORDER.map(s=>{
+  const S=SUITS[s];
+  const cards=S.cards.map((c,i)=>cardHTML(s,i,"",`--i:${Math.min(gi++,40)}`)).join("")+blankHTML(s,`--i:${Math.min(gi++,40)}`)+blankHTML(s,`--i:${Math.min(gi++,40)}`);
+  return `<section class="suit-section s-${s}"><div class="suit-head"><span class="tile">${svg(S.shape)}</span><h2>${S.plural}</h2><p>${S.ask} · ${S.cards.length} carte + 2 jolly</p></div><div class="grid">${cards}</div></section>`;
+}).join("");
+
+/* ---------- pesca: le carte arrivano coperte, si svelano una alla volta ---------- */
+const reduce=matchMedia("(prefers-reduced-motion: reduce)").matches;
+const state={concetto:5,superpotere:0,contesto:0,chi:1};
+const locked={},revealed={};
+const table=document.getElementById("table");
+table.innerHTML=ORDER.map(s=>`<div class="slot hidden s-${s}" data-suit="${s}">
+  <p class="slot-label">${svg(SUITS[s].shape)}${SUITS[s].label}<span>${SUITS[s].cards.length} carte</span></p>
+  <div class="stack"><span class="stamp">Tenuta</span><div class="flip"><div class="inner down"><div class="front"></div><div class="back-face"><button class="reveal" aria-label="Gira la carta ${SUITS[s].label}">${backHTML(s)}</button></div></div></div></div>
+  <div class="slot-actions"><button class="btn-small" data-act="tieni" aria-pressed="false">Tieni</button><button class="btn-small" data-act="ripesca">Ripesca</button></div>
+</div>`).join("");
+const slotOf=s=>table.querySelector(`[data-suit="${s}"]`);
+function setFront(s){slotOf(s).querySelector(".front").innerHTML=cardHTML(s,state[s])}
+function cover(s){
+  revealed[s]=false;const sl=slotOf(s);
+  sl.classList.add("hidden");sl.querySelector(".inner").classList.add("down");sl.querySelector(".reveal").disabled=false;
+}
+let busy=0;
+function reveal(s,delay){
+  busy++;
+  setTimeout(()=>{
+    setFront(s);const sl=slotOf(s);
+    sl.querySelector(".inner").classList.remove("down");sl.classList.remove("hidden");sl.querySelector(".reveal").disabled=true;
+    revealed[s]=true;busy--;renderQ(s);updateMain();
+  },reduce?0:delay);
+}
+const hiddenSuits=()=>ORDER.filter(s=>!revealed[s]);
+function updateMain(){document.getElementById("pesca").textContent=hiddenSuits().length?"Gira le carte":"Pesca di nuovo"}
+function question(news){
+  const c=SUITS.concetto.cards[state.concetto].q;
+  const prep=revealed.concetto&&/^[aà]/i.test(c)?"ad":"a";
+  const h=(s,txt)=>revealed[s]
+    ?`<span class="h s-${s}${s===news?" new":""}">${svg(SUITS[s].shape)}${txt}</span>`
+    :`<span class="h veil s-${s}" aria-label="carta ancora coperta">${svg(SUITS[s].shape)}✦✦✦</span>`;
+  return `Come può uno strumento ${h("superpotere",SUITS.superpotere.cards[state.superpotere].p)} aiutare ${h("chi",SUITS.chi.cards[state.chi].p)} ${prep} ${h("concetto",c)}, ${h("contesto",SUITS.contesto.cards[state.contesto].p)}?`;
+}
+function renderQ(news){document.getElementById("q").innerHTML=question(news)}
+function pick(s){const n=SUITS[s].cards.length;let i;do{i=Math.floor(Math.random()*n)}while(i===state[s]&&n>1);state[s]=i}
+function revealAll(){hiddenSuits().forEach((s,n)=>reveal(s,n*420))}
+function drawAll(){
+  const ds=ORDER.filter(s=>!locked[s]);if(!ds.length)return;
+  ds.forEach(s=>{pick(s);cover(s)});renderQ();updateMain();
+  ds.forEach((s,n)=>reveal(s,650+n*480));
+}
+function main(){if(busy)return;hiddenSuits().length?revealAll():drawAll()}
+table.addEventListener("click",e=>{
+  const b=e.target.closest("button");if(!b)return;
+  const s=b.closest(".slot").dataset.suit;
+  if(b.classList.contains("reveal")){if(!revealed[s])reveal(s,0);return}
+  if(!revealed[s])return;
+  if(b.dataset.act==="ripesca"){if(locked[s])return;pick(s);cover(s);renderQ();updateMain();reveal(s,600)}
+  if(b.dataset.act==="tieni"){
+    locked[s]=!locked[s];
+    b.setAttribute("aria-pressed",String(locked[s]));
+    b.textContent=locked[s]?"Tenuta":"Tieni";
+    b.closest(".slot").classList.toggle("locked",locked[s]);
+  }
+});
+document.getElementById("pesca").addEventListener("click",main);
+document.addEventListener("keydown",e=>{
+  if(e.code!=="Space"||e.repeat)return;
+  if(!document.getElementById("v-pesca").classList.contains("active"))return;
+  if(e.target.closest("button,input,textarea,select,a"))return;
+  e.preventDefault();main();
+});
+
+/* combinazioni messe da parte */
+const KEY="carte-idee-salvate";
+let saved=[];
+try{saved=JSON.parse(localStorage.getItem(KEY)||"[]")}catch(e){saved=[]}
+function persist(){try{localStorage.setItem(KEY,JSON.stringify(saved))}catch(e){}}
+function renderSaved(){
+  const ul=document.getElementById("saved");
+  if(!saved.length){ul.innerHTML=`<li class="empty" style="box-shadow:none;background:none;padding:0">Ancora nessuna. Quando una pescata ti accende un'idea, premi «Metti da parte».</li>`;return}
+  ul.innerHTML=saved.map((c,i)=>`<li><div class="combo">${ORDER.map(s=>`<span class="s-${s}">${svg(SUITS[s].shape)}${(SUITS[s].cards[c[s]]||{t:"?"}).t}</span>`).join("")}</div><button data-i="${i}" aria-label="Togli questa combinazione">Togli</button></li>`).join("");
+}
+document.getElementById("saved").addEventListener("click",e=>{
+  const b=e.target.closest("button[data-i]");if(!b)return;
+  saved.splice(Number(b.dataset.i),1);persist();renderSaved();
+});
+let toastT;
+document.getElementById("salva").addEventListener("click",()=>{
+  const t=document.getElementById("toast");
+  if(hiddenSuits().length){t.textContent="Prima gira tutte le carte";clearTimeout(toastT);toastT=setTimeout(()=>t.textContent="",1800);return}
+  const combo={...state};
+  if(!saved.some(c=>ORDER.every(s=>c[s]===combo[s]))){saved.unshift(combo);persist();renderSaved()}
+  t.textContent="Messa da parte ✓";
+  clearTimeout(toastT);toastT=setTimeout(()=>t.textContent="",1800);
+});
+
+/* ---------- carte che si inclinano sotto il puntatore ---------- */
+if(!reduce&&matchMedia("(hover:hover) and (pointer:fine)").matches){
+  let cur=null;
+  const reset=c=>{c.classList.remove("hot");["--rx","--ry"].forEach(p=>c.style.removeProperty(p))};
+  document.addEventListener("pointermove",e=>{
+    const c=e.target.closest&&e.target.closest(".card.face");
+    if(cur&&cur!==c){reset(cur)}cur=c;if(!c)return;
+    const b=c.getBoundingClientRect(),px=(e.clientX-b.left)/b.width,py=(e.clientY-b.top)/b.height;
+    c.style.setProperty("--ry",((px-.5)*14).toFixed(2)+"deg");
+    c.style.setProperty("--rx",((.5-py)*12).toFixed(2)+"deg");
+    c.style.setProperty("--mx",(px*100).toFixed(1)+"%");
+    c.style.setProperty("--my",(py*100).toFixed(1)+"%");
+    c.classList.add("hot");
+  });
+  document.addEventListener("pointerleave",()=>{if(cur){reset(cur);cur=null}});
+}
+
+/* ---------- stampa ---------- */
+let printing=false;
+function buildPrint(withBacks){
+  const items=[];
+  ORDER.forEach(s=>{SUITS[s].cards.forEach((c,i)=>items.push({s,i}));items.push({s,blank:true},{s,blank:true})});
+  let html="";
+  for(let p=0;p<items.length;p+=9){
+    const ch=items.slice(p,p+9);
+    html+=`<div class="sheet fronts">`+Array.from({length:9},(_,j)=>{const it=ch[j];return `<div class="cell">${it?(it.blank?blankHTML(it.s):cardHTML(it.s,it.i)):""}</div>`}).join("")+`</div>`;
+    if(withBacks){ // specchiato per girare il foglio sul lato lungo
+      html+=`<div class="sheet backs">`+Array.from({length:9},(_,j)=>{const r=Math.floor(j/3),c=j%3,it=ch[r*3+(2-c)];return `<div class="cell">${it?backHTML(it.s):""}</div>`}).join("")+`</div>`;
+    }
+  }
+  document.getElementById("print").innerHTML=html;
+}
+window.addEventListener("beforeprint",()=>{if(!printing)buildPrint(false)});
+window.addEventListener("afterprint",()=>{printing=false});
+document.getElementById("print-fr").addEventListener("click",()=>{printing=true;buildPrint(true);window.print()});
+document.getElementById("print-f").addEventListener("click",()=>{printing=true;buildPrint(false);window.print()});
+
+/* nella pagina online (in un riquadro) la finestra di stampa non si apre: si rimanda al file */
+if(window.self!==window.top){document.querySelector(".printbar").innerHTML=`<p><b>Stampa il mazzo.</b> Da questa pagina la stampa non si apre: usa il file «01 Carte delle idee» aperto nel browser del computer. A4, nove carte per foglio, 63 × 88 mm, fronte-retro sul lato lungo.</p>`}
+
+/* ---------- schede ---------- */
+const tabs=[...document.querySelectorAll(".tab")];
+function show(id){
+  tabs.forEach(t=>{const on=t.id==="t-"+id;t.setAttribute("aria-selected",String(on));t.tabIndex=on?0:-1});
+  document.querySelectorAll(".view").forEach(v=>{const on=v.id==="v-"+id;v.classList.toggle("active",on);v.classList.toggle("enter",on&&id==="tutte")});
+}
+tabs.forEach(t=>t.addEventListener("click",()=>show(t.id.slice(2))));
+document.querySelector(".tabs").addEventListener("keydown",e=>{
+  const i=tabs.indexOf(document.activeElement);if(i<0)return;
+  let j=null;if(e.key==="ArrowRight")j=(i+1)%tabs.length;if(e.key==="ArrowLeft")j=(i-1+tabs.length)%tabs.length;
+  if(j!==null){e.preventDefault();tabs[j].focus();show(tabs[j].id.slice(2))}
+});
+if(["tutte","regole"].includes(location.hash.slice(1)))show(location.hash.slice(1));
+window.addEventListener("hashchange",()=>{const h=location.hash.slice(1);if(["pesca","tutte","regole"].includes(h))show(h)});
+
+/* cielo */
+(()=>{const r=rng(7),sky=document.getElementById("sky");let h="";
+  for(let i=0;i<110;i++){const tw=r()<.35;h+=`<circle cx="${(r()*100).toFixed(2)}%" cy="${(r()*r()*62).toFixed(2)}%" r="${(.4+r()*r()*1.4).toFixed(2)}"${tw?` class="tw" style="--d:${(2.5+r()*4).toFixed(1)}s;--dl:${(-r()*6).toFixed(1)}s"`:` opacity="${(.15+r()*.5).toFixed(2)}"`}/>`}
+  sky.innerHTML=h;
+  const fr=rng(11);let f="";
+  f+=`<path d="M0 170 Q180 120 360 150 T720 140 T1080 150 T1440 130 V300 H0Z" style="fill:#6B4266;opacity:.55"/>`;
+  f+=`<path d="${treeline(fr,-20,1470,205,40,70,.5)}" style="fill:#4A3058"/><rect y="204" width="1440" height="96" style="fill:#4A3058"/>`;
+  f+=`<path d="${treeline(fr,-30,1480,250,70,120,.44)}" style="fill:#2C2042"/><rect y="249" width="1440" height="51" style="fill:#2C2042"/>`;
+  f+=`<path d="${treeline(fr,-40,1500,305,110,190,.42)}" style="fill:#17122A"/>`;
+  for(let i=0;i<26;i++)f+=`<circle class="fly" cx="${(fr()*1440).toFixed(0)}" cy="${(170+fr()*120).toFixed(0)}" r="${(1.2+fr()*1.6).toFixed(1)}" style="--d:${(4+fr()*5).toFixed(1)}s;--dl:${(-fr()*8).toFixed(1)}s;--fx:${(fr()*24-12).toFixed(0)}px;--fy:${(-fr()*18).toFixed(0)}px"/>`;
+  document.getElementById("forest").innerHTML=f;
+})();
+if(!reduce&&matchMedia("(pointer:fine)").matches){
+  const sp=document.getElementById("spot");
+  document.addEventListener("pointermove",e=>{sp.style.setProperty("--px",e.clientX+"px");sp.style.setProperty("--py",e.clientY+"px")},{passive:true});
+}
+
+/* avvio: i mazzi aspettano coperti */
+ORDER.forEach(s=>{revealed[s]=false;setFront(s)});
+renderQ();renderSaved();updateMain();
+</script>

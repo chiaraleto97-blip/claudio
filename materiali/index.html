@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="it">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Materiali IDEAᴵᴬ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,650;1,9..144,400;1,9..144,600&family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&display=swap">
+<style>
+/* La pagina pubblica dei materiali, quella del QR sul segnalibro: lo stesso tavolo notturno del corso, le schede dei materiali come carte pergamena con il seme colorato. Un solo aspetto, notturno. */
+:root{
+  --bg:#17142C; --panel:rgba(38,30,64,.82); --ink:#F3EAF0; --muted:#B9A9C4; --line:#3B3056;
+  --paper:#F7F1EE; --paper-ink:#2A2045; --paper-muted:#5E5269;
+  --blu:#9EA6E2; --rosso:#EA9B8C; --giallo:#F2B97F; --verde:#88C0AF; --lilla:#C8A5D8; --glow:#F6D58E;
+  --blu-d:#404894; --rosso-d:#A3493C; --giallo-d:#8A5217; --verde-d:#2A6858; --lilla-d:#6B4A85;
+  --f-display:"Bricolage Grotesque","Arial Narrow",system-ui,sans-serif;
+  --f-serif:"Fraunces",Georgia,"Times New Roman",serif;
+  --f-body:"Atkinson Hyperlegible",Verdana,system-ui,sans-serif;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{background:var(--bg)}
+body{margin:0;min-height:100vh;background:linear-gradient(to bottom,#14122A 0%,#1F1A3C 30%,#35284F 55%,#5C3760 76%,#8C4F63 92%,#B86E66 100%) fixed,var(--bg);color:var(--ink);font-family:var(--f-body);font-size:17px;line-height:1.55;
+  padding-block:max(28px,env(safe-area-inset-top,0px)) 140px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+a{color:inherit}
+:focus-visible{outline:3px solid var(--giallo);outline-offset:3px}
+.sky,.forest{position:fixed;left:0;right:0;pointer-events:none;z-index:0}
+.sky{top:0;bottom:0;width:100%;height:100%}
+.sky circle{fill:#FFF3E6}
+.forest{bottom:0;width:100%;height:clamp(110px,20vh,200px)}
+.fly{fill:var(--glow);animation:fly var(--d,6s) ease-in-out infinite;animation-delay:var(--dl,0s)}
+@keyframes fly{0%,100%{opacity:0}40%{opacity:.9}60%{opacity:.8;transform:translate(var(--fx,8px),var(--fy,-10px))}}
+@media (prefers-reduced-motion: reduce){.fly{animation:none;opacity:.7}}
+.c-blu{--suit:var(--blu);--suit-d:var(--blu-d)}.c-rosso{--suit:var(--rosso);--suit-d:var(--rosso-d)}.c-giallo{--suit:var(--giallo);--suit-d:var(--giallo-d)}.c-verde{--suit:var(--verde);--suit-d:var(--verde-d)}.c-lilla{--suit:var(--lilla);--suit-d:var(--lilla-d)}
+.wrap{position:relative;z-index:1;max-width:1080px;margin:0 auto;display:flex;flex-direction:column;gap:40px}
+.eyebrow{font-family:var(--f-display);font-weight:800;font-size:14px;letter-spacing:.18em;text-transform:uppercase;color:var(--giallo);margin:0}
+.hero{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:24px;align-items:center}
+.logo{font-family:var(--f-display);font-weight:800;font-size:clamp(64px,13vw,128px);letter-spacing:-.03em;line-height:.9;margin:10px 0 0}
+.logo sup{font-size:.42em;color:var(--rosso);vertical-align:.95em}
+.hero h1{font-family:var(--f-serif);font-weight:500;font-size:clamp(26px,3.6vw,38px);line-height:1.15;margin:14px 0 0;text-wrap:balance}
+.hero h1 em{font-style:italic;font-weight:400;color:var(--glow)}
+.hero p{color:var(--muted);max-width:60ch;margin:12px 0 0}
+.mascot{width:clamp(110px,18vw,190px)}
+h2{font-family:var(--f-serif);font-weight:500;font-size:clamp(28px,3.4vw,38px);line-height:1.1;margin:0;text-wrap:balance}
+h2 em{font-style:italic;font-weight:400;color:var(--glow)}
+.sec{display:flex;flex-direction:column;gap:18px}
+.feature{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:22px;align-items:center;background:var(--panel);border:2px solid rgba(246,213,142,.35);border-radius:24px;padding:22px 26px;text-decoration:none}
+.feature:hover{border-color:var(--glow)}
+.feature .ico{width:74px}
+.feature h3{font-family:var(--f-serif);font-weight:650;font-size:26px;margin:0}
+.feature p{margin:4px 0 0;color:var(--muted)}
+.go{display:inline-block;border-radius:14px;padding:12px 20px;font-family:var(--f-display);font-weight:800;font-size:15px;letter-spacing:.06em;text-transform:uppercase;background:var(--giallo);color:var(--paper-ink);box-shadow:0 4px 0 var(--giallo-d);white-space:nowrap}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,300px),1fr));gap:18px}
+.card{display:flex;flex-direction:column;background:var(--paper);color:var(--paper-ink);border-radius:20px;overflow:hidden;text-decoration:none;box-shadow:0 22px 40px -26px #000;transition:transform .2s}
+.card:hover{transform:translateY(-3px)}
+.card .k{background:var(--suit);font-family:var(--f-display);font-weight:800;font-size:13px;letter-spacing:.14em;text-transform:uppercase;padding:9px 18px;color:var(--paper-ink)}
+.card .b{padding:16px 18px 18px;display:flex;flex-direction:column;gap:8px;flex:1}
+.card h3{font-family:var(--f-serif);font-weight:650;font-size:23px;line-height:1.15;margin:0}
+.card p{margin:0;font-size:16px;line-height:1.45;color:var(--paper-muted)}
+.card .use{margin-top:auto;padding-top:8px;font-family:var(--f-display);font-weight:700;font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--suit-d)}
+.path{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,180px),1fr));gap:12px}
+.path li{background:var(--panel);border-radius:18px;padding:16px 18px;display:flex;flex-direction:column;gap:4px}
+.path b{font-family:var(--f-display);font-weight:800;font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--glow)}
+.path span{font-family:var(--f-serif);font-size:20px;line-height:1.2}
+.path small{color:var(--muted);font-size:15px;line-height:1.4}
+.tips{background:var(--panel);border-radius:20px;padding:20px 24px;display:grid;gap:10px}
+.tips p{margin:0;color:var(--muted)}
+.tips b{color:var(--ink)}
+footer{color:var(--muted);font-size:15px;border-top:1px solid var(--line);padding-top:18px;display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px 20px}
+@media (max-width:640px){.hero{grid-template-columns:minmax(0,1fr)}.mascot{display:none}.feature{grid-template-columns:minmax(0,1fr)}.feature .ico{display:none}}
+</style>
+
+<svg class="sky" id="sky" aria-hidden="true"></svg>
+<svg class="forest" id="forest" viewBox="0 0 1440 240" preserveAspectRatio="xMidYMax slice" aria-hidden="true"></svg>
+
+<main class="wrap">
+  <header class="hero">
+    <div>
+      <p class="eyebrow">Corso per docenti · materiali</p>
+      <p class="logo">IDEA<sup>IA</sup></p>
+      <h1>Claude sa solo scrivere testo. <em>Ma quasi tutto è testo.</em></h1>
+      <p>Tutto quello che abbiamo usato nel corso, da aprire a schermo o da stampare. Gli strumenti funzionano nel browser: niente account, nessun dato raccolto.</p>
+    </div>
+    <div class="mascot" id="mascot"></div>
+  </header>
+
+  <section class="sec" aria-labelledby="h-claudio">
+    <h2 id="h-claudio">Per cominciare</h2>
+    <a class="feature" href="../">
+      <div class="ico" id="ico"></div>
+      <div><h3>Claudio</h3><p>L'app con le lezioni brevi per imparare Claude e GitHub: Le basi, Avanzato, Claude Code, GitHub. Si installa sul telefono e funziona anche senza rete.</p></div>
+      <span class="go">Apri l'app</span>
+    </a>
+  </section>
+
+  <section class="sec" aria-labelledby="h-mat">
+    <h2 id="h-mat">I materiali del <em>laboratorio</em></h2>
+    <div class="cards">
+      <a class="card c-rosso" href="carte-delle-idee.html"><span class="k">Avere l'idea</span><div class="b"><h3>Carte delle idee</h3><p>88 carte in quattro semi (Concetto, Superpotere, Contesto, Chi) più i jolly. Se ne pesca una per seme e si risponde alla domanda che compongono.</p><span class="use">A schermo · stampa 9 per foglio</span></div></a>
+      <a class="card c-blu" href="scheda-progetto.html"><span class="k">Progettare</span><div class="b"><h3>Scheda progetto</h3><p>Dall'idea al primo prompt, poi le versioni e la prova in classe. Compilata a schermo, scrive da sola il prompt da copiare in Claude.</p><span class="use">A schermo · stampa 2 facciate</span></div></a>
+      <a class="card c-lilla" href="presentazione.html"><span class="k">I cinque incontri</span><div class="b"><h3>Presentazione del laboratorio</h3><p>Le slide del corso: la teoria sui modelli linguistici, le attività con i timer, il muro delle idee e la Firefly Forest.</p><span class="use">Frecce per avanzare · N note · F schermo intero</span></div></a>
+      <a class="card c-giallo" href="cartellino-fiera.html"><span class="k">La fiera</span><div class="b"><h3>Cartellino della fiera</h3><p>Il cartello della postazione: nome dello strumento, a che cosa serve, i post-it degli studenti e il QR per provarlo.</p><span class="use">Si compila a schermo · stampa A4</span></div></a>
+      <a class="card c-verde" href="passaporto-fiera.html"><span class="k">La fiera</span><div class="b"><h3>Passaporto della fiera</h3><p>Un timbro per ogni strumento provato, le idee da portare in classe e i voti per i premi.</p><span class="use">Stampa A4 orizzontale, piegato a metà</span></div></a>
+    </div>
+  </section>
+
+  <section class="sec" aria-labelledby="h-path">
+    <h2 id="h-path">Il percorso</h2>
+    <ol class="path">
+      <li><b>Incontro 1</b><span>Tutto è testo</span><small>Come funzionano Claude e i modelli linguistici; il primo strumento.</small></li>
+      <li><b>Incontro 2</b><span>Avere l'idea</span><small>Il diario dei bisogni, le carte, il filtro, la scheda progetto.</small></li>
+      <li><b>Incontro 3</b><span>Costruire parlando</span><small>Dal primo prompt alla prima versione, poi la prova in classe.</small></li>
+      <li><b>Incontro 4</b><span>Dalla classe al web</span><small>La versione 2 e la pubblicazione con GitHub Pages.</small></li>
+      <li><b>Incontro 5</b><span>La fiera</span><small>Postazioni, passaporti, premi e la Firefly Forest.</small></li>
+    </ol>
+  </section>
+
+  <section class="sec" aria-labelledby="h-more">
+    <h2 id="h-more">Per vedere che cosa si può fare</h2>
+    <a class="feature" href="https://comprensivoalmese.github.io/learning-hub/" target="_blank" rel="noopener">
+      <div class="ico" id="ico2"></div>
+      <div><h3>Learning Hub del Wolf Team</h3><p>Giochi, laboratori e app per la scuola costruiti con l'IA: Wolf Escape, Ulù e gli altri progetti.</p></div>
+      <span class="go">Visita</span>
+    </a>
+  </section>
+
+  <section class="tips" aria-label="Consigli per la stampa">
+    <p><b>Per stampare</b> aprite il materiale, premete Ctrl+P (su Mac Cmd+P) e attivate «Grafica di sfondo»: senza, i colori e il cielo restano bianchi.</p>
+    <p><b>Quello che scrivete</b> nelle schede resta solo nel vostro browser, su quel dispositivo.</p>
+  </section>
+
+  <footer><span>IDEA<sup>IA</sup> · corso di formazione per docenti · IC Almese</span><span>Fatto con Claude, come tutto il resto.</span></footer>
+</main>
+
+<script>
+function rng(seed){return()=>{seed|=0;seed=seed+0x6D2B79F5|0;let t=Math.imul(seed^seed>>>15,1|seed);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+const f1=n=>Math.round(n*10)/10;
+function pine(x,base,h,w){const t=h*.12,y0=base-t;let d=`M${f1(x-w*.07)} ${f1(base)}h${f1(w*.14)}v${f1(-t)}h${f1(-w*.14)}Z`;[[1,0],[.78,.3],[.55,.56]].forEach(([k,o])=>{const yb=y0-h*o,ww=w*k/2,ht=h*.48;d+=`M${f1(x)} ${f1(yb-ht)}L${f1(x+ww)} ${f1(yb)}H${f1(x-ww)}Z`});return d}
+function treeline(r,x0,x1,base,hmin,hmax,wk){let d="";for(let x=x0;x<x1;){const h=hmin+r()*(hmax-hmin);d+=pine(x,base+r()*1.2,h,h*wk);x+=h*wk*(.42+r()*.35)}return d}
+function claudio(){return `<svg viewBox="0 0 120 120" aria-hidden="true"><circle cx="60" cy="82" r="36" style="fill:#F6D58E;opacity:.2"/><ellipse cx="38" cy="54" rx="20" ry="10" transform="rotate(-28 38 54)" style="fill:#C8A5D8;opacity:.6"/><ellipse cx="82" cy="54" rx="20" ry="10" transform="rotate(28 82 54)" style="fill:#C8A5D8;opacity:.6"/><ellipse cx="60" cy="81" rx="18" ry="22" style="fill:#F6D58E"/><path d="M44 76h32M45 86h30" style="stroke:#E2B866;stroke-width:2.2"/><ellipse cx="60" cy="59" rx="16" ry="11" style="fill:#4A3560"/><path d="M52 25Q46 11 37 9M68 25Q74 11 83 9" style="fill:none;stroke:#F3EAF0;stroke-width:3;stroke-linecap:round;opacity:.85"/><circle cx="37" cy="9" r="3.6" style="fill:#F2B97F"/><circle cx="83" cy="9" r="3.6" style="fill:#F2B97F"/><circle cx="60" cy="38" r="17.5" style="fill:#2A2045"/><circle cx="53" cy="35.5" r="5.6" style="fill:#fff"/><circle cx="67" cy="35.5" r="5.6" style="fill:#fff"/><circle cx="54.2" cy="36.6" r="2.7" style="fill:#17142C"/><circle cx="68.2" cy="36.6" r="2.7" style="fill:#17142C"/><circle cx="46.5" cy="43" r="3" style="fill:#EA9B8C;opacity:.7"/><circle cx="73.5" cy="43" r="3" style="fill:#EA9B8C;opacity:.7"/><path d="M52.5 44Q60 51.5 67.5 44" style="fill:none;stroke:#F3EAF0;stroke-width:2.4;stroke-linecap:round"/></svg>`}
+const wolf=`<svg viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="30" style="fill:#2A2045"/><circle cx="44" cy="20" r="8" style="fill:#FFF3E6;opacity:.9"/><circle cx="47" cy="18" r="7" style="fill:#2A2045"/><path d="M14 52 L22 30 L27 36 L32 22 L37 36 L42 30 L50 52 Z" style="fill:#C8A5D8"/><circle cx="27.5" cy="40" r="1.8" style="fill:#F6D58E"/><circle cx="36.5" cy="40" r="1.8" style="fill:#F6D58E"/></svg>`;
+document.getElementById("mascot").innerHTML=claudio();
+document.getElementById("ico").innerHTML=claudio();
+document.getElementById("ico2").innerHTML=wolf;
+(()=>{const r=rng(7);let h="";for(let i=0;i<90;i++)h+=`<circle cx="${(r()*100).toFixed(2)}%" cy="${(r()*r()*62).toFixed(2)}%" r="${(.4+r()*r()*1.4).toFixed(2)}" opacity="${(.15+r()*.55).toFixed(2)}"/>`;document.getElementById("sky").innerHTML=h;
+  const fr=rng(11);let f=`<path d="M0 140 Q180 100 360 125 T720 115 T1080 125 T1440 105 V240 H0Z" style="fill:#6B4266;opacity:.5"/>`;
+  f+=`<path d="${treeline(fr,-20,1470,170,32,56,.5)}" style="fill:#4A3058"/><rect y="169" width="1440" height="71" style="fill:#4A3058"/><path d="${treeline(fr,-30,1480,205,56,95,.44)}" style="fill:#2C2042"/><rect y="204" width="1440" height="36" style="fill:#2C2042"/><path d="${treeline(fr,-40,1500,245,85,145,.42)}" style="fill:#17122A"/>`;
+  for(let i=0;i<14;i++)f+=`<circle class="fly" cx="${(fr()*1440).toFixed(0)}" cy="${(140+fr()*90).toFixed(0)}" r="${(1.2+fr()*1.6).toFixed(1)}" style="--d:${(4+fr()*5).toFixed(1)}s;--dl:${(-fr()*8).toFixed(1)}s;--fx:${(fr()*24-12).toFixed(0)}px;--fy:${(-fr()*18).toFixed(0)}px"/>`;
+  document.getElementById("forest").innerHTML=f})();
+</script>

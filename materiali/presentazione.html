@@ -1,0 +1,917 @@
+<!doctype html>
+<html lang="it">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Laboratorio IDEAᴵᴬ</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,650;1,9..144,400;1,9..144,600&family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&display=swap">
+<style>
+/* La presentazione del laboratorio: un palco 16:9 sul tavolo notturno. In basso il sentiero dei cinque incontri: a ogni incontro si accende una firefly. Un solo aspetto, notturno. */
+:root{
+  --bg:#17142C; --bg-2:#261E40; --panel:rgba(38,30,64,.82); --ink:#F3EAF0; --muted:#B9A9C4; --line:#3B3056;
+  --paper:#F7F1EE; --paper-ink:#2A2045; --paper-muted:#6C5F77; --paper-line:#DCD2C3;
+  --blu:#9EA6E2; --rosso:#EA9B8C; --giallo:#F2B97F; --verde:#88C0AF; --lilla:#C8A5D8; --glow:#F6D58E;
+  --blu-d:#404894; --rosso-d:#A3493C; --giallo-d:#8A5217; --verde-d:#2A6858; --lilla-d:#6B4A85;
+  --f-display:"Bricolage Grotesque","Arial Narrow",system-ui,sans-serif;
+  --f-serif:"Fraunces",Georgia,"Times New Roman",serif;
+  --f-body:"Atkinson Hyperlegible",Verdana,system-ui,sans-serif;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+html{background:var(--bg)}
+body{margin:0;overflow:hidden;background:linear-gradient(to bottom,#14122A 0%,#1F1A3C 34%,#35284F 58%,#5C3760 78%,#8C4F63 92%,#B86E66 100%),var(--bg);color:var(--ink);font-family:var(--f-body);
+  padding-left:max(0px,env(safe-area-inset-left,0px));padding-right:max(0px,env(safe-area-inset-right,0px))}
+button,input{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:3px solid var(--giallo);outline-offset:3px}
+.sky,.forest{position:fixed;left:0;right:0;pointer-events:none;z-index:0}
+.sky{top:0;bottom:0;width:100%;height:100%}
+.sky circle{fill:#FFF3E6}
+.sky .tw{animation:tw var(--d,4s) ease-in-out infinite;animation-delay:var(--dl,0s)}
+@keyframes tw{0%,100%{opacity:.15}50%{opacity:.95}}
+.forest{bottom:0;width:100%;height:24vh}
+.fly{fill:var(--glow);animation:fly var(--d,6s) ease-in-out infinite;animation-delay:var(--dl,0s)}
+@keyframes fly{0%,100%{opacity:0;transform:translate(0,0)}40%{opacity:.9}60%{opacity:.8;transform:translate(var(--fx,8px),var(--fy,-10px))}}
+.s-concetto,.c-blu{--suit:var(--blu);--suit-d:var(--blu-d)} .s-superpotere,.c-rosso{--suit:var(--rosso);--suit-d:var(--rosso-d)} .s-contesto,.c-giallo{--suit:var(--giallo);--suit-d:var(--giallo-d)} .s-chi,.c-verde{--suit:var(--verde);--suit-d:var(--verde-d)} .c-lilla{--suit:var(--lilla);--suit-d:var(--lilla-d)}
+
+/* palco */
+#deck{position:fixed;inset:0;z-index:1;overflow:hidden}
+.stage{position:absolute;left:50%;top:50%;width:1600px;height:900px;transform:translate(-50%,-50%) scale(var(--k,1));transform-origin:center}
+.slide{position:absolute;inset:0;padding:64px 96px 128px;display:none;flex-direction:column;gap:28px}
+.slide.on{display:flex;animation:in .45s cubic-bezier(.2,.8,.2,1)}
+@keyframes in{from{opacity:0;transform:translateY(14px)}}
+.frag{opacity:0;transform:translateY(14px);transition:opacity .4s,transform .4s;pointer-events:none}
+.frag.show{opacity:1;transform:none;pointer-events:auto}
+.eyebrow{font-family:var(--f-display);font-weight:800;font-size:22px;letter-spacing:.16em;text-transform:uppercase;color:var(--giallo);margin:0}
+h1,h2,h3{font-family:var(--f-serif);margin:0;letter-spacing:-.02em;text-wrap:balance}
+h1{font-weight:500;font-size:112px;line-height:.95}
+h2{font-weight:500;font-size:72px;line-height:1.02}
+h3{font-weight:650;font-size:34px;line-height:1.15}
+h1 em,h2 em{font-style:italic;font-weight:400;color:var(--giallo)}
+.lead{font-size:34px;line-height:1.35;color:var(--muted);margin:0;max-width:1100px}
+.row{display:flex;gap:28px;align-items:stretch}
+.grow{flex:1;min-width:0}
+.col{display:flex;flex-direction:column;gap:18px;min-width:0}
+.pcard{background:var(--paper);color:var(--paper-ink);border-radius:22px;padding:26px 28px;box-shadow:0 24px 50px -28px #000}
+.pcard h3{color:var(--paper-ink)}
+.pcard p{margin:8px 0 0;font-size:24px;line-height:1.4;color:#4A3F5A}
+.pcard .k{display:block;font-family:var(--f-display);font-weight:800;font-size:16px;letter-spacing:.12em;text-transform:uppercase;color:var(--suit-d,var(--paper-muted));margin-bottom:8px}
+.panel{background:var(--panel);border-radius:22px;padding:26px 30px}
+.tools{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:18px;margin-top:4px}
+.tools .pcard{padding:18px 20px 20px}
+.tools .pcard h3{font-size:28px}
+.tools .pcard p{font-size:19px;line-height:1.35;margin-top:6px}
+.tools .pcard .k{font-size:13px;margin-bottom:6px}
+.tools-cta{display:flex;flex-direction:column;justify-content:center;padding:0 10px}
+.tools-cta p{margin:0;font-family:var(--f-serif);font-size:32px;line-height:1.2;color:var(--muted)}
+.tools-cta em{color:var(--giallo);font-size:44px}
+.steps{list-style:none;margin:0;padding:0;display:grid;gap:16px;counter-reset:s}
+.steps li{display:flex;gap:18px;align-items:flex-start;font-size:28px;line-height:1.35;counter-increment:s}
+.steps li::before{content:counter(s);flex:none;display:grid;place-items:center;width:46px;height:46px;border-radius:50%;background:var(--paper);color:var(--paper-ink);font-family:var(--f-display);font-weight:800;font-size:22px;margin-top:-4px}
+.ticks{list-style:none;margin:0;padding:0;display:grid;gap:14px}
+.ticks li{display:flex;gap:16px;align-items:flex-start;font-size:28px;line-height:1.35}
+.ticks li::before{content:"";flex:none;width:16px;height:16px;margin-top:12px;border-radius:50%;background:var(--glow);box-shadow:0 0 0 6px rgba(246,213,142,.18),0 0 18px var(--glow)}
+.postit{background:#FBE8A6;color:#3A2E1A;border-radius:6px;padding:22px 22px 26px;font-family:var(--f-serif);font-size:28px;line-height:1.3;box-shadow:0 18px 30px -18px #000;transform:rotate(var(--r,-1.5deg))}
+.postit.rosa{background:#F6C9C0}.postit.azz{background:#C9D2F2}.postit.verde{background:#C6E3D8}
+.qr{width:300px;height:300px;padding:16px;background:#fff;border-radius:24px;box-shadow:0 0 40px -6px var(--glow)}
+.qr img,.qr canvas{width:100%!important;height:auto!important;display:block}
+.url{font-family:ui-monospace,Consolas,monospace;font-size:22px;color:var(--muted);margin:14px 0 0;word-break:break-all;max-width:320px}
+.code{background:#120F24;color:#F3EAF0;border-radius:16px;padding:22px;font-family:ui-monospace,Consolas,"Courier New",monospace;font-size:24px;line-height:1.5;white-space:pre;overflow:hidden}
+.hl{background:rgba(242,185,127,.22);color:var(--giallo);border-radius:6px;padding:0 6px;font-style:italic}
+.mascot .halo{animation:halo 2.8s ease-in-out infinite;transform-origin:60px 82px}
+.bob{animation:bob 3.2s ease-in-out infinite}
+@keyframes halo{50%{transform:scale(1.18);opacity:.55}}
+@keyframes bob{50%{transform:translateY(-6px)}}
+
+/* sezioni: i cinque incontri */
+.sec{justify-content:center}
+.sec .num{font-family:var(--f-display);font-weight:800;font-size:28px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted)}
+.sec h1{font-size:150px}
+.ffrow{display:flex;gap:46px;margin-top:40px;align-items:flex-end}
+.ffrow .ff1{display:flex;flex-direction:column;align-items:center;gap:10px;font-family:var(--f-display);font-weight:700;font-size:18px;letter-spacing:.1em;text-transform:uppercase;color:#7D6F92}
+.ffrow .ff1.lit{color:var(--glow)}
+.ffrow svg{width:70px;height:70px}
+
+/* sentiero in basso */
+.trail{position:absolute;left:96px;right:96px;bottom:34px;display:flex;align-items:center;gap:14px;font-family:var(--f-display);font-weight:700;font-size:17px;letter-spacing:.08em;color:#8E80A3}
+.trail .seg{display:flex;align-items:center;gap:8px;border:0;background:none;padding:4px 8px;border-radius:12px;color:inherit;text-transform:uppercase}
+.trail .seg svg{width:30px;height:30px}
+.trail .seg.lit{color:var(--glow)}
+.trail .seg.now{background:rgba(246,213,142,.12)}
+.trail .line{flex:1;height:2px;background:linear-gradient(90deg,rgba(246,213,142,.5),rgba(142,128,163,.25))}
+.trail .count{margin-left:auto;font-variant-numeric:tabular-nums}
+
+/* timer */
+.timer{position:absolute;right:96px;bottom:92px;display:flex;align-items:center;gap:12px;background:var(--panel);border-radius:22px;padding:12px 14px 12px 22px;box-shadow:0 20px 40px -24px #000}
+.timer .t{font-family:var(--f-display);font-weight:800;font-size:46px;font-variant-numeric:tabular-nums;min-width:140px;text-align:center}
+.timer button{border:0;background:var(--paper);color:var(--paper-ink);border-radius:14px;padding:10px 16px;font-weight:700;font-size:20px}
+.timer button.ghost{background:transparent;color:var(--ink);border:2px solid var(--line)}
+.timer.done{box-shadow:0 0 0 4px var(--glow),0 0 50px var(--glow)}
+.timer.done .t{color:var(--glow)}
+.timer .lab{font-family:var(--f-display);font-weight:800;font-size:15px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+
+/* pesca delle carte */
+.draw{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.dcard{background:var(--paper);color:var(--paper-ink);border-radius:16px;overflow:hidden;min-height:150px;box-shadow:0 18px 30px -20px #000}
+.dcard b{display:block;background:var(--suit);font-family:var(--f-display);font-weight:800;font-size:14px;letter-spacing:.12em;text-transform:uppercase;padding:8px 12px}
+.dcard span{display:block;padding:12px 14px 16px;font-family:var(--f-serif);font-weight:650;font-size:23px;line-height:1.15}
+.dq{font-family:var(--f-serif);font-size:32px;line-height:1.3;margin:0}
+.dq .h{font-style:italic;font-weight:600;background:linear-gradient(var(--suit),var(--suit)) 0 92%/100% .2em no-repeat}
+.btn{border:0;border-radius:18px;padding:16px 28px;font-family:var(--f-display);font-weight:800;font-size:22px;letter-spacing:.06em;text-transform:uppercase;background:var(--giallo);color:var(--paper-ink);box-shadow:0 6px 0 var(--giallo-d)}
+.btn:active{transform:translateY(4px);box-shadow:0 2px 0 var(--giallo-d)}
+.btn.line{background:transparent;color:var(--ink);border:2px solid var(--ink);box-shadow:none}
+
+/* muro delle idee */
+.wallform{display:flex;gap:12px}
+.wallform input,.ffform input{flex:1;min-width:0;background:rgba(255,255,255,.07);border:2px solid var(--line);border-radius:14px;padding:14px 18px;font-size:24px}
+.wallform input:focus,.ffform input:focus{border-color:var(--giallo);outline:none}
+.wall{display:grid;grid-template-columns:repeat(5,1fr);gap:18px;align-content:start;flex:1;min-height:0;overflow:hidden}
+.note{position:relative;background:#FBE8A6;color:#3A2E1A;border-radius:6px;padding:16px 16px 44px;font-family:var(--f-serif);font-size:22px;line-height:1.25;min-height:130px;box-shadow:0 14px 24px -16px #000;transform:rotate(var(--r,0deg));cursor:pointer}
+.note:nth-child(4n+2){background:#F6C9C0}.note:nth-child(4n+3){background:#C9D2F2}.note:nth-child(4n){background:#C6E3D8}
+.note .dots{position:absolute;left:12px;bottom:10px;display:flex;gap:4px;flex-wrap:wrap}
+.note .dots i{width:16px;height:16px;border-radius:50%;background:#C46A50;box-shadow:inset 0 -2px 0 rgba(0,0,0,.2)}
+.note .x{position:absolute;right:6px;top:4px;border:0;background:none;font-size:22px;color:#6B5A3A;opacity:.6}
+.empty{color:var(--muted);font-size:24px;grid-column:1/-1}
+
+/* Firefly Forest */
+.forestbox{position:relative;flex:1;min-height:0;border-radius:26px;overflow:hidden;background:linear-gradient(to bottom,#14122A 0%,#2E2450 50%,#6A3F68 85%,#8C4F63 100%);box-shadow:inset 0 0 0 2px var(--line)}
+.forestbox svg.trees{position:absolute;left:0;right:0;bottom:0;width:100%;height:46%}
+.forestbox svg.stars{position:absolute;inset:0;width:100%;height:100%}
+.ff{position:absolute;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;gap:6px;text-decoration:none;color:var(--ink)}
+.ff .g{width:26px;height:26px;border-radius:50%;background:radial-gradient(circle,#FFF6D6 0 28%,var(--glow) 45%,rgba(246,213,142,0) 72%);box-shadow:0 0 30px 10px rgba(246,213,142,.45);animation:pulse var(--d,3s) ease-in-out infinite}
+@keyframes pulse{50%{box-shadow:0 0 44px 16px rgba(246,213,142,.7)}}
+.ff .n{font-family:var(--f-display);font-weight:800;font-size:17px;letter-spacing:.04em;background:rgba(20,18,42,.75);padding:4px 10px;border-radius:10px;white-space:nowrap;max-width:260px;overflow:hidden;text-overflow:ellipsis}
+.ff .n small{display:block;font-family:var(--f-body);font-weight:400;font-size:14px;color:var(--muted)}
+a.ff:hover .n{background:var(--paper);color:var(--paper-ink)}
+.ff.ghost{opacity:.35}.ff.ghost .g{animation:none;box-shadow:none;background:radial-gradient(circle,rgba(246,213,142,.5) 0 30%,rgba(246,213,142,0) 70%)}
+.ffform{display:flex;gap:12px}
+.ffcount{font-family:var(--f-display);font-weight:800;font-size:22px;letter-spacing:.08em;text-transform:uppercase;color:var(--glow)}
+
+/* comandi */
+.ctrl{position:fixed;z-index:5;right:max(14px,env(safe-area-inset-right,0px));top:calc(12px + env(safe-area-inset-top,0px));display:flex;gap:6px;opacity:.25;transition:opacity .3s}
+.ctrl:hover,.ctrl:focus-within,body.moving .ctrl{opacity:1}
+.ctrl button{border:0;background:var(--panel);color:var(--ink);border-radius:12px;width:42px;height:42px;display:grid;place-items:center;font-weight:800}
+.ctrl svg{width:20px;height:20px;fill:currentColor}
+.nav{position:fixed;z-index:4;top:50%;transform:translateY(-50%);border:0;background:transparent;color:var(--ink);width:56px;height:120px;opacity:.15;font-size:42px}
+.nav:hover{opacity:.8}
+.nav.prev{left:max(4px,env(safe-area-inset-left,0px))}.nav.next{right:max(4px,env(safe-area-inset-right,0px))}
+.notes{position:fixed;z-index:6;left:0;right:0;bottom:0;max-height:34vh;overflow:auto;background:rgba(14,12,30,.96);border-top:2px solid var(--line);padding:16px max(20px,env(safe-area-inset-left,0px)) calc(16px + env(safe-area-inset-bottom,0px));font-size:18px;line-height:1.5}
+.notes b{font-family:var(--f-display);letter-spacing:.1em;text-transform:uppercase;font-size:13px;color:var(--giallo);display:block;margin-bottom:4px}
+.menu{position:fixed;z-index:7;inset:0;background:rgba(10,8,22,.9);overflow:auto;padding:70px max(20px,env(safe-area-inset-left,0px)) 40px}
+.menu .in{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:22px}
+.menu h4{font-family:var(--f-serif);font-weight:650;font-size:22px;margin:0 0 8px;color:var(--glow)}
+.menu button{display:block;width:100%;text-align:left;border:0;background:none;padding:6px 8px;border-radius:8px;font-size:16px;color:var(--ink)}
+.menu button:hover,.menu button.cur{background:var(--bg-2)}
+.help{color:var(--muted);font-size:15px;max-width:1100px;margin:28px auto 0}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+
+/* teoria: indovina la parola, il testo a pezzi, la finestra di contesto */
+.phrase{font-family:var(--f-serif);font-size:58px;line-height:1.15;margin:0}
+.phrase .blank{display:inline-block;min-width:240px;border-bottom:4px dashed var(--giallo);color:var(--giallo);font-style:italic;text-align:center;padding:0 12px}
+.phrase .blank.pop{animation:pop .5s cubic-bezier(.2,.8,.2,1)}
+@keyframes pop{from{transform:translateY(-16px);opacity:0}}
+.temp{display:flex;flex-direction:column;gap:14px}
+.temp label{display:flex;justify-content:space-between;font-family:var(--f-display);font-weight:800;font-size:18px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.temp input[type=range]{width:100%;accent-color:var(--giallo);height:30px}
+.temp .hint{font-size:20px;line-height:1.35;color:var(--muted);margin:0}
+.picks{display:flex;flex-wrap:wrap;gap:8px;min-height:44px}
+.picks span{background:rgba(255,255,255,.08);border-radius:10px;padding:6px 12px;font-family:var(--f-serif);font-size:22px}
+.tokin{width:100%;background:rgba(255,255,255,.07);border:2px solid var(--line);border-radius:14px;padding:14px 18px;font-size:26px}
+.tokin:focus{border-color:var(--giallo);outline:none}
+.chips{display:flex;flex-wrap:wrap;gap:8px;align-content:flex-start;min-height:130px}
+.chips span{border-radius:12px;padding:8px 14px;font-family:ui-monospace,Consolas,monospace;font-size:38px;color:var(--paper-ink);white-space:pre;animation:pop .35s cubic-bezier(.2,.8,.2,1) backwards}
+.chips span i{font-style:normal;opacity:.45}
+.chips span:nth-child(5n+1){background:var(--blu)}.chips span:nth-child(5n+2){background:var(--rosso)}.chips span:nth-child(5n+3){background:var(--giallo)}.chips span:nth-child(5n+4){background:var(--verde)}.chips span:nth-child(5n){background:var(--lilla)}
+.presets{display:flex;gap:10px;flex-wrap:wrap}
+.chip-btn{border:2px solid var(--line);background:transparent;border-radius:12px;padding:8px 16px;font-family:var(--f-display);font-weight:700;font-size:18px;letter-spacing:.06em;text-transform:uppercase}
+.chip-btn:hover{border-color:var(--giallo)}
+.ctxwin{display:flex;align-items:stretch;gap:12px;height:120px;overflow:hidden}
+.ctxwin .out{display:flex;gap:6px;align-items:stretch;opacity:.35;filter:grayscale(1)}
+.ctxwin .frame{flex:1;min-width:0;display:flex;gap:6px;justify-content:flex-end;padding:8px;border:3px solid var(--glow);border-radius:18px;box-shadow:0 0 30px -8px var(--glow)}
+.ctxwin .blk{display:grid;place-items:center;border-radius:10px;font-family:var(--f-display);font-weight:800;font-size:15px;letter-spacing:.06em;text-transform:uppercase;color:var(--paper-ink);background:var(--suit);overflow:hidden;white-space:nowrap;animation:pop .35s cubic-bezier(.2,.8,.2,1)}
+.ctxwin .out .blk{width:34px!important;font-size:0}
+.ctxcap{font-size:24px;line-height:1.35;color:var(--muted);margin:0;min-height:66px}
+
+/* sondaggi in diretta: sulla LIM i risultati, sul telefono i pulsanti */
+.poll{background:var(--panel);border-radius:22px;padding:20px 24px;display:flex;flex-direction:column;gap:12px;min-width:0}
+.poll-head{display:flex;align-items:center;gap:16px}
+.poll-head .qr-s{flex:none;width:112px;height:112px;padding:7px;background:#fff;border-radius:14px}
+.poll-head .qr-s img,.poll-head .qr-s canvas{width:100%!important;height:auto!important;display:block}
+.poll-head .qr-s p{color:#2A2045;font-size:12px;margin:0}
+.poll-join{flex:1;min-width:0}
+.poll-join b{display:block;font-family:var(--f-display);font-weight:800;font-size:16px;letter-spacing:.12em;text-transform:uppercase;color:var(--giallo)}
+.poll-join span{display:block;font-size:19px;line-height:1.3;color:var(--muted);margin-top:4px}
+.poll-meta{display:flex;align-items:center;gap:10px;font-family:var(--f-display);font-weight:800;font-size:16px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.poll-meta .dot{width:12px;height:12px;border-radius:50%;background:#7D6F92}
+.poll-meta.live .dot{background:#7FD49B;box-shadow:0 0 12px #7FD49B}
+.poll-meta button{margin-left:auto;border:2px solid var(--line);background:transparent;border-radius:10px;padding:4px 12px;font:inherit;letter-spacing:.08em}
+.poll-bars{display:grid;gap:10px}
+.pbar{display:grid;grid-template-columns:minmax(0,var(--lab,290px)) 1fr 64px;align-items:center;gap:14px;border:0;background:none;padding:0;text-align:left;color:var(--ink)}
+.pbar .lab{font-size:23px;line-height:1.15}
+.pbar .track{height:34px;border-radius:12px;background:rgba(255,255,255,.08);overflow:hidden}
+.pbar .fill{display:block;height:100%;width:0;background:var(--suit);border-radius:12px;transition:width .6s cubic-bezier(.2,.8,.2,1)}
+.pbar .n{font-family:var(--f-display);font-weight:800;font-size:26px;text-align:right;font-variant-numeric:tabular-nums}
+.remote{position:fixed;inset:0;z-index:8;overflow:auto;display:flex;flex-direction:column;gap:18px;max-width:560px;margin:0 auto;padding:calc(18px + env(safe-area-inset-top,0px)) 16px calc(24px + env(safe-area-inset-bottom,0px))}
+.remote[hidden],.rback[hidden],.poll-head[hidden]{display:none}
+body.remote-mode #deck,body.remote-mode .nav,body.remote-mode .ctrl{display:none}
+body.remote-mode{overflow:auto}
+.r-top{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.r-logo{font-family:var(--f-display);font-weight:800;font-size:30px;letter-spacing:-.02em}
+.r-logo sup{font-size:.45em;color:var(--rosso)}
+.r-st{display:flex;align-items:center;gap:8px;font-family:var(--f-display);font-weight:700;font-size:13px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.r-st .dot{width:10px;height:10px;border-radius:50%;background:#7D6F92}
+.r-st.live .dot{background:#7FD49B;box-shadow:0 0 10px #7FD49B}
+.r-body{display:flex;flex-direction:column;gap:14px;flex:1}
+.r-body h2{font-size:30px;line-height:1.15}
+.r-wait{display:flex;flex-direction:column;align-items:center;text-align:center;gap:10px;margin-top:6vh}
+.r-wait p{font-size:20px;line-height:1.4;color:var(--muted);margin:0;max-width:340px}
+.r-opt{display:flex;align-items:center;gap:12px;width:100%;text-align:left;background:var(--paper);color:var(--paper-ink);border:0;border-radius:18px;padding:16px 18px;font-family:var(--f-serif);font-weight:650;font-size:21px;line-height:1.2;box-shadow:0 5px 0 var(--suit-d)}
+.r-opt::before{content:"";flex:none;width:22px;height:22px;border-radius:50%;border:3px solid var(--suit-d)}
+.r-opt.sel{box-shadow:0 0 0 4px var(--glow),0 5px 0 var(--suit-d)}
+.r-opt.sel::before{background:var(--suit-d)}
+.r-opt:active{transform:translateY(3px);box-shadow:0 2px 0 var(--suit-d)}
+.r-res{display:grid;gap:8px;margin-top:4px}
+.r-res div{display:grid;grid-template-columns:minmax(0,1fr) 34px;gap:4px 10px;font-size:15px;color:var(--muted)}
+.r-res i{grid-column:1/-1;display:block;height:8px;border-radius:6px;background:rgba(255,255,255,.08);overflow:hidden}
+.r-res i b{display:block;height:100%;background:var(--suit);transition:width .6s}
+.r-res span:last-of-type{text-align:right;font-weight:700}
+.r-note{font-size:16px;color:var(--muted);margin:0}
+.r-deck,.rback{border:2px solid var(--line);background:var(--panel);color:var(--ink);border-radius:14px;padding:12px 18px;font-family:var(--f-display);font-weight:700;font-size:15px;letter-spacing:.08em;text-transform:uppercase}
+.rback{position:fixed;z-index:9;left:50%;transform:translateX(-50%);bottom:calc(14px + env(safe-area-inset-bottom,0px));background:var(--giallo);color:var(--paper-ink);border:0}
+@media (prefers-reduced-motion: reduce){.sky .tw,.fly,.mascot .halo,.bob,.ff .g,.slide.on,.chips span,.ctxwin .blk,.phrase .blank.pop{animation:none}.frag,.pbar .fill{transition:none}}
+</style>
+
+<svg class="sky" id="sky" aria-hidden="true"></svg>
+<svg class="forest" id="forest" viewBox="0 0 1440 240" preserveAspectRatio="xMidYMax slice" aria-hidden="true"></svg>
+
+<div id="deck"><div class="stage" id="stage">
+
+<!-- 0 · copertina -->
+<section class="slide" data-inc="0" data-title="Copertina" data-notes="Lasciatela sullo schermo mentre arrivano. Le frecce, la barra spaziatrice o un clic a destra fanno avanzare; N mostra le note, M l'indice, F lo schermo intero.">
+  <div class="row grow" style="align-items:center">
+    <div class="col grow" style="gap:26px">
+      <p class="eyebrow">Corso per docenti · laboratorio</p>
+      <h1 style="font-family:var(--f-display);font-weight:800;font-size:190px;letter-spacing:-.03em">IDEA<sup style="font-size:.42em;color:var(--rosso);vertical-align:.95em">IA</sup></h1>
+      <p class="lead">Dieci ore per passare dall'idea allo strumento, con Claude.</p>
+    </div>
+    <div data-mascot="happy" style="width:380px"></div>
+  </div>
+</section>
+
+<!-- INCONTRO 1 -->
+<section class="slide sec" data-inc="1" data-title="Incontro 1 · Tutto è testo" data-notes="La prima firefly del sentiero. Durata dell'incontro: 2 ore.">
+  <span class="num">Incontro 1</span><h1>Tutto è <em>testo</em></h1><div class="ffrow" data-ffrow="1"></div>
+</section>
+
+<section class="slide" data-inc="1" data-title="Provate questi strumenti" data-timer="35" data-notes="È anche l'accoglienza: chi arriva trova subito una postazione da provare, senza aspettare gli altri. Non spiegate come sono stati fatti. Postazioni sparse per l'aula: i docenti girano e provano. Wolf Escape e Wolf Padel danno il meglio con il visore VR; Wolf Padel funziona anche con webcam e smartphone. Ulù è online su comprensivoalmese.github.io/lingue-ulu.">
+  <p class="eyebrow">Prima di spiegare · fatti con Claude</p>
+  <h2>Provate questi <em>strumenti</em></h2>
+  <div class="tools">
+    <div class="pcard c-rosso"><span class="k">Suona · Vede</span><h3>Theremin</h3><p>Si suona muovendo le mani nell'aria, senza toccare niente.</p></div>
+    <div class="pcard c-blu"><span class="k">Vede · Suona</span><h3>Direttore d'orchestra</h3><p>Si dirige con il gesto: levare, schemi, sezioni che entrano.</p></div>
+    <div class="pcard c-verde"><span class="k">Ascolta · Suona</span><h3>Aula sonora</h3><p>Ascolta la stanza e la trasforma in musica: le voci diventano melodia, i rumori percussione.</p></div>
+    <div class="pcard c-lilla"><span class="k">Gioca · Esplora</span><h3>Wolf Escape</h3><p>Escape room 3D, anche con il visore: 13 discipline, 154 stanze, 770 enigmi sul programma delle medie.</p></div>
+    <div class="pcard c-giallo"><span class="k">Parla · Ricorda</span><h3>Ulù</h3><p>Le lingue della notte: inglese, francese, tedesco, italiano L2 e Python, dal livello A0 al C2, con racconti narrati.</p></div>
+    <div class="pcard c-blu"><span class="k">Simula · Esplora</span><h3>Lupus in Tempore</h3><p>L'atlante del tempo: un globo con confini, città, popolazione e ambiente dalla preistoria a oggi.</p></div>
+    <div class="pcard c-rosso"><span class="k">Vede · Gioca</span><h3>Wolf Padel</h3><p>Padel 3D in doppio con le regole vere: si gioca con il visore, oppure con webcam e smartphone.</p></div>
+    <div class="tools-cta"><p>Non vi dico come sono fatti.</p><p><em>Provateli.</em></p></div>
+  </div>
+</section>
+
+<section class="slide" data-inc="1" data-title="Quanto tempo ci è voluto?" data-notes="Primo sondaggio: serve anche a far entrare tutti nella sala. I docenti inquadrano il QR con il telefono (devono avere accesso alla presentazione con il loro account Claude) e votano: le barre crescono in diretta. Chi non riesce alza la mano: un clic su una barra aggiunge un voto, Maiusc+clic lo toglie. Chiedete anche che competenze servivano. Poi avanzate: arriva la risposta.">
+  <p class="eyebrow">Una domanda</p>
+  <div class="row" style="align-items:flex-start">
+    <h2 class="grow" style="font-size:84px">Quanto tempo ci è voluto per farli?</h2>
+    <div class="poll" style="width:700px;--lab:190px" data-poll="tempo" data-q="Quanto tempo ci è voluto per fare questi strumenti?" data-o="Un pomeriggio|Una settimana|Un mese|Sei mesi o più"></div>
+  </div>
+  <h1 class="frag" style="font-size:130px;color:var(--giallo);font-style:italic;font-weight:400">Una conversazione.</h1>
+  <p class="lead frag">Nessuna riga di codice scritta a mano: domande, prove e correzioni, in italiano.</p>
+</section>
+
+<section class="slide" data-inc="1" data-title="Indovina la parola" data-notes="Votano la parola che secondo loro viene dopo. Le barre della sala sono una distribuzione di probabilità: è esattamente ciò che calcola un modello linguistico, su decine di migliaia di pezzi di parola invece che su cinque. Poi pescate: con la temperatura bassa esce quasi sempre la più votata, alzandola escono anche le meno votate. Pescate più volte con lo stesso valore: la stessa frase finisce in modi diversi. Nelle chat la temperatura non si regola: per questo la stessa domanda dà risposte un po' diverse ogni volta, e chiedere tre varianti funziona. Se nessuno vota, la pesca usa probabilità di esempio.">
+  <p class="eyebrow">Che cos'è un modello linguistico</p>
+  <h2>Indovina la parola <em>che viene dopo</em></h2>
+  <p class="phrase">Oggi in classe abbiamo fatto un <span class="blank" id="blank">…</span></p>
+  <div class="row grow" style="min-height:0">
+    <div class="poll grow" data-poll="parola" data-q="Oggi in classe abbiamo fatto un… Quale parola viene dopo?" data-o="compito|esperimento|disastro|gioco|capolavoro"></div>
+    <div class="panel temp" style="width:470px">
+      <h3>Pesca come un modello</h3>
+      <label for="tempin"><span>Temperatura</span><span id="tempval">0,7</span></label>
+      <input type="range" id="tempin" min="0" max="2" step="0.1" value="0.7">
+      <p class="hint" id="temphint"></p>
+      <div><button class="btn" id="pickbtn">Pesca la parola</button></div>
+      <div class="picks" id="picks" aria-live="polite"></div>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-inc="1" data-title="Come impara" data-notes="Nessuno ha scritto dentro il modello le regole della grammatica o del codice: le ha ricavate dagli esempi, a forza di prevedere la parola nascosta. Il terzo passaggio lo trasforma da completatore di testi in un assistente con cui si dialoga. Non sa che cosa è successo dopo la fine dei suoi testi, a meno che non cerchi sul web.">
+  <p class="eyebrow">Che cos'è un modello linguistico</p>
+  <h2>Come <em>impara</em></h2>
+  <div class="row" style="align-items:stretch;margin-top:10px">
+    <div class="pcard grow frag c-blu"><span class="k">1 · Legge</span><h3>Una quantità enorme di testi</h3><p>Libri, articoli, siti, codice: molto più di quanto una persona leggerebbe in mille vite.</p></div>
+    <div class="pcard grow frag c-giallo"><span class="k">2 · Si allena</span><h3>Indovina la parola nascosta</h3><p>Sbaglia, si corregge, riprova. Miliardi di volte. Così ricava da solo grammatica, stili, ragionamenti, linguaggi di programmazione.</p></div>
+    <div class="pcard grow frag c-verde"><span class="k">3 · Diventa assistente</span><h3>Persone valutano le risposte</h3><p>Impara a essere utile, chiaro e prudente: da completatore di testi a collega con cui dialogare.</p></div>
+  </div>
+</section>
+
+<section class="slide" data-inc="1" data-title="Sbaglia con sicurezza" data-notes="Prova dal vivo: chiedete a Claude una citazione precisa di un autore poco noto, con pagina ed edizione, e controllate insieme. Poi la stessa domanda con la ricerca web attiva. Per gli strumenti il rischio è più basso: se il codice non funziona lo si vede subito, e lo si fa correggere. I contenuti dentro lo strumento invece vanno controllati come quelli di un libro.">
+  <p class="eyebrow">Che cos'è un modello linguistico</p>
+  <h2>Sembra capire. <em>A volte inventa.</em></h2>
+  <div class="row" style="margin-top:6px">
+    <div class="col grow panel"><span class="eyebrow" style="color:var(--verde)">Perché funziona</span><p class="dq">Ha visto moltissimi esempi di come si spiega, si ragiona, si scrive codice. Li ricombina in modo nuovo per ogni richiesta.</p></div>
+    <div class="col grow panel"><span class="eyebrow" style="color:var(--rosso)">Perché sbaglia</span><p class="dq">Scrive ciò che è <i>plausibile</i>, non per forza ciò che è vero. Con lo stesso tono sicuro.</p></div>
+  </div>
+  <div class="row frag" style="align-items:center">
+    <ul class="ticks grow"><li>Date, citazioni, fonti: si verificano sempre.</li><li>Il codice si verifica da solo: o funziona, o no.</li></ul>
+    <p class="dq" style="color:var(--giallo);width:520px;text-align:right">Il giudizio resta nostro.</p>
+  </div>
+</section>
+
+<section class="slide" data-inc="1" data-title="Il testo a pezzi" data-notes="Scrivete una frase o usate i tre esempi: Claude non vede lettere né parole, vede pezzi di testo, e ne scrive uno alla volta. I pezzi qui sono un esempio illustrativo: quelli veri dipendono dal modello. Fate notare che uno spartito e una riga di codice si spezzano esattamente come Dante: per il modello sono la stessa cosa. È il ponte verso la slide seguente.">
+  <p class="eyebrow">Che cosa vede Claude</p>
+  <h2>Il testo <em>a pezzi</em></h2>
+  <div class="row" style="align-items:center">
+    <input class="tokin grow" id="tokin" value="Nel mezzo del cammin di nostra vita" aria-label="Scrivete una frase" autocomplete="off" spellcheck="false">
+    <div class="presets"><button class="chip-btn" data-tok="Nel mezzo del cammin di nostra vita">Dante</button><button class="chip-btn" data-tok="X:1 K:C C D E F | G2 G2 |">Spartito</button><button class="chip-btn" data-tok='&lt;circle r="40" fill="red"/&gt;'>Disegno</button></div>
+  </div>
+  <div class="chips" id="chips"></div>
+  <div class="row" style="align-items:flex-end;margin-top:auto">
+    <p class="lead grow" style="color:var(--ink)">Parole, note, codice: per Claude sono <em style="color:var(--giallo)">pezzi di testo</em>. Ne scrive uno alla volta.</p>
+    <p class="poll-meta" id="tokcount" style="margin:0"></p>
+  </div>
+</section>
+
+<section class="slide" data-inc="1" data-title="Tutto è testo" data-notes="Claude prevede il testo parola dopo parola. Ma uno spartito, un disegno, un'app sono testo: per questo può costruire strumenti.">
+  <h2 style="font-size:96px">Claude sa solo scrivere testo.</h2>
+  <h2 class="frag" style="font-size:96px"><em>Ma quasi tutto è testo.</em></h2>
+  <div class="row frag" style="margin-top:20px">
+    <div class="col grow"><span class="eyebrow" style="color:var(--blu)">Uno spartito</span><div class="code">X:1
+K:C
+C D E F | G2 G2 |</div></div>
+    <div class="col grow"><span class="eyebrow" style="color:var(--rosso)">Un disegno</span><div class="code">&lt;circle r="40"
+  fill="red"/&gt;</div></div>
+    <div class="col grow"><span class="eyebrow" style="color:var(--verde)">Uno strumento</span><div class="code">&lt;button
+  onclick="suona(440)"&gt;
+La&lt;/button&gt;</div></div>
+  </div>
+</section>
+
+<section class="slide" data-inc="1" data-title="Avere l'idea" data-notes="È la tesi del corso. Fermatevi qualche secondo.">
+  <div class="col grow" style="justify-content:center">
+    <h2 style="font-size:110px">Il limite non è la tecnologia.</h2>
+    <h1 class="frag" style="font-size:170px"><em>È avere l'idea.</em></h1>
+  </div>
+</section>
+
+<section class="slide" data-inc="1" data-title="Detto male, detto bene" data-notes="Fatelo dal vivo in Claude: prima la richiesta corta, poi quella completa. Mostrate i due risultati affiancati.">
+  <p class="eyebrow">La stessa richiesta</p>
+  <h2>Detto male, <em>detto bene</em></h2>
+  <div class="row grow">
+    <div class="col grow panel"><span class="eyebrow" style="color:var(--rosso)">Detto così</span><p class="dq">«Fammi un gioco.»</p><div class="pcard frag" style="margin-top:auto"><p style="margin:0">Un quiz generico, per nessuno in particolare. Bisogna rifare quasi tutto.</p></div></div>
+    <div class="col grow panel"><span class="eyebrow" style="color:var(--verde)">Detto così</span><p class="dq">«Crea un gioco per una seconda primaria sulle doppie: lo strumento legge una parola ad alta voce e il bambino sceglie come si scrive. Parti da una versione minima.»</p><div class="pcard frag" style="margin-top:auto"><p style="margin:0">Un gioco usabile subito, per quella classe, con la voce. Si migliora a piccoli passi.</p></div></div>
+  </div>
+</section>
+
+<section class="slide" data-inc="1" data-title="Che cosa ricorda" data-notes="Aggiungete domande, PDF e strumenti: la finestra si riempie e le parti più vecchie escono. È ciò che succede nelle chat lunghissime: i dettagli dell'inizio si perdono o vengono riassunti, e le risposte peggiorano. Il rimedio: un riassunto e una chat nuova. Nuova chat svuota la finestra: ogni chat parte da zero, salvo ciò che sta nel progetto o nella memoria. Suggerite di creare subito un progetto «Corso» con dentro la scheda progetto.">
+  <p class="eyebrow">Come si lavora con Claude</p>
+  <h2>Che cosa <em>ricorda</em></h2>
+  <div class="row grow" style="min-height:0">
+    <div class="col grow" style="gap:16px">
+      <span class="eyebrow" style="color:var(--muted);font-size:17px">La finestra: tutto ciò che Claude vede in questa chat</span>
+      <div class="ctxwin" id="ctxwin"></div>
+      <div class="presets"><button class="chip-btn" data-ctx="q">+ Domanda e risposta</button><button class="chip-btn" data-ctx="pdf">+ Un PDF</button><button class="chip-btn" data-ctx="app">+ Uno strumento</button><button class="chip-btn" data-ctx="new">Nuova chat</button></div>
+      <p class="ctxcap" id="ctxcap"></p>
+    </div>
+    <div class="panel col" style="width:560px"><ul class="ticks"><li>Ogni chat nuova parte da zero.</li><li><span>Un <b>progetto</b> tiene istruzioni e file per tutte le sue chat.</span></li><li><span>La <b>memoria</b>, se è attiva, ricorda alcune cose tra una chat e l'altra.</span></li><li>Chat troppo lunga? Un riassunto, e si riparte.</li></ul></div>
+  </div>
+</section>
+
+<section class="slide" data-inc="1" data-title="Le regole" data-notes="Il quadro in un minuto. Le Linee guida del Ministero sono state adottate con il D.M. 166 del 9 agosto 2025 e chiedono a ogni scuola un Piano d'Istituto per l'IA. L'AI Act (Reg. UE 2024/1689), articolo 4, dal 2 febbraio 2025 chiede a chi usa l'IA nel lavoro un'alfabetizzazione adeguata: questo corso ne fa parte. La legge italiana 132/2025, articolo 4, in vigore dal 10 ottobre 2025: sotto i 14 anni l'accesso alle tecnologie di IA richiede il consenso dei genitori. Claude in più è riservato ai maggiorenni: agli studenti arriva lo strumento finito, non la chat. Privacy: niente dati degli alunni; quando serve un materiale personale (le foto per la CAA) lo strumento le carica dal dispositivo della scuola, senza passarle a Claude. Nelle impostazioni di Claude, alla voce Privacy, si sceglie se le chat possono servire ad addestrare i modelli: verificatela insieme.">
+  <p class="eyebrow">Responsabilità</p>
+  <h2>Il docente resta <em>l'autore</em></h2>
+  <div class="tools" style="grid-template-columns:repeat(2,minmax(0,1fr));gap:20px">
+    <div class="pcard c-blu"><span class="k">Linee guida MIM · D.M. 166/2025</span><h3>Un piano per ogni scuola</h3><p>L'IA a scuola dentro un Piano d'Istituto, con la persona al centro e il docente che decide.</p></div>
+    <div class="pcard c-lilla"><span class="k">AI Act · articolo 4</span><h3>Chi usa l'IA si forma</h3><p>Chi la usa nel lavoro deve saperla usare con consapevolezza. Questo corso serve anche a questo.</p></div>
+    <div class="pcard c-giallo"><span class="k">Legge 132/2025 · Claude 18+</span><h3>Agli studenti, gli strumenti</h3><p>Sotto i 14 anni serve il consenso dei genitori, e Claude è solo per maggiorenni: agli studenti arriva lo strumento finito.</p></div>
+    <div class="pcard c-verde"><span class="k">Privacy</span><h3>Bisogni, non persone</h3><p>Niente nomi, diagnosi, certificazioni o foto degli alunni. Nelle impostazioni di Claude controllate la voce Privacy.</p></div>
+  </div>
+</section>
+
+<section class="slide" data-inc="1" data-title="Installate Claudio · Le basi" data-timer="25" data-notes="Prima 5 minuti per installare: chi ha un iPhone usa Safari, chi ha Android usa Chrome; il link apre l'app anche senza installarla. Poi a coppie: una lezione a testa, poi si scambiano il telefono. Prima di ogni lezione Claudio mostra la guida con la schermata.">
+  <p class="eyebrow">Ora conosciamo Claude da vicino</p>
+  <div class="row grow">
+    <div class="col grow"><h2>Installate <em>Claudio</em></h2>
+      <ol class="steps" style="margin-top:6px"><li>Inquadrate il codice. Android: menu ⋮, «Installa app». iPhone: Condividi, «Aggiungi alla schermata Home».</li><li><span>Aprite il percorso <b>Le basi</b>, a coppie: una lezione a testa, poi vi scambiate il telefono.</span></li><li>Prima di ogni lezione leggete la guida con la schermata. Gli errori tornano alla fine.</li></ol></div>
+    <div class="col" style="align-items:center"><div class="qr" data-qr="#basi"></div><p class="url" data-url="#basi"></p></div>
+  </div>
+</section>
+
+<section class="slide" data-inc="1" data-title="Primo strumento lampo" data-timer="30" data-notes="Tutti sullo stesso strumento semplice: l'attenzione va al modo di chiedere e correggere. Girate tra i tavoli e raccogliete le trasformazioni più curiose.">
+  <p class="eyebrow">Adesso tocca a voi</p>
+  <h2>Il vostro primo <em>strumento</em></h2>
+  <div class="row grow">
+    <div class="col grow"><p class="lead" style="color:var(--ink)">Un estrattore di nomi o un timer per la vostra classe.</p><p class="lead">Poi trasformatelo: «rendilo più…», «aggiungi…», «e se…?»</p></div>
+    <div class="panel col" style="width:620px"><h3>Tre regole</h3><ul class="ticks"><li>Una richiesta alla volta.</li><li>Se non va, dite che cosa vedete e che cosa vi aspettavate.</li><li>Salvate la versione che funziona.</li></ul></div>
+  </div>
+</section>
+
+<section class="slide" data-inc="1" data-title="Il diario dei bisogni" data-timer="5" data-notes="Compito per la settimana. I diari saranno la materia prima delle idee nel secondo incontro.">
+  <p class="eyebrow">Per la prossima volta</p>
+  <h2>Il diario dei <em>bisogni</em></h2>
+  <p class="lead">Per una settimana, ogni volta che in classe pensate «mi servirebbe qualcosa che…», scrivetelo.</p>
+  <div class="row" style="margin-top:20px">
+    <div class="postit grow" style="--r:-2deg">…che faccia sentire il ritmo a chi non riesce a seguirlo.</div>
+    <div class="postit rosa grow" style="--r:1.5deg">…che mostri quanto manca alla fine del compito.</div>
+    <div class="postit azz grow" style="--r:-1deg">…che legga ad alta voce le consegne.</div>
+  </div>
+</section>
+
+<!-- INCONTRO 2 -->
+<section class="slide sec" data-inc="2" data-title="Incontro 2 · Avere l'idea" data-notes="Si accende la seconda firefly.">
+  <span class="num">Incontro 2</span><h1>Avere l'<em>idea</em></h1><div class="ffrow" data-ffrow="2"></div>
+</section>
+
+<section class="slide" data-inc="2" data-title="Firefly del giorno" data-timer="5" data-notes="Rituale di apertura di ogni incontro: un docente mostra una cosa riuscita, oppure un errore buffo e come l'ha risolto.">
+  <div class="row grow" style="align-items:center">
+    <div class="col grow"><p class="eyebrow">Ogni incontro si apre così</p><h2>Firefly <em>del giorno</em></h2><p class="lead">Due minuti: una cosa che vi è riuscita, oppure un errore buffo e come l'avete risolto.</p></div>
+    <div data-mascot="wow" style="width:320px"></div>
+  </div>
+</section>
+
+<section class="slide" data-inc="2" data-title="Leggiamo i diari" data-timer="15" data-notes="Un bisogno a testa, scritto alla lavagna. Non si giudica, si raccoglie.">
+  <p class="eyebrow">Dai diari dei bisogni</p>
+  <h2>«Mi servirebbe qualcosa <em>che…</em>»</h2>
+  <p class="lead">A turno, un bisogno a testa. Li scriviamo alla lavagna: sono la materia prima delle idee.</p>
+</section>
+
+<section class="slide" data-inc="2" data-title="Le carte delle idee" data-timer="40" data-notes="Tre giri. Valgono anche le idee assurde. Il mazzo completo è nelle Carte delle idee, sulla LIM o stampato.">
+  <p class="eyebrow">Concetto × Superpotere × Contesto × Chi</p>
+  <h2>Le carte delle <em>idee</em></h2>
+  <div class="row grow">
+    <div class="col" style="width:470px"><ol class="steps"><li>Pescate una carta per mazzo.</li><li>Rispondete alla domanda: che strumento potrebbe essere? Cinque minuti.</li><li>Tre giri, poi scegliete l'idea migliore.</li></ol></div>
+    <div class="col grow">
+      <div class="draw" id="draw"></div>
+      <p class="dq" id="dq"></p>
+      <div><button class="btn" id="drawbtn">Pesca le carte</button></div>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-inc="2" data-title="Il muro delle idee" data-notes="Scrivete qui le idee più belle (anche da tastiera mentre i gruppi parlano). Ogni docente ha tre bollini: un clic su un post-it aggiunge un bollino, Maiusc+clic lo toglie.">
+  <div class="row" style="align-items:flex-end;justify-content:space-between"><div class="col" style="gap:8px"><p class="eyebrow">Tre bollini a testa</p><h2>Il muro delle <em>idee</em></h2></div>
+  <form class="wallform" id="wallform" style="width:760px"><input id="wallin" placeholder="Scrivi un'idea e premi Invio" autocomplete="off" aria-label="Nuova idea"><button class="btn" type="submit">Attacca</button></form></div>
+  <div class="wall" id="wall"></div>
+</section>
+
+<section class="slide" data-inc="2" data-title="Il filtro" data-notes="Un'idea passa se risponde bene a tutte e tre le domande.">
+  <p class="eyebrow">Prima di costruire</p>
+  <h2>Il <em>filtro</em></h2>
+  <ol class="steps" style="margin-top:16px">
+    <li class="frag" style="font-size:40px">Che cosa fa che la lavagna o il libro non possono fare?</li>
+    <li class="frag" style="font-size:40px">Chi lo usa, e con quale gesto?</li>
+    <li class="frag" style="font-size:40px">Si capisce come si usa in un minuto?</li>
+  </ol>
+</section>
+
+<section class="slide" data-inc="2" data-title="Gruppi e scheda progetto" data-timer="45" data-notes="I gruppi si formano attorno alle idee con più bollini. La scheda compone da sola il primo prompt.">
+  <p class="eyebrow">Si forma la squadra</p>
+  <h2>Gruppi e <em>scheda progetto</em></h2>
+  <ol class="steps" style="margin-top:14px"><li>Gruppi da due o tre, attorno alle idee con più bollini.</li><li>Compilate la scheda progetto, facciata 1: le carte, l'idea, il filtro, come funziona, per tutti.</li><li>Alla fine la scheda vi dà il primo prompt, pronto per Claude.</li></ol>
+</section>
+
+<!-- INCONTRO 3 -->
+<section class="slide sec" data-inc="3" data-title="Incontro 3 · Costruire" data-notes="Si accende la terza firefly. Aprite con la firefly del giorno.">
+  <span class="num">Incontro 3</span><h1>Costruire <em>parlando</em></h1><div class="ffrow" data-ffrow="3"></div>
+</section>
+
+<section class="slide" data-inc="3" data-title="Il prompt del progettista" data-notes="Ogni parte evidenziata risponde a una domanda: per chi, a che cosa serve, dove, come si usa, da dove partire.">
+  <p class="eyebrow">Come si chiede</p>
+  <h2>Il prompt del <em>progettista</em></h2>
+  <div class="panel" style="font-family:var(--f-serif);font-size:40px;line-height:1.55;margin-top:10px">Crea uno strumento interattivo <span class="hl">per una terza primaria</span> che aiuti a <span class="hl">fondere le sillabe</span>. Si userà <span class="hl">sulla LIM</span>. Chi lo usa <span class="hl">tocca due sillabe e sente la parola</span>. Parti da una <span class="hl">versione minima</span>: poi la miglioriamo insieme.</div>
+</section>
+
+<section class="slide" data-inc="3" data-title="Al lavoro" data-timer="90" data-notes="Girate tra i gruppi come consulenti. Chi si blocca apre Claudio, percorso Avanzato: connettori, file, skill.">
+  <p class="eyebrow">Novanta minuti</p>
+  <div class="row grow">
+    <div class="col grow"><h2>Si costruisce a <em>piccoli passi</em></h2>
+      <ul class="ticks" style="margin-top:8px"><li>Partite dalla versione minima.</li><li>Una richiesta alla volta.</li><li>Mostrate che cosa non va: uno screenshot o una descrizione precisa.</li><li>Chiedete tre varianti quando siete in dubbio.</li><li>Salvate (o pubblicate) la versione che funziona.</li></ul></div>
+    <div class="col panel" style="align-items:center;width:420px"><h3 style="text-align:center">Bloccati? <em style="color:var(--giallo)">Claudio</em>, percorso Avanzato</h3><div class="qr" data-qr="#avanzato" style="width:260px;height:260px"></div></div>
+  </div>
+</section>
+
+<section class="slide" data-inc="3" data-title="Prova incrociata" data-timer="30" data-notes="Chi ha costruito lo strumento non parla: guarda e prende appunti nella scheda, sezione 8.">
+  <p class="eyebrow">Senza spiegazioni</p>
+  <h2>La prova <em>incrociata</em></h2>
+  <ol class="steps" style="margin-top:14px"><li>Ogni gruppo usa lo strumento di un altro gruppo.</li><li>Chi l'ha costruito non spiega niente: guarda.</li><li>Dove si bloccano? Si scrive nella scheda progetto.</li></ol>
+</section>
+
+<section class="slide" data-inc="3" data-title="La prova in classe" data-notes="Tra il terzo e il quarto incontro. I post-it degli studenti tornano al quarto incontro e finiscono sul cartellino della fiera.">
+  <p class="eyebrow">Tra il terzo e il quarto incontro</p>
+  <h2>La prova in <em>classe</em></h2>
+  <p class="lead">Usate lo strumento con una classe, anche solo dieci minuti. Ogni studente lascia un post-it:</p>
+  <div class="row" style="margin-top:14px">
+    <div class="postit grow" style="--r:-2deg">Mi è piaciuto…</div>
+    <div class="postit verde grow" style="--r:1.2deg">Cambierei…</div>
+    <div class="postit rosa grow" style="--r:-1deg">Lo userei per…</div>
+  </div>
+  <p class="lead">Portate i post-it: finiranno sul cartellino della fiera.</p>
+</section>
+
+<!-- INCONTRO 4 -->
+<section class="slide sec" data-inc="4" data-title="Incontro 4 · Pubblicare" data-notes="Si accende la quarta firefly.">
+  <span class="num">Incontro 4</span><h1>Dalla classe <em>al web</em></h1><div class="ffrow" data-ffrow="4"></div>
+</section>
+
+<section class="slide" data-inc="4" data-title="Racconti dalla classe" data-timer="50" data-notes="Prima i racconti, poi la versione 2 con la checklist per tutti della scheda.">
+  <p class="eyebrow">Che cosa è successo?</p>
+  <h2>Racconti dalla classe e <em>versione 2</em></h2>
+  <div class="row grow" style="margin-top:6px">
+    <ul class="ticks grow"><li>Leggete i post-it degli studenti.</li><li>Che cosa hanno fatto che non vi aspettavate?</li><li>Che cosa cambiate nella versione 2?</li></ul>
+    <div class="panel col" style="width:560px"><h3>Per tutti</h3><ul class="ticks"><li>Testi grandi, contrasto forte.</li><li>Anche senza audio.</li><li>Un solo tasto basta.</li><li>Niente fretta obbligatoria.</li></ul></div>
+  </div>
+</section>
+
+<section class="slide" data-inc="4" data-title="Claudio · GitHub" data-timer="25" data-notes="Il percorso GitHub di Claudio: repository, commit, GitHub Pages, lavorare insieme.">
+  <p class="eyebrow">Con Claudio</p>
+  <div class="row grow">
+    <div class="col grow"><h2>Percorso <em>GitHub</em></h2><ul class="ticks" style="margin-top:10px"><li>Repository: la cartella con la memoria.</li><li>Commit: un salvataggio con un messaggio.</li><li>GitHub Pages: il vostro strumento diventa un sito.</li></ul></div>
+    <div class="col" style="align-items:center"><div class="qr" data-qr="#github"></div><p class="url" data-url="#github"></p></div>
+  </div>
+</section>
+
+<section class="slide" data-inc="4" data-title="Pubblicare" data-timer="45" data-notes="Ogni gruppo pubblica la versione 2 e prepara il cartellino della fiera con il QR del proprio strumento.">
+  <p class="eyebrow">Il vostro strumento, online</p>
+  <h2>Pubblicate con <em>GitHub Pages</em></h2>
+  <div class="row grow">
+    <ol class="steps grow"><li>Scaricate il file HTML dello strumento.</li><li>Nuovo repository, Add file, Upload files: caricatelo come index.html.</li><li>Settings, Pages: ramo main, cartella principale, Save.</li><li>Dopo qualche minuto: nomeutente.github.io/nome-repository.</li><li>Preparate il cartellino della fiera, con il QR.</li></ol>
+  </div>
+</section>
+
+<section class="slide" data-inc="4" data-title="Accendete la vostra firefly" data-notes="Ogni gruppo scrive il nome dello strumento e il link pubblico: nel bosco si accende la sua firefly. Il bosco resta in questo browser.">
+  <div class="row" style="align-items:flex-end;justify-content:space-between"><div class="col" style="gap:8px"><p class="eyebrow">Firefly Forest</p><h2>Accendete la vostra <em>firefly</em></h2></div><span class="ffcount" id="ffcount"></span></div>
+  <form class="ffform" id="ffform"><input id="ffname" placeholder="Nome dello strumento" autocomplete="off" aria-label="Nome dello strumento"><input id="ffgroup" placeholder="Gruppo" autocomplete="off" aria-label="Gruppo" style="flex:.5"><input id="fflink" placeholder="https://…github.io/…" autocomplete="off" aria-label="Link dello strumento"><button class="btn" type="submit">Accendi</button></form>
+  <div class="forestbox" data-forest="edit"></div>
+</section>
+
+<!-- INCONTRO 5 -->
+<section class="slide sec" data-inc="5" data-title="Incontro 5 · La fiera" data-notes="Si accende l'ultima firefly.">
+  <span class="num">Incontro 5</span><h1>La <em>fiera</em></h1><div class="ffrow" data-ffrow="5"></div>
+</section>
+
+<section class="slide" data-inc="5" data-title="Fiera degli strumenti" data-timer="60" data-notes="Ultima mezz'ora aperta al dirigente e a una classe di studenti come collaudatori.">
+  <p class="eyebrow">Sessanta minuti</p>
+  <h2>La fiera degli <em>strumenti</em></h2>
+  <div class="row grow" style="margin-top:6px">
+    <div class="pcard grow c-giallo"><span class="k">Chi presenta</span><h3>Una postazione per gruppo</h3><p>Il cartellino con il QR, lo strumento acceso, i post-it degli studenti.</p></div>
+    <div class="pcard grow c-verde"><span class="k">Chi visita</span><h3>Il passaporto</h3><p>Un timbro per ogni strumento provato, e un post-it «Io lo userei per…».</p></div>
+  </div>
+</section>
+
+<section class="slide" data-inc="5" data-title="I premi" data-notes="Si contano i voti dei passaporti e si svelano i premi uno alla volta.">
+  <p class="eyebrow">Dai passaporti</p>
+  <h2>I <em>premi</em></h2>
+  <div class="row" style="flex-wrap:wrap;margin-top:6px">
+    <div class="pcard frag c-rosso" style="width:440px"><span class="k">Premio</span><h3>Il più sorprendente</h3><p>Quello che non immaginavi si potesse fare.</p></div>
+    <div class="pcard frag c-blu" style="width:440px"><span class="k">Premio</span><h3>Lo uso domattina</h3><p>Quello che porteresti subito in classe.</p></div>
+    <div class="pcard frag c-giallo" style="width:440px"><span class="k">Premio</span><h3>Semplice ma geniale</h3><p>Poca tecnica, grande idea.</p></div>
+    <div class="pcard frag c-verde" style="width:440px"><span class="k">Premio</span><h3>Nessuno escluso</h3><p>Quello pensato davvero per tutti.</p></div>
+    <div class="pcard frag c-rosso" style="width:440px"><span class="k">Premio</span><h3>Il più rumoroso</h3><p>Perché una fiera deve anche suonare.</p></div>
+  </div>
+</section>
+
+<section class="slide" data-inc="5" data-title="Firefly Forest" data-notes="Il bosco con tutte le fireflies accese: un clic su una firefly apre lo strumento.">
+  <div class="row" style="align-items:flex-end;justify-content:space-between"><div class="col" style="gap:8px"><p class="eyebrow">Il bosco della scuola</p><h2>Firefly <em>Forest</em></h2></div><span class="ffcount" data-ffcount=""></span></div>
+  <div class="forestbox" data-forest="view"></div>
+</section>
+
+<section class="slide" data-inc="5" data-title="Questionario finale" data-timer="5" data-form data-notes="Il link del modulo Google si crea una volta sola con lo script della Segreteria del corso (scheda Questionario). Incollatelo qui sotto: diventa un QR e resta in questo browser. Chi è collegato alla sala dal telefono trova anche il pulsante per aprirlo. Il foglio di carta è nella Segreteria, per chi preferisce.">
+  <p class="eyebrow">Cinque minuti, anonimo</p>
+  <div class="row grow" style="align-items:center">
+    <div class="col grow"><h2>Il questionario <em>finale</em></h2>
+      <p class="lead">Ci aiuta a migliorare il corso e a capire se ne volete un secondo livello.</p>
+      <form class="wallform" id="formform" style="margin-top:10px"><input id="formin" placeholder="Incollate il link del modulo Google" autocomplete="off" aria-label="Link del questionario"><button class="btn" type="submit">Crea il QR</button></form></div>
+    <div class="col" style="align-items:center"><div class="qr" id="formqr"></div><p class="url" id="formurl"></p></div>
+  </div>
+</section>
+
+<section class="slide" data-inc="5" data-title="Che cosa vi portate a casa" data-notes="Ultimo sondaggio dal telefono, poi un giro veloce: chi vuole racconta la sua risposta.">
+  <div class="row grow" style="align-items:center">
+    <div class="col grow"><p class="eyebrow">Per chiudere</p><h2>Che cosa vi portate <em>a casa?</em></h2>
+      <div class="poll" style="margin-top:14px" data-poll="casa" data-q="Che cosa vi portate a casa da questo corso?" data-o="Un'idea che non avevo|Uno strumento che userò domani|Una cosa da insegnare a un collega|La voglia di costruirne altri"></div></div>
+    <div data-mascot="happy" style="width:300px"></div>
+  </div>
+</section>
+
+<div class="trail" id="trail"></div>
+</div></div>
+
+<button class="nav prev" id="prev" aria-label="Indietro">‹</button>
+<button class="nav next" id="next" aria-label="Avanti">›</button>
+<div class="ctrl">
+  <button id="bmenu" aria-label="Indice delle slide (M)" title="Indice (M)"><svg viewBox="0 0 24 24"><path d="M3 5h18v2H3Zm0 6h18v2H3Zm0 6h18v2H3Z"/></svg></button>
+  <button id="bnotes" aria-label="Note per chi parla (N)" title="Note (N)"><svg viewBox="0 0 24 24"><path d="M5 3h10l4 4v14H5Zm2 2v14h10V8h-3V5Zm2 6h6v2H9Zm0 4h6v2H9Z"/></svg></button>
+  <button id="bfull" aria-label="Schermo intero (F)" title="Schermo intero (F)"><svg viewBox="0 0 24 24"><path d="M4 4h6v2H6v4H4Zm10 0h6v6h-2V6h-4ZM4 14h2v4h4v2H4Zm14 0h2v6h-6v-2h4Z"/></svg></button>
+</div>
+<div class="notes" id="notes" hidden></div>
+<div class="menu" id="menu" hidden><div class="in" id="menuin"></div><p class="help">Frecce, barra spaziatrice o clic ai lati per avanzare · N note · M indice · F schermo intero · Esc chiude.</p></div>
+<p class="sr" id="live" aria-live="polite"></p>
+<div class="remote" id="remote" hidden>
+  <div class="r-top"><span class="r-logo">IDEA<sup>IA</sup></span><span class="r-st" id="rst"><span class="dot"></span><span id="rsttxt">In collegamento…</span></span></div>
+  <div class="r-body" id="rbody"></div>
+  <button class="r-deck" id="rdeck">Guarda le slide</button>
+</div>
+<button class="rback" id="rback" hidden>Torna al voto</button>
+
+<script>
+const CLAUDIO="https://chiaraleto97-blip.github.io/claudio/";
+const $=id=>document.getElementById(id);
+const esc=t=>String(t).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const reduce=matchMedia("(prefers-reduced-motion: reduce)").matches;
+const store={get(k,d){try{return JSON.parse(localStorage.getItem(k))??d}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
+
+/* ---------- Claudio e le fireflies ---------- */
+function claudio(mood){
+  const mouth=mood==="wow"?'<ellipse cx="60" cy="46.5" rx="3.4" ry="4" style="fill:#F3EAF0"/>':'<path d="M52.5 44Q60 51.5 67.5 44" style="fill:none;stroke:#F3EAF0;stroke-width:2.4;stroke-linecap:round"/>';
+  return `<svg class="mascot" viewBox="0 0 120 120" aria-hidden="true"><g class="bob"><circle class="halo" cx="60" cy="82" r="34" style="fill:#F6D58E;opacity:.22"/><ellipse cx="38" cy="54" rx="20" ry="10" transform="rotate(-28 38 54)" style="fill:#C8A5D8;opacity:.55"/><ellipse cx="82" cy="54" rx="20" ry="10" transform="rotate(28 82 54)" style="fill:#C8A5D8;opacity:.55"/><ellipse cx="60" cy="81" rx="18" ry="22" style="fill:#F6D58E"/><path d="M44 76h32M45 86h30" style="stroke:#E2B866;stroke-width:2.2"/><ellipse cx="60" cy="59" rx="16" ry="11" style="fill:#4A3560"/><path d="M52 25Q46 11 37 9M68 25Q74 11 83 9" style="fill:none;stroke:#2A2045;stroke-width:3;stroke-linecap:round"/><circle cx="37" cy="9" r="3.6" style="fill:#F2B97F"/><circle cx="83" cy="9" r="3.6" style="fill:#F2B97F"/><circle cx="60" cy="38" r="17.5" style="fill:#2A2045"/><circle cx="53" cy="35.5" r="5.6" style="fill:#fff"/><circle cx="67" cy="35.5" r="5.6" style="fill:#fff"/><circle cx="54.2" cy="36.6" r="2.7" style="fill:#17142C"/><circle cx="68.2" cy="36.6" r="2.7" style="fill:#17142C"/><circle cx="46.5" cy="43" r="3" style="fill:#EA9B8C;opacity:.7"/><circle cx="73.5" cy="43" r="3" style="fill:#EA9B8C;opacity:.7"/>${mouth}</g></svg>`;
+}
+function fly(lit){return `<svg viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="24" r="${lit?17:0}" style="fill:#F6D58E;opacity:.25"/><ellipse cx="13" cy="15" rx="7" ry="3.6" transform="rotate(-28 13 15)" style="fill:#C8A5D8;opacity:${lit?.6:.25}"/><ellipse cx="27" cy="15" rx="7" ry="3.6" transform="rotate(28 27 15)" style="fill:#C8A5D8;opacity:${lit?.6:.25}"/><ellipse cx="20" cy="25" rx="7" ry="9" style="fill:${lit?"#F6D58E":"#4A3D66"}"/><circle cx="20" cy="12" r="6" style="fill:${lit?"#2A2045":"#3B3056"}"/></svg>`}
+document.querySelectorAll("[data-mascot]").forEach(el=>el.innerHTML=claudio(el.dataset.mascot));
+const INC=["","Tutto è testo","Avere l'idea","Costruire","Pubblicare","La fiera"];
+document.querySelectorAll("[data-ffrow]").forEach(el=>{const n=+el.dataset.ffrow;el.innerHTML=[1,2,3,4,5].map(i=>`<div class="ff1 ${i<=n?"lit":""}">${fly(i<=n)}<span>${i}</span></div>`).join("")});
+
+/* ---------- QR verso Claudio ---------- */
+document.querySelectorAll("[data-qr]").forEach(el=>{
+  const url=CLAUDIO+(el.dataset.qr||"");
+  if(typeof QRCode!=="undefined"){try{new QRCode(el,{text:url,width:500,height:500,colorDark:"#2A2045",colorLight:"#FFFFFF",correctLevel:QRCode.CorrectLevel.M})}catch(e){}}
+  else el.innerHTML=`<p style="color:#2A2045;font-size:20px;margin:0">Serve la connessione per disegnare il QR.</p>`;
+});
+document.querySelectorAll("[data-url]").forEach(el=>el.textContent=CLAUDIO.replace(/^https:\/\//,"")+(el.dataset.url||""));
+
+/* ---------- le carte (dal mazzo delle idee) ---------- */
+const D={
+concetto:[["Il ritmo e la pulsazione","sentire il ritmo e la pulsazione"],["Leggere le note","leggere le note sul pentagramma"],["Acuto, grave, intervalli","distinguere acuto, grave e intervalli"],["Il timbro degli strumenti","riconoscere il timbro degli strumenti"],["La forma di un brano","seguire la forma di un brano"],["Il canto a più voci","cantare a più voci"],["Piano, forte, accelerando","capire dinamica e agogica"],["Improvvisare","improvvisare con la musica"],["La metrica della poesia","sentire la metrica della poesia"],["Le figure retoriche","riconoscere le figure retoriche"],["La struttura della fiaba","capire come è fatta una fiaba"],["L'analisi logica","fare l'analisi logica"],["Fondere le sillabe","fondere le sillabe"],["Doppie e accenti","scrivere doppie e accenti"],["Il riassunto","fare un riassunto"],["Il testo argomentativo","scrivere un testo argomentativo"],["Capire un testo","comprendere un testo"],["Leggere ad alta voce","leggere ad alta voce"],["La linea del tempo","immaginare la linea del tempo"],["Cause e conseguenze","collegare cause e conseguenze"],["Le fonti storiche","leggere le fonti storiche"],["Orientarsi sulla carta","orientarsi sulla carta geografica"],["Leggere un paesaggio","leggere un paesaggio"],["La prospettiva","capire la prospettiva"],["Il colore e i suoi accordi","accostare i colori"],["Leggere un'opera d'arte","leggere un'opera d'arte"],["Luce e ombra","usare luce e ombra"],["La composizione","comporre un'immagine"],["La pronuncia inglese","pronunciare l'inglese"],["Le prime parole","imparare le prime parole in inglese"],["L'inglese parlato","capire l'inglese parlato"],["Regole condivise","costruire regole condivise"],["Cittadinanza digitale","muoversi con prudenza online"],["Dare un nome alle emozioni","dare un nome alle emozioni"],["Lavorare insieme","lavorare in gruppo"],["Imparare a memoria","imparare a memoria"]],
+superpotere:[["Suona","che suona"],["Vede","che vede con la webcam"],["Ascolta","che ascolta con il microfono"],["Parla","che parla"],["Si tocca","che si tocca e si trascina"],["Gioca","che è un gioco"],["Simula","che simula un piccolo mondo"],["Genera","che genera infinite varianti"],["Racconta","che racconta una storia a bivi"],["Su misura","fatto su misura"],["Ricorda","che ricorda i progressi"],["Traduce","che traduce"],["Disegna","che disegna"],["Scandisce","che scandisce il tempo"],["Svela","che nasconde e svela"],["Esplora","che si esplora come una mappa"]],
+contesto:[["Sulla LIM, davanti a tutti","sulla LIM, davanti a tutti"],["Su un tablet, da soli","su un tablet, ognuno da solo"],["A coppie","a coppie"],["In movimento","in palestra o in movimento"],["Nell'aula di musica","nell'aula di musica"],["A casa","a casa"],["Nei primi cinque minuti","nei primi cinque minuti di lezione"],["Per chiudere la lezione","per chiudere la lezione"],["Al museo o in gita","al museo o in gita"],["Nell'angolo della calma","nell'angolo della calma"],["Nel lavoro a gruppi","nel lavoro a gruppi"],["Allo spettacolo di fine anno","allo spettacolo di fine anno"],["In biblioteca","in biblioteca"],["All'aperto","all'aperto, in cortile"],["Con un'altra classe","insieme a un'altra classe"],["In un'ora di supplenza","in un'ora di supplenza"],["Prima di una verifica","prima di una verifica"],["Al colloquio con le famiglie","al colloquio con le famiglie"]],
+chi:[["Tutta la classe","tutta la classe"],["Chi legge con fatica","chi legge con fatica"],["Chi non usa la parola","chi non usa la parola per comunicare"],["Chi è appena arrivato in Italia","chi è appena arrivato in Italia"],["Chi fatica a stare fermo","chi fatica a stare fermo e concentrato"],["Chi usa poco le mani","chi ha difficoltà a usare le mani"],["Chi si agita con i cambiamenti","chi si agita quando qualcosa cambia"],["Chi vede poco","chi vede poco"],["Chi sente poco","chi sente poco"],["Chi è già avanti","chi è già avanti e si annoia"],["Chi non ama parlare in pubblico","chi non ama parlare in pubblico"],["Chi non sa ancora leggere","chi non sa ancora leggere"],["Chi ha paura di sbagliare","chi ha paura di sbagliare"],["Chi pensa per immagini","chi pensa per immagini"],["Chi è stato spesso assente","chi è stato spesso assente"],["Chi si stanca presto","chi si stanca presto"],["Chi ha un talento nascosto","chi ha un talento che a scuola non si vede"],["Una classe molto rumorosa","una classe molto rumorosa"]]};
+const LAB={concetto:"Concetto",superpotere:"Superpotere",contesto:"Contesto",chi:"Chi"};
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+function draw(first){
+  const c=first?{concetto:D.concetto[8],superpotere:D.superpotere[0],contesto:D.contesto[0],chi:D.chi[1]}:{concetto:pick(D.concetto),superpotere:pick(D.superpotere),contesto:pick(D.contesto),chi:pick(D.chi)};
+  $("draw").innerHTML=Object.keys(LAB).map(k=>`<div class="dcard s-${k}"><b>${LAB[k]}</b><span>${esc(c[k][0])}</span></div>`).join("");
+  const h=(k,t)=>`<span class="h s-${k}">${esc(t)}</span>`;
+  $("dq").innerHTML=`Come può uno strumento ${h("superpotere",c.superpotere[1])} aiutare ${h("chi",c.chi[1])} ${/^[aà]/i.test(c.concetto[1])?"ad":"a"} ${h("concetto",c.concetto[1])}, ${h("contesto",c.contesto[1])}?`;
+}
+draw(true);$("drawbtn").onclick=()=>draw(false);
+
+/* ---------- il muro delle idee ---------- */
+let wall=store.get("muro-idee-v1",[]);
+function renderWall(){
+  $("wall").innerHTML=wall.length?wall.map((n,i)=>`<div class="note" data-i="${i}" style="--r:${((i*37)%7-3)*.6}deg" title="Clic: un bollino · Maiusc+clic: toglie un bollino"><button class="x" data-del="${i}" aria-label="Togli questa idea">×</button>${esc(n.t)}<span class="dots">${"<i></i>".repeat(n.v)}</span></div>`).join("")
+    :`<p class="empty">Il muro è vuoto: scrivete in alto la prima idea nata dalle carte.</p>`;
+}
+$("wallform").addEventListener("submit",e=>{e.preventDefault();const t=$("wallin").value.trim();if(!t)return;wall.push({t,v:0});store.set("muro-idee-v1",wall);$("wallin").value="";renderWall()});
+$("wall").addEventListener("click",e=>{
+  const d=e.target.closest("[data-del]");if(d){wall.splice(+d.dataset.del,1);store.set("muro-idee-v1",wall);renderWall();return}
+  const n=e.target.closest(".note");if(!n)return;const it=wall[+n.dataset.i];it.v=Math.max(0,it.v+(e.shiftKey?-1:1));store.set("muro-idee-v1",wall);renderWall();
+});
+renderWall();
+
+/* ---------- Firefly Forest ---------- */
+function rng(seed){return()=>{seed|=0;seed=seed+0x6D2B79F5|0;let t=Math.imul(seed^seed>>>15,1|seed);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+const f1=n=>Math.round(n*10)/10;
+function pine(x,base,h,w){const t=h*.12,y0=base-t;let d=`M${f1(x-w*.07)} ${f1(base)}h${f1(w*.14)}v${f1(-t)}h${f1(-w*.14)}Z`;[[1,0],[.78,.3],[.55,.56]].forEach(([k,o])=>{const yb=y0-h*o,ww=w*k/2,ht=h*.48;d+=`M${f1(x)} ${f1(yb-ht)}L${f1(x+ww)} ${f1(yb)}H${f1(x-ww)}Z`});return d}
+function treeline(r,x0,x1,base,hmin,hmax,wk){let d="";for(let x=x0;x<x1;){const h=hmin+r()*(hmax-hmin);d+=pine(x,base+r()*1.2,h,h*wk);x+=h*wk*(.42+r()*.35)}return d}
+let forest=store.get("firefly-forest-v1",[]);
+const POS=(()=>{const r=rng(42),a=[];for(let i=0;i<40;i++){let p,tries=0;do{p=[8+r()*84,14+r()*62];tries++}while(tries<40&&a.some(q=>Math.hypot(q[0]-p[0],(q[1]-p[1])*1.6)<13));a.push(p)}return a})();
+function renderForest(){
+  const tr=rng(9);const trees=`<svg class="trees" viewBox="0 0 1400 300" preserveAspectRatio="none" aria-hidden="true"><path d="${treeline(tr,-20,1430,170,50,90,.5)}" style="fill:#4A3058"/><rect y="169" width="1400" height="131" style="fill:#4A3058"/><path d="${treeline(tr,-30,1440,240,80,140,.44)}" style="fill:#2C2042"/><rect y="239" width="1400" height="61" style="fill:#2C2042"/><path d="${treeline(tr,-40,1460,305,110,190,.42)}" style="fill:#17122A"/></svg>`;
+  const sr=rng(3);let st="";for(let i=0;i<70;i++)st+=`<circle cx="${(sr()*100).toFixed(1)}%" cy="${(sr()*55).toFixed(1)}%" r="${(.6+sr()*1.3).toFixed(1)}" style="fill:#FFF3E6;opacity:${(.2+sr()*.6).toFixed(2)}"/>`;
+  const flies=forest.length?forest.map((f,i)=>{const [x,y]=POS[i%POS.length];const inner=`<span class="g" style="--d:${(2.4+(i%5)*.5).toFixed(1)}s"></span><span class="n">${esc(f.name)}${f.group?`<small>${esc(f.group)}</small>`:""}</span>`;
+      return /^https?:\/\//.test(f.link)?`<a class="ff" href="${esc(f.link)}" target="_blank" rel="noopener" style="left:${x}%;top:${y}%">${inner}</a>`:`<div class="ff" style="left:${x}%;top:${y}%">${inner}</div>`}).join("")
+    :[0,1,2,3,4].map(i=>`<div class="ff ghost" style="left:${POS[i][0]}%;top:${POS[i][1]}%"><span class="g"></span><span class="n">${i===0?"Qui si accenderanno le fireflies dei gruppi":"…"}</span></div>`).join("");
+  document.querySelectorAll("[data-forest]").forEach(el=>{el.innerHTML=`<svg class="stars" aria-hidden="true">${st}</svg>${trees}${flies}`});
+  const txt=forest.length===1?"1 firefly accesa":`${forest.length} fireflies accese`;
+  $("ffcount").textContent=txt;document.querySelectorAll("[data-ffcount]").forEach(e=>e.textContent=txt);
+}
+$("ffform").addEventListener("submit",e=>{e.preventDefault();const name=$("ffname").value.trim();if(!name){$("ffname").focus();return}
+  forest.push({name,group:$("ffgroup").value.trim(),link:$("fflink").value.trim()});store.set("firefly-forest-v1",forest);["ffname","ffgroup","fflink"].forEach(id=>$(id).value="");renderForest();chime([523,784,1047])});
+document.addEventListener("contextmenu",e=>{const f=e.target.closest("[data-forest='edit'] .ff:not(.ghost)");if(!f)return;e.preventDefault();const i=[...f.parentNode.querySelectorAll(".ff")].indexOf(f);forest.splice(i,1);store.set("firefly-forest-v1",forest);renderForest()});
+renderForest();
+
+/* ---------- suoni ---------- */
+let AC=null;
+function chime(fs){try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();const t0=AC.currentTime;fs.forEach((f,i)=>{const o=AC.createOscillator(),g=AC.createGain();o.frequency.value=f;g.gain.setValueAtTime(0,t0+i*.16);g.gain.linearRampToValueAtTime(.18,t0+i*.16+.02);g.gain.exponentialRampToValueAtTime(.001,t0+i*.16+.6);o.connect(g).connect(AC.destination);o.start(t0+i*.16);o.stop(t0+i*.16+.7)})}catch(e){}}
+
+/* ---------- sondaggi in diretta ----------
+   Sulla LIM (chi può modificare la presentazione) le barre; sul telefono dei corsisti i pulsanti.
+   La domanda va ai telefoni sull'argomento "sondaggio", che solo chi presenta può inviare;
+   ogni telefono mette il suo voto nella propria presenza. Senza collegamento si vota per alzata di mano:
+   un clic su una barra aggiunge un voto, Maiusc+clic lo toglie. */
+const SALA="";
+const POLLS={};
+document.querySelectorAll("[data-poll]").forEach(el=>{
+  const id=el.dataset.poll,o=el.dataset.o.split("|");POLLS[id]={id,q:el.dataset.q,o,el};
+  el.innerHTML=`<div class="poll-head"><div class="qr-s" data-qrsala></div><div class="poll-join"><b>Votate dal telefono</b><span>Inquadrate il codice ed entrate con il vostro account Claude.</span></div></div>
+  <div class="poll-bars">${o.map((t,i)=>`<button class="pbar c-${["blu","rosso","giallo","verde","lilla"][i%5]}" data-i="${i}" title="Clic: un voto in più · Maiusc+clic: uno in meno"><span class="lab">${esc(t)}</span><span class="track"><span class="fill"></span></span><span class="n">0</span></button>`).join("")}</div>
+  <div class="poll-meta"><span class="dot"></span><span class="pm-txt"></span><button data-reset>Azzera</button></div>`;
+});
+document.querySelectorAll("[data-qrsala]").forEach(el=>{
+  if(!SALA){el.closest(".poll-head").hidden=true;return}
+  if(typeof QRCode!=="undefined"){try{new QRCode(el,{text:SALA,width:300,height:300,colorDark:"#2A2045",colorLight:"#FFFFFF",correctLevel:QRCode.CorrectLevel.M})}catch(e){}}
+  else el.innerHTML="<p>Serve la connessione per il QR.</p>";
+});
+let votes=store.get("sondaggi-v1",{});
+const slot=id=>{const s=votes[id]||(votes[id]={});s.remote=s.remote||{};s.manual=s.manual||[];return s};
+function counts(id){const p=POLLS[id],c=p.o.map(()=>0),s=slot(id);
+  Object.values(s.remote).forEach(i=>{if(c[i]!=null)c[i]++});s.manual.forEach((n,i)=>{if(c[i]!=null)c[i]+=n||0});return c}
+let ROOM=null,inSala=0;
+function renderPoll(id){const p=POLLS[id],c=counts(id),max=Math.max(1,...c),tot=c.reduce((a,b)=>a+b,0);
+  p.el.querySelectorAll(".pbar").forEach((b,i)=>{b.querySelector(".fill").style.width=(c[i]/max*100)+"%";b.querySelector(".n").textContent=c[i]});
+  const m=p.el.querySelector(".poll-meta");m.classList.toggle("live",!!ROOM);
+  m.querySelector(".pm-txt").textContent=(tot===1?"1 voto":`${tot} voti`)+(ROOM?` · ${inSala} in sala`:" · voto per alzata di mano");
+}
+function renderPolls(){Object.keys(POLLS).forEach(renderPoll)}
+function savePolls(){store.set("sondaggi-v1",votes);renderPolls();broadcastSoon()}
+document.addEventListener("click",e=>{
+  const p=e.target.closest("[data-poll]");if(!p)return;const id=p.dataset.poll;
+  if(e.target.closest("[data-reset]")){e.stopPropagation();votes[id]={};savePolls();return}
+  const b=e.target.closest(".pbar");if(!b)return;e.stopPropagation();const s=slot(id),i=+b.dataset.i;
+  s.manual[i]=Math.max(0,(s.manual[i]||0)+(e.shiftKey?-1:1));savePolls();
+});
+const activePoll=()=>slides[cur]?.querySelector("[data-poll]")?.dataset.poll||null;
+renderPolls();
+let PRESENTER=false;
+function broadcast(){if(!ROOM||!PRESENTER)return;const id=activePoll(),form=slides[cur]?.hasAttribute("data-form")&&FORM?FORM:null;
+  ROOM.emit("sondaggio",id?{id,q:POLLS[id].q,o:POLLS[id].o,c:counts(id)}:{id:null,form}).catch(()=>{})}
+
+/* il questionario finale: il link del modulo diventa un QR (e un pulsante sui telefoni) */
+const okForm=u=>/^https:\/\/(docs\.google\.com\/forms\/|forms\.gle\/)/.test(u||"");
+let FORM=store.get("questionario-link","");
+function renderForm(){const box=$("formqr");box.innerHTML="";$("formin").value=FORM;$("formurl").textContent=FORM?FORM.replace(/^https:\/\//,""):"";
+  if(!FORM){box.innerHTML='<p style="color:#2A2045;font-size:22px;margin:0;text-align:center">Qui comparirà il QR del questionario.</p>';return}
+  if(typeof QRCode!=="undefined"){try{new QRCode(box,{text:FORM,width:500,height:500,colorDark:"#2A2045",colorLight:"#FFFFFF",correctLevel:QRCode.CorrectLevel.M})}catch(e){}}
+  else box.innerHTML='<p style="color:#2A2045;font-size:20px;margin:0">Serve la connessione per disegnare il QR.</p>'}
+$("formform").addEventListener("submit",e=>{e.preventDefault();const u=$("formin").value.trim();
+  if(u&&!okForm(u)){$("formurl").textContent="Serve un link di Google Moduli (docs.google.com/forms/… oppure forms.gle/…).";return}
+  FORM=u;store.set("questionario-link",FORM);renderForm();broadcastSoon()});
+renderForm();
+let bt=null;function broadcastSoon(){if(!ROOM||!PRESENTER||bt)return;bt=setTimeout(()=>{bt=null;broadcast()},700)}
+function startPresenter(room){
+  ROOM=room;PRESENTER=true;renderPolls();
+  room.onPeers(ch=>{
+    inSala=ch.peers.filter(p=>p.kind==="viewer"&&!p.isMe).length;const act=activePoll();let changed=false;
+    for(const p of [...ch.joined,...ch.updated]){
+      if(p.isMe||p.kind!=="viewer")continue;const v=p.presence&&p.presence.vote;
+      if(!v||v.id!==act||!Number.isInteger(v.c)||v.c<0||v.c>=POLLS[act].o.length)continue;
+      const s=slot(act),key=p.by||p.peer;if(s.remote[key]!==v.c){s.remote[key]=v.c;changed=true}
+    }
+    if(changed){store.set("sondaggi-v1",votes);broadcastSoon()}
+    if(ch.joined.length)broadcastSoon();
+    renderPolls();
+  });
+  setInterval(broadcast,4000);broadcast();
+}
+
+/* il telefono: la domanda in corso e i pulsanti per votare */
+let RQ=null,myVote=null,RFORM=null;
+function startRemote(room){
+  ROOM=room;document.body.classList.add("remote-mode");$("remote").hidden=false;renderRemote();
+  room.onConnection(ok=>{$("rst").classList.toggle("live",ok);$("rsttxt").textContent=ok?"In sala":"Riconnessione…"});
+  room.on("sondaggio",m=>{const d=m.data;if(!d||typeof d!=="object")return;
+    RFORM=!d.id&&okForm(d.form)?d.form:null;
+    if(!d.id){RQ=null}else if(typeof d.id==="string"&&typeof d.q==="string"&&Array.isArray(d.o)){
+      RQ={id:d.id.slice(0,40),q:d.q.slice(0,300),o:d.o.slice(0,8).map(t=>String(t).slice(0,80)),c:Array.isArray(d.c)?d.c.slice(0,8).map(n=>Math.max(0,+n||0)):[]}}
+    renderRemote()},()=>{$("rsttxt").textContent="Collegamento non disponibile"});
+  $("rbody").addEventListener("click",e=>{const b=e.target.closest("[data-v]");if(!b||!RQ)return;
+    myVote={id:RQ.id,c:+b.dataset.v};room.presence({vote:myVote}).catch(()=>{});renderRemote()});
+}
+function renderRemote(){
+  if(!RQ&&RFORM){$("rbody").innerHTML=`<div class="r-wait"><div style="width:160px">${claudio("happy")}</div><h2>Il questionario finale</h2><p>Anonimo, cinque minuti. Grazie!</p><a class="btn" style="text-decoration:none;margin-top:8px" href="${esc(RFORM)}" target="_blank" rel="noopener">Apri il questionario</a></div>`;return}
+  if(!RQ){$("rbody").innerHTML=`<div class="r-wait"><div style="width:180px">${claudio("happy")}</div><h2>Aspettate la prossima domanda</h2><p>Quando sulla LIM compare un sondaggio, qui arrivano i pulsanti per votare.</p></div>`;return}
+  const mine=myVote&&myVote.id===RQ.id?myVote.c:null,tot=RQ.c.reduce((a,b)=>a+b,0),max=Math.max(1,...RQ.c),suit=["blu","rosso","giallo","verde","lilla"];
+  $("rbody").innerHTML=`<h2>${esc(RQ.q)}</h2>${RQ.o.map((t,i)=>`<button class="r-opt c-${suit[i%5]} ${mine===i?"sel":""}" data-v="${i}" aria-pressed="${mine===i}">${esc(t)}</button>`).join("")}
+    ${mine==null?`<p class="r-note">Toccate una risposta: potete cambiarla finché la domanda resta sulla LIM.</p>`
+    :`<p class="r-note">Voto inviato. Ecco la sala${tot?` (${tot} ${tot===1?"voto":"voti"})`:""}:</p><div class="r-res">${RQ.o.map((t,i)=>`<div class="c-${suit[i%5]}"><span>${esc(t)}</span><span>${RQ.c[i]||0}</span><i><b style="width:${(RQ.c[i]||0)/max*100}%"></b></i></div>`).join("")}</div>`}`;
+}
+$("rdeck").onclick=()=>{document.body.classList.remove("remote-mode");$("remote").hidden=true;$("rback").hidden=false;fit()};
+$("rback").onclick=()=>{document.body.classList.add("remote-mode");$("remote").hidden=false;$("rback").hidden=true};
+
+(async()=>{
+  if(!window.claude||!window.claude.use)return;
+  const [room,user]=await Promise.all([claude.use("room"),claude.use("user")]);
+  if(!room)return;
+  const presenter=user?await user.canEdit().catch(()=>false):true;
+  if(presenter&&location.hash!=="#voto")startPresenter(room);else startRemote(room);
+})();
+
+/* ---------- indovina la parola: la sala vota, il modello pesca ---------- */
+const ESEMPIO=[30,25,15,20,10];
+function hintTemp(t){return t===0?"Sceglie sempre la parola più votata: prevedibile, sempre uguale.":t<1?"Quasi sempre le parole più votate, ogni tanto una sorpresa.":t<1.5?"Anche le parole meno votate hanno le loro possibilità.":"Osa molto: escono spesso le parole meno votate."}
+function showTemp(){const t=+$("tempin").value;$("tempval").textContent=String(t).replace(".",",");$("temphint").textContent=hintTemp(t)}
+$("tempin").addEventListener("input",showTemp);showTemp();
+$("pickbtn").onclick=()=>{
+  const p=POLLS.parola;let w=counts("parola");const vere=w.some(n=>n>0);if(!vere)w=ESEMPIO;
+  const t=+$("tempin").value;let i;
+  if(t===0){const m=Math.max(...w);const top=w.map((n,k)=>n===m?k:-1).filter(k=>k>=0);i=pick(top)}
+  else{const q=w.map(n=>n>0?Math.pow(n,1/t):0),s=q.reduce((a,b)=>a+b,0);let r=Math.random()*s;i=q.findIndex(n=>(r-=n)<0);if(i<0)i=q.length-1}
+  const bl=$("blank");bl.textContent=p.o[i];bl.classList.remove("pop");void bl.offsetWidth;bl.classList.add("pop");
+  const pk=$("picks");pk.insertAdjacentHTML("afterbegin",`<span>${esc(p.o[i])}</span>`);while(pk.children.length>8)pk.lastChild.remove();
+  $("temphint").textContent=hintTemp(t)+(vere?"":" (Nessun voto ancora: probabilità di esempio.)");
+};
+
+/* ---------- il testo a pezzi (esempio illustrativo, non il vero tokenizzatore) ---------- */
+const VOC="aeiouàèéìòùAEIOUÀÈÉÌÒÙ";
+function sillabe(w){return w.match(new RegExp(`[^${VOC}]*[${VOC}]+(?:[^${VOC}](?![${VOC}]))*`,"g"))||[w]}
+function pezzi(t){const out=[];
+  (t.match(/ ?[A-Za-zÀ-ÖØ-öø-ÿ]+| ?\d{1,3}| ?[^\sA-Za-zÀ-ÖØ-öø-ÿ\d]{1,2}|\s+/g)||[]).forEach(m=>{
+    const sp=m[0]===" "&&m.length>1?" ":"",w=sp?m.slice(1):m;
+    if(!/^[A-Za-zÀ-ÖØ-öø-ÿ]+$/.test(w)||w.length<=4){out.push(m);return}
+    const parti=[];let acc="";sillabe(w).forEach(s=>{if(acc&&acc.length+s.length>4){parti.push(acc);acc=""}acc+=s});if(acc)parti.push(acc);
+    parti[0]=sp+parti[0];out.push(...parti);
+  });return out}
+function renderTok(){const t=$("tokin").value.slice(0,140),p=pezzi(t);
+  $("chips").innerHTML=p.map((x,i)=>`<span style="animation-delay:${Math.min(i,30)*25}ms">${x.startsWith(" ")?"<i>·</i>"+esc(x.slice(1)):esc(x)}</span>`).join("");
+  const parole=(t.match(/\S+/g)||[]).length;$("tokcount").textContent=`${parole} ${parole===1?"parola":"parole"} · ${p.length} ${p.length===1?"pezzo":"pezzi"}`}
+$("tokin").addEventListener("input",renderTok);
+document.querySelectorAll("[data-tok]").forEach(b=>b.onclick=()=>{$("tokin").value=b.dataset.tok;renderTok()});
+
+/* ---------- la finestra di contesto ---------- */
+const CTX={q:[["Domanda",1,"blu"],["Risposta",2,"verde"]],pdf:[["PDF",5,"giallo"]],app:[["Strumento",4,"rosso"]]};
+const CAP=12;let ctx=[];
+function renderCtx(){let used=0,cut=ctx.length;
+  for(let i=ctx.length-1;i>=0;i--){if(used+ctx[i][1]>CAP){cut=i+1;break}used+=ctx[i][1];cut=i}
+  const blk=b=>`<span class="blk c-${b[2]}" style="width:calc(${b[1]/CAP*100}% - 6px)">${b[1]>1?esc(b[0]):""}</span>`;
+  $("ctxwin").innerHTML=`<div class="out">${ctx.slice(0,cut).slice(-3).map(blk).join("")}</div><div class="frame">${ctx.slice(cut).map(blk).join("")}</div>`;
+  $("ctxcap").textContent=!ctx.length?"Una chat nuova: la finestra è vuota. Aggiungete qualcosa."
+    :cut>0?"Le parti più vecchie escono dalla finestra o vengono riassunte: Claude non le vede più bene. Meglio un riassunto e una chat nuova."
+    :"Tutto quello che c'è nella finestra, Claude lo vede a ogni risposta.";
+}
+document.querySelectorAll("[data-ctx]").forEach(b=>b.onclick=()=>{const k=b.dataset.ctx;if(k==="new")ctx=[];else ctx.push(...CTX[k]);renderCtx()});
+renderCtx();
+
+/* ---------- timer delle attività ---------- */
+const slides=[...document.querySelectorAll(".slide")];
+slides.forEach(s=>{if(!s.dataset.timer)return;const min=+s.dataset.timer;const t=document.createElement("div");t.className="timer";
+  t.innerHTML=`<span class="lab">${min} min</span><span class="t">${min}:00</span><button data-a="go">Avvia</button><button class="ghost" data-a="plus" aria-label="Aggiungi un minuto">+1</button><button class="ghost" data-a="reset" aria-label="Ricomincia">↺</button>`;
+  s.appendChild(t);let left=min*60,id=null;const show=()=>{t.querySelector(".t").textContent=`${Math.floor(left/60)}:${String(left%60).padStart(2,"0")}`};
+  t.addEventListener("click",e=>{const a=e.target.closest("button")?.dataset.a;if(!a)return;e.stopPropagation();
+    if(a==="go"){if(id){clearInterval(id);id=null;e.target.textContent="Riprendi"}else{t.classList.remove("done");e.target.textContent="Pausa";id=setInterval(()=>{left--;show();if(left<=0){clearInterval(id);id=null;left=0;show();t.classList.add("done");t.querySelector("[data-a=go]").textContent="Avvia";chime([784,659,523,784])}},1000)}}
+    if(a==="plus"){left+=60;show()}
+    if(a==="reset"){clearInterval(id);id=null;left=min*60;show();t.classList.remove("done");t.querySelector("[data-a=go]").textContent="Avvia"}
+  });
+});
+
+/* ---------- navigazione ---------- */
+let cur=0;
+function fit(){const k=Math.min(innerWidth/1600,innerHeight/900);$("stage").style.setProperty("--k",k)}
+addEventListener("resize",fit);fit();
+function trail(){const inc=+slides[cur].dataset.inc;
+  $("trail").innerHTML=[1,2,3,4,5].map(i=>`<button class="seg ${i<=inc?"lit":""} ${i===inc?"now":""}" data-go="${i}" aria-label="Vai all'incontro ${i}: ${INC[i]}">${fly(i<=inc)}<span>${i}</span></button>`).join('<span class="line"></span>')+`<span class="count">${cur+1} / ${slides.length}</span>`}
+function go(n,showAll){
+  n=Math.max(0,Math.min(slides.length-1,n));slides[cur].classList.remove("on");cur=n;const s=slides[cur];s.classList.add("on");
+  s.querySelectorAll(".frag").forEach(f=>f.classList.toggle("show",!!showAll));
+  trail();$("notes").innerHTML=`<b>${esc(s.dataset.title||"")}</b>${esc(s.dataset.notes||"Nessuna nota.")}`;
+  $("live").textContent=s.dataset.title||"";
+  if(s.querySelector("#tokin"))renderTok();
+  broadcastSoon();
+  try{if(location.hash!=="#voto")history.replaceState(null,"","#s"+cur)}catch(e){}
+  document.querySelectorAll("#menuin button").forEach(b=>b.classList.toggle("cur",+b.dataset.n===cur));
+}
+function next(){const f=slides[cur].querySelector(".frag:not(.show)");if(f){f.classList.add("show");return}go(cur+1)}
+function prev(){const sh=[...slides[cur].querySelectorAll(".frag.show")];if(sh.length){sh.at(-1).classList.remove("show");return}go(cur-1,true)}
+$("next").onclick=next;$("prev").onclick=prev;
+$("trail").addEventListener("click",e=>{const b=e.target.closest("[data-go]");if(!b)return;go(slides.findIndex(s=>s.classList.contains("sec")&&+s.dataset.inc===+b.dataset.go))});
+$("menuin").innerHTML=[0,1,2,3,4,5].map(i=>`<div><h4>${i?`Incontro ${i} · ${INC[i]}`:"Apertura"}</h4>${slides.map((s,n)=>+s.dataset.inc===i?`<button data-n="${n}">${n+1}. ${esc(s.dataset.title)}${s.dataset.timer?` · ${s.dataset.timer}'`:""}</button>`:"").join("")}</div>`).join("");
+$("menuin").addEventListener("click",e=>{const b=e.target.closest("[data-n]");if(!b)return;go(+b.dataset.n);$("menu").hidden=true});
+$("bmenu").onclick=()=>{$("menu").hidden=!$("menu").hidden};
+$("bnotes").onclick=()=>{$("notes").hidden=!$("notes").hidden};
+function full(){if(document.fullscreenElement){document.exitFullscreen().catch(()=>{})}else{document.documentElement.requestFullscreen?.().catch(()=>{})}}
+$("bfull").onclick=full;
+document.addEventListener("keydown",e=>{
+  if(e.target.closest("input,textarea"))return;
+  if(e.key==="Escape"){$("menu").hidden=true;return}
+  if(["ArrowRight","PageDown"," "].includes(e.key)){e.preventDefault();next()}
+  else if(["ArrowLeft","PageUp"].includes(e.key)){e.preventDefault();prev()}
+  else if(e.key==="Home")go(0);else if(e.key==="End")go(slides.length-1,true);
+  else if(e.key==="n"||e.key==="N")$("notes").hidden=!$("notes").hidden;
+  else if(e.key==="m"||e.key==="M")$("menu").hidden=!$("menu").hidden;
+  else if(e.key==="f"||e.key==="F")full();
+});
+let tx=null;addEventListener("touchstart",e=>{tx=e.touches[0].clientX},{passive:true});
+addEventListener("touchend",e=>{if(tx===null)return;const dx=e.changedTouches[0].clientX-tx;if(Math.abs(dx)>60&&!e.target.closest("input,button,a,.note"))(dx<0?next:prev)();tx=null});
+let mt;addEventListener("mousemove",()=>{document.body.classList.add("moving");clearTimeout(mt);mt=setTimeout(()=>document.body.classList.remove("moving"),1600)});
+
+/* cielo e bosco dietro al palco */
+(()=>{const r=rng(7);let h="";for(let i=0;i<90;i++){const tw=r()<.35;h+=`<circle cx="${(r()*100).toFixed(2)}%" cy="${(r()*r()*62).toFixed(2)}%" r="${(.4+r()*r()*1.4).toFixed(2)}"${tw?` class="tw" style="--d:${(2.5+r()*4).toFixed(1)}s;--dl:${(-r()*6).toFixed(1)}s"`:` opacity="${(.15+r()*.5).toFixed(2)}"`}/>`}$("sky").innerHTML=h;
+  const fr=rng(11);let f=`<path d="M0 140 Q180 100 360 125 T720 115 T1080 125 T1440 105 V240 H0Z" style="fill:#6B4266;opacity:.5"/>`;
+  f+=`<path d="${treeline(fr,-20,1470,170,32,56,.5)}" style="fill:#4A3058"/><rect y="169" width="1440" height="71" style="fill:#4A3058"/><path d="${treeline(fr,-30,1480,205,56,95,.44)}" style="fill:#2C2042"/><rect y="204" width="1440" height="36" style="fill:#2C2042"/><path d="${treeline(fr,-40,1500,245,85,145,.42)}" style="fill:#17122A"/>`;
+  for(let i=0;i<14;i++)f+=`<circle class="fly" cx="${(fr()*1440).toFixed(0)}" cy="${(140+fr()*90).toFixed(0)}" r="${(1.2+fr()*1.6).toFixed(1)}" style="--d:${(4+fr()*5).toFixed(1)}s;--dl:${(-fr()*8).toFixed(1)}s;--fx:${(fr()*24-12).toFixed(0)}px;--fy:${(-fr()*18).toFixed(0)}px"/>`;
+  $("forest").innerHTML=f;})();
+
+const start=/^#s(\d+)$/.exec(location.hash);go(start?+start[1]:0,!!start);
+</script>
