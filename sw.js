@@ -1,4 +1,4 @@
-const CACHE="claudio-a1f46b9146";
+const CACHE="claudio-9f2032729a";
 const FILES=["./","index.html","manifest.webmanifest","qr.html","icone/icona-192.png","icone/icona-512.png","icone/icona-maskable-512.png","icone/apple-touch-icon.png"];
 self.addEventListener("install",e=>{e.waitUntil(caches.open(CACHE).then(c=>c.addAll(FILES)).then(()=>self.skipWaiting()))});
 self.addEventListener("activate",e=>{e.waitUntil(caches.keys().then(ks=>Promise.all(ks.filter(k=>k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim()))});

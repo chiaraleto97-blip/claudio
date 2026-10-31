@@ -303,6 +303,11 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 @media (max-width:460px){.s-split,.s-split2,.s-pgrid{grid-template-columns:minmax(0,1fr)}.s-side{border-right:0;padding-right:0}}
 @media (max-width:460px){.opts.two{grid-template-columns:1fr}.tiles small{font-size:.66rem}.course{padding:7px 11px}.stat{padding:6px 5px}}
 @media (prefers-reduced-motion: reduce){.sky .tw,.fly,.mascot .halo,.bob,.node.next,.startbub,.match .opt.shake{animation:none}.prog i,.prog .bug{transition:none}}
+
+/* logo Wolf Team, nei colori del corso */
+.wt{display:inline-flex;align-items:center;gap:.5em;font-family:"Bricolage Grotesque","Arial Narrow",system-ui,sans-serif;font-weight:800;letter-spacing:.16em;text-transform:uppercase;white-space:nowrap;vertical-align:middle;line-height:1;font-style:normal}
+.wt .wt-m{width:2.1em;height:2.1em;flex:none;display:block}
+.wt-w b{font-weight:800;color:var(--wt-accent,#F2B97F)}
 </style>
 
 <svg class="sky" id="sky" aria-hidden="true"></svg>
@@ -331,6 +336,7 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
     </div>
     <div class="goal"><small>Il sentiero</small><div class="bar"><i id="goalbar"></i></div><small id="goaltxt"></small></div>
     <div id="path"></div>
+    <p style="text-align:center;margin:28px 0 8px;font-size:13px;color:var(--muted)"><span class="wt"><svg class="wt-m" viewBox="0 0 200 200" aria-hidden="true"><circle cx="100" cy="100" r="93" style="fill:#ABA3DC;stroke:#F6D58E;stroke-width:7"/><circle cx="100" cy="100" r="84" style="fill:none;stroke:#F7F1EE;stroke-opacity:.28;stroke-width:2"/><path d="M53 40.9 74.8 64.3 49.7 72.7Z" style="fill:#F7F1EE"/><path d="M146.9 40.9 125.2 64.3 150.3 72.7Z" style="fill:#F7F1EE"/><path d="M100 57.6 116.8 62.6 160.3 89.4 180.5 116.1 133.5 143.1 100 176.6Z" style="fill:#F7F1EE;opacity:.5"/><path d="M61.5 96.2 88.2 101.2 76.5 109.5Z" style="fill:#17142C"/><path d="M138.5 96.2 111.8 101.2 123.5 109.5Z" style="fill:#17142C"/><path d="M88.2 153.1 111.8 153.1 100 168.1Z" style="fill:#17142C"/></svg><span class="wt-w">Wolf <b>Team</b></span></span></p>
   </div>
 
   <!-- lezione -->

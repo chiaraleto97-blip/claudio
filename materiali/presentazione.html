@@ -208,41 +208,21 @@ a.ff:hover .n{background:var(--paper);color:var(--paper-ink)}
 .poll-meta{display:flex;align-items:center;gap:10px;font-family:var(--f-display);font-weight:800;font-size:16px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
 .poll-meta .dot{width:12px;height:12px;border-radius:50%;background:#7D6F92}
 .poll-meta.live .dot{background:#7FD49B;box-shadow:0 0 12px #7FD49B}
-.poll-meta button{margin-left:auto;border:2px solid var(--line);background:transparent;border-radius:10px;padding:4px 12px;font:inherit;letter-spacing:.08em}
+.poll-meta button:first-of-type{margin-left:auto}
+.poll-meta button{border:2px solid var(--line);background:transparent;border-radius:10px;padding:4px 12px;font:inherit;letter-spacing:.08em}
 .poll-bars{display:grid;gap:10px}
 .pbar{display:grid;grid-template-columns:minmax(0,var(--lab,290px)) 1fr 64px;align-items:center;gap:14px;border:0;background:none;padding:0;text-align:left;color:var(--ink)}
 .pbar .lab{font-size:23px;line-height:1.15}
 .pbar .track{height:34px;border-radius:12px;background:rgba(255,255,255,.08);overflow:hidden}
 .pbar .fill{display:block;height:100%;width:0;background:var(--suit);border-radius:12px;transition:width .6s cubic-bezier(.2,.8,.2,1)}
 .pbar .n{font-family:var(--f-display);font-weight:800;font-size:26px;text-align:right;font-variant-numeric:tabular-nums}
-.remote{position:fixed;inset:0;z-index:8;overflow:auto;display:flex;flex-direction:column;gap:18px;max-width:560px;margin:0 auto;padding:calc(18px + env(safe-area-inset-top,0px)) 16px calc(24px + env(safe-area-inset-bottom,0px))}
-.remote[hidden],.rback[hidden],.poll-head[hidden]{display:none}
-body.remote-mode #deck,body.remote-mode .nav,body.remote-mode .ctrl{display:none}
-body.remote-mode{overflow:auto}
-.r-top{display:flex;align-items:center;justify-content:space-between;gap:12px}
-.r-logo{font-family:var(--f-display);font-weight:800;font-size:30px;letter-spacing:-.02em}
-.r-logo sup{font-size:.45em;color:var(--rosso)}
-.r-st{display:flex;align-items:center;gap:8px;font-family:var(--f-display);font-weight:700;font-size:13px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
-.r-st .dot{width:10px;height:10px;border-radius:50%;background:#7D6F92}
-.r-st.live .dot{background:#7FD49B;box-shadow:0 0 10px #7FD49B}
-.r-body{display:flex;flex-direction:column;gap:14px;flex:1}
-.r-body h2{font-size:30px;line-height:1.15}
-.r-wait{display:flex;flex-direction:column;align-items:center;text-align:center;gap:10px;margin-top:6vh}
-.r-wait p{font-size:20px;line-height:1.4;color:var(--muted);margin:0;max-width:340px}
-.r-opt{display:flex;align-items:center;gap:12px;width:100%;text-align:left;background:var(--paper);color:var(--paper-ink);border:0;border-radius:18px;padding:16px 18px;font-family:var(--f-serif);font-weight:650;font-size:21px;line-height:1.2;box-shadow:0 5px 0 var(--suit-d)}
-.r-opt::before{content:"";flex:none;width:22px;height:22px;border-radius:50%;border:3px solid var(--suit-d)}
-.r-opt.sel{box-shadow:0 0 0 4px var(--glow),0 5px 0 var(--suit-d)}
-.r-opt.sel::before{background:var(--suit-d)}
-.r-opt:active{transform:translateY(3px);box-shadow:0 2px 0 var(--suit-d)}
-.r-res{display:grid;gap:8px;margin-top:4px}
-.r-res div{display:grid;grid-template-columns:minmax(0,1fr) 34px;gap:4px 10px;font-size:15px;color:var(--muted)}
-.r-res i{grid-column:1/-1;display:block;height:8px;border-radius:6px;background:rgba(255,255,255,.08);overflow:hidden}
-.r-res i b{display:block;height:100%;background:var(--suit);transition:width .6s}
-.r-res span:last-of-type{text-align:right;font-weight:700}
-.r-note{font-size:16px;color:var(--muted);margin:0}
-.r-deck,.rback{border:2px solid var(--line);background:var(--panel);color:var(--ink);border-radius:14px;padding:12px 18px;font-family:var(--f-display);font-weight:700;font-size:15px;letter-spacing:.08em;text-transform:uppercase}
-.rback{position:fixed;z-index:9;left:50%;transform:translateX(-50%);bottom:calc(14px + env(safe-area-inset-bottom,0px));background:var(--giallo);color:var(--paper-ink);border:0}
+.poll-head[hidden]{display:none}
 @media (prefers-reduced-motion: reduce){.sky .tw,.fly,.mascot .halo,.bob,.ff .g,.slide.on,.chips span,.ctxwin .blk,.phrase .blank.pop{animation:none}.frag,.pbar .fill{transition:none}}
+
+/* logo Wolf Team, nei colori del corso */
+.wt{display:inline-flex;align-items:center;gap:.5em;font-family:"Bricolage Grotesque","Arial Narrow",system-ui,sans-serif;font-weight:800;letter-spacing:.16em;text-transform:uppercase;white-space:nowrap;vertical-align:middle;line-height:1;font-style:normal}
+.wt .wt-m{width:2.1em;height:2.1em;flex:none;display:block}
+.wt-w b{font-weight:800;color:var(--wt-accent,#F2B97F)}
 </style>
 
 <svg class="sky" id="sky" aria-hidden="true"></svg>
@@ -257,6 +237,7 @@ body.remote-mode{overflow:auto}
       <p class="eyebrow">Corso per docenti · laboratorio</p>
       <h1 style="font-family:var(--f-display);font-weight:800;font-size:190px;letter-spacing:-.03em">IDEA<sup style="font-size:.42em;color:var(--rosso);vertical-align:.95em">IA</sup></h1>
       <p class="lead">Dieci ore per passare dall'idea allo strumento, con Claude.</p>
+      <p style="margin:10px 0 0;font-size:22px;color:var(--muted)"><span class="wt"><svg class="wt-m" viewBox="0 0 200 200" aria-hidden="true"><circle cx="100" cy="100" r="93" style="fill:#ABA3DC;stroke:#F6D58E;stroke-width:7"/><circle cx="100" cy="100" r="84" style="fill:none;stroke:#F7F1EE;stroke-opacity:.28;stroke-width:2"/><path d="M53 40.9 74.8 64.3 49.7 72.7Z" style="fill:#F7F1EE"/><path d="M146.9 40.9 125.2 64.3 150.3 72.7Z" style="fill:#F7F1EE"/><path d="M100 57.6 116.8 62.6 160.3 89.4 180.5 116.1 133.5 143.1 100 176.6Z" style="fill:#F7F1EE;opacity:.5"/><path d="M61.5 96.2 88.2 101.2 76.5 109.5Z" style="fill:#17142C"/><path d="M138.5 96.2 111.8 101.2 123.5 109.5Z" style="fill:#17142C"/><path d="M88.2 153.1 111.8 153.1 100 168.1Z" style="fill:#17142C"/></svg><span class="wt-w">Wolf <b>Team</b></span></span></p>
     </div>
     <div data-mascot="happy" style="width:380px"></div>
   </div>
@@ -282,8 +263,8 @@ body.remote-mode{overflow:auto}
   </div>
 </section>
 
-<section class="slide" data-inc="1" data-title="Quanto tempo ci è voluto?" data-notes="Primo sondaggio: serve anche a far entrare tutti nella sala. I docenti inquadrano il QR con il telefono (devono avere accesso alla presentazione con il loro account Claude) e votano: le barre crescono in diretta. Chi non riesce alza la mano: un clic su una barra aggiunge un voto, Maiusc+clic lo toglie. Chiedete anche che competenze servivano. Poi avanzate: arriva la risposta.">
-  <p class="eyebrow">Una domanda</p>
+<section class="slide" data-inc="1" data-title="Quanto tempo ci è voluto?" data-notes="Primo sondaggio: serve anche a far entrare tutti nella sala. I docenti inquadrano il QR con il telefono e votano, senza account: le barre crescono in diretta. Il voto dal telefono funziona aprendo la presentazione dal file o dal sito dei materiali (non dalla pagina su claude.ai). Per un nuovo gruppo di corsisti premete «Nuova sala». Chi non riesce alza la mano: un clic su una barra aggiunge un voto, Maiusc+clic lo toglie. Chiedete anche che competenze servivano. Poi avanzate: arriva la risposta.">
+  <p class="eyebrow">Una domanda · votate dal telefono</p>
   <div class="row" style="align-items:flex-start">
     <h2 class="grow" style="font-size:84px">Quanto tempo ci è voluto per farli?</h2>
     <div class="poll" style="width:700px;--lab:190px" data-poll="tempo" data-q="Quanto tempo ci è voluto per fare questi strumenti?" data-o="Un pomeriggio|Una settimana|Un mese|Sei mesi o più"></div>
@@ -601,7 +582,7 @@ La&lt;/button&gt;</div></div>
 
 <section class="slide" data-inc="5" data-title="Che cosa vi portate a casa" data-notes="Ultimo sondaggio dal telefono, poi un giro veloce: chi vuole racconta la sua risposta.">
   <div class="row grow" style="align-items:center">
-    <div class="col grow"><p class="eyebrow">Per chiudere</p><h2>Che cosa vi portate <em>a casa?</em></h2>
+    <div class="col grow"><p class="eyebrow">Per chiudere · votate dal telefono</p><h2>Che cosa vi portate <em>a casa?</em></h2>
       <div class="poll" style="margin-top:14px" data-poll="casa" data-q="Che cosa vi portate a casa da questo corso?" data-o="Un'idea che non avevo|Uno strumento che userò domani|Una cosa da insegnare a un collega|La voglia di costruirne altri"></div></div>
     <div data-mascot="happy" style="width:300px"></div>
   </div>
@@ -620,12 +601,6 @@ La&lt;/button&gt;</div></div>
 <div class="notes" id="notes" hidden></div>
 <div class="menu" id="menu" hidden><div class="in" id="menuin"></div><p class="help">Frecce, barra spaziatrice o clic ai lati per avanzare · N note · M indice · F schermo intero · Esc chiude.</p></div>
 <p class="sr" id="live" aria-live="polite"></p>
-<div class="remote" id="remote" hidden>
-  <div class="r-top"><span class="r-logo">IDEA<sup>IA</sup></span><span class="r-st" id="rst"><span class="dot"></span><span id="rsttxt">In collegamento…</span></span></div>
-  <div class="r-body" id="rbody"></div>
-  <button class="r-deck" id="rdeck">Guarda le slide</button>
-</div>
-<button class="rback" id="rback" hidden>Torna al voto</button>
 
 <script>
 const CLAUDIO="https://chiaraleto97-blip.github.io/claudio/";
@@ -708,46 +683,57 @@ let AC=null;
 function chime(fs){try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();const t0=AC.currentTime;fs.forEach((f,i)=>{const o=AC.createOscillator(),g=AC.createGain();o.frequency.value=f;g.gain.setValueAtTime(0,t0+i*.16);g.gain.linearRampToValueAtTime(.18,t0+i*.16+.02);g.gain.exponentialRampToValueAtTime(.001,t0+i*.16+.6);o.connect(g).connect(AC.destination);o.start(t0+i*.16);o.stop(t0+i*.16+.7)})}catch(e){}}
 
 /* ---------- sondaggi in diretta ----------
-   Sulla LIM (chi può modificare la presentazione) le barre; sul telefono dei corsisti i pulsanti.
-   La domanda va ai telefoni sull'argomento "sondaggio", che solo chi presenta può inviare;
-   ogni telefono mette il suo voto nella propria presenza. Senza collegamento si vota per alzata di mano:
-   un clic su una barra aggiunge un voto, Maiusc+clic lo toglie. */
-const SALA="";
+   I corsisti votano dal telefono senza account: inquadrano il QR e si apre la pagina di voto sul sito
+   dei materiali. Domanda e voti viaggiano su due server MQTT pubblici e gratuiti (HiveMQ ed EMQX), in una
+   "sala" con un codice casuale: nessun servizio di Claude, nessun token. Dalla pagina su claude.ai questi
+   collegamenti non sono permessi: lì, e senza rete, si vota per alzata di mano (clic su una barra: un voto
+   in più, Maiusc+clic: uno in meno). */
+const VOTA="https://chiaraleto97-blip.github.io/claudio/vota/";
+const BROKERS=["wss://broker.hivemq.com:8884/mqtt","wss://broker.emqx.io:8084/mqtt"];
+const IN_CLAUDE=!!(window.claude&&window.claude.use);
+const newCode=()=>Array.from(crypto.getRandomValues(new Uint8Array(6)),b=>"abcdefghjkmnpqrstuvwxyz23456789"[b%31]).join("");
+let SALA=store.get("voto-sala","");if(!/^[a-z0-9]{6}$/.test(SALA)){SALA=newCode();store.set("voto-sala",SALA)}
+const base=()=>`ideaia/v1/${SALA}`;
 const POLLS={};
 document.querySelectorAll("[data-poll]").forEach(el=>{
   const id=el.dataset.poll,o=el.dataset.o.split("|");POLLS[id]={id,q:el.dataset.q,o,el};
-  el.innerHTML=`<div class="poll-head"><div class="qr-s" data-qrsala></div><div class="poll-join"><b>Votate dal telefono</b><span>Inquadrate il codice ed entrate con il vostro account Claude.</span></div></div>
+  el.innerHTML=`<div class="poll-head"><div class="qr-s" data-qrsala></div><div class="poll-join"><b>Votate dal telefono</b><span class="pj-txt"></span></div></div>
   <div class="poll-bars">${o.map((t,i)=>`<button class="pbar c-${["blu","rosso","giallo","verde","lilla"][i%5]}" data-i="${i}" title="Clic: un voto in più · Maiusc+clic: uno in meno"><span class="lab">${esc(t)}</span><span class="track"><span class="fill"></span></span><span class="n">0</span></button>`).join("")}</div>
-  <div class="poll-meta"><span class="dot"></span><span class="pm-txt"></span><button data-reset>Azzera</button></div>`;
+  <div class="poll-meta"><span class="dot"></span><span class="pm-txt"></span><button data-newsala title="Un codice nuovo: i telefoni dovranno inquadrare di nuovo il QR">Nuova sala</button><button data-reset>Azzera</button></div>`;
 });
-document.querySelectorAll("[data-qrsala]").forEach(el=>{
-  if(!SALA){el.closest(".poll-head").hidden=true;return}
-  if(typeof QRCode!=="undefined"){try{new QRCode(el,{text:SALA,width:300,height:300,colorDark:"#2A2045",colorLight:"#FFFFFF",correctLevel:QRCode.CorrectLevel.M})}catch(e){}}
-  else el.innerHTML="<p>Serve la connessione per il QR.</p>";
-});
+function drawSalaQR(){document.querySelectorAll("[data-qrsala]").forEach(el=>{el.innerHTML="";
+  if(IN_CLAUDE){el.closest(".poll-head").hidden=true;return}
+  if(typeof QRCode!=="undefined"){try{new QRCode(el,{text:VOTA+"#"+SALA,width:300,height:300,colorDark:"#2A2045",colorLight:"#FFFFFF",correctLevel:QRCode.CorrectLevel.M})}catch(e){}}
+  else el.innerHTML="<p>Serve la connessione per il QR.</p>"})}
+drawSalaQR();
 let votes=store.get("sondaggi-v1",{});
 const slot=id=>{const s=votes[id]||(votes[id]={});s.remote=s.remote||{};s.manual=s.manual||[];return s};
 function counts(id){const p=POLLS[id],c=p.o.map(()=>0),s=slot(id);
   Object.values(s.remote).forEach(i=>{if(c[i]!=null)c[i]++});s.manual.forEach((n,i)=>{if(c[i]!=null)c[i]+=n||0});return c}
-let ROOM=null,inSala=0;
-function renderPoll(id){const p=POLLS[id],c=counts(id),max=Math.max(1,...c),tot=c.reduce((a,b)=>a+b,0);
+const CLIENTS=[],PHONES=new Set();let TRIED=false;
+const live=()=>CLIENTS.filter(c=>c.connected);
+function renderPoll(id){const p=POLLS[id],c=counts(id),max=Math.max(1,...c),tot=c.reduce((a,b)=>a+b,0),on=live().length>0;
   p.el.querySelectorAll(".pbar").forEach((b,i)=>{b.querySelector(".fill").style.width=(c[i]/max*100)+"%";b.querySelector(".n").textContent=c[i]});
-  const m=p.el.querySelector(".poll-meta");m.classList.toggle("live",!!ROOM);
-  m.querySelector(".pm-txt").textContent=(tot===1?"1 voto":`${tot} voti`)+(ROOM?` · ${inSala} in sala`:" · voto per alzata di mano");
+  const m=p.el.querySelector(".poll-meta");m.classList.toggle("live",on);
+  m.querySelector(".pm-txt").textContent=(tot===1?"1 voto":`${tot} voti`)+(on?` · ${PHONES.size} ${PHONES.size===1?"telefono":"telefoni"} in sala ${SALA}`:TRIED?" · voto per alzata di mano":" · collegamento…");
+  p.el.querySelector(".pj-txt").textContent=on||!TRIED?"Inquadrate il codice: si vota senza account, in forma anonima.":"Collegamento non riuscito: votate per alzata di mano, oppure controllate la rete.";
 }
 function renderPolls(){Object.keys(POLLS).forEach(renderPoll)}
 function savePolls(){store.set("sondaggi-v1",votes);renderPolls();broadcastSoon()}
+const pub=(topic,payload)=>live().forEach(c=>{try{c.publish(topic,payload,{retain:true,qos:0})}catch(e){}});
 document.addEventListener("click",e=>{
   const p=e.target.closest("[data-poll]");if(!p)return;const id=p.dataset.poll;
-  if(e.target.closest("[data-reset]")){e.stopPropagation();votes[id]={};savePolls();return}
+  if(e.target.closest("[data-reset]")){e.stopPropagation();const giro=(slot(id).r||0)+1;Object.keys(slot(id).remote).forEach(v=>pub(`${base()}/v/${id}/${v}`,""));votes[id]={r:giro};savePolls();return}
+  const ns=e.target.closest("[data-newsala]");
+  if(ns){e.stopPropagation();if(!ns.dataset.sure){ns.dataset.sure="1";ns.textContent="Sicuri? Clic di nuovo";setTimeout(()=>{delete ns.dataset.sure;ns.textContent="Nuova sala"},3000);return}
+    setSala(newCode());return}
   const b=e.target.closest(".pbar");if(!b)return;e.stopPropagation();const s=slot(id),i=+b.dataset.i;
   s.manual[i]=Math.max(0,(s.manual[i]||0)+(e.shiftKey?-1:1));savePolls();
 });
 const activePoll=()=>slides[cur]?.querySelector("[data-poll]")?.dataset.poll||null;
 renderPolls();
-let PRESENTER=false;
-function broadcast(){if(!ROOM||!PRESENTER)return;const id=activePoll(),form=slides[cur]?.hasAttribute("data-form")&&FORM?FORM:null;
-  ROOM.emit("sondaggio",id?{id,q:POLLS[id].q,o:POLLS[id].o,c:counts(id)}:{id:null,form}).catch(()=>{})}
+function broadcast(){if(!live().length)return;const id=activePoll(),form=slides[cur]?.hasAttribute("data-form")&&FORM?FORM:null;
+  pub(base()+"/poll",JSON.stringify(id?{id,r:slot(id).r||0,q:POLLS[id].q,o:POLLS[id].o,c:counts(id)}:{id:null,form}))}
 
 /* il questionario finale: il link del modulo diventa un QR (e un pulsante sui telefoni) */
 const okForm=u=>/^https:\/\/(docs\.google\.com\/forms\/|forms\.gle\/)/.test(u||"");
@@ -760,54 +746,35 @@ $("formform").addEventListener("submit",e=>{e.preventDefault();const u=$("formin
   if(u&&!okForm(u)){$("formurl").textContent="Serve un link di Google Moduli (docs.google.com/forms/… oppure forms.gle/…).";return}
   FORM=u;store.set("questionario-link",FORM);renderForm();broadcastSoon()});
 renderForm();
-let bt=null;function broadcastSoon(){if(!ROOM||!PRESENTER||bt)return;bt=setTimeout(()=>{bt=null;broadcast()},700)}
-function startPresenter(room){
-  ROOM=room;PRESENTER=true;renderPolls();
-  room.onPeers(ch=>{
-    inSala=ch.peers.filter(p=>p.kind==="viewer"&&!p.isMe).length;const act=activePoll();let changed=false;
-    for(const p of [...ch.joined,...ch.updated]){
-      if(p.isMe||p.kind!=="viewer")continue;const v=p.presence&&p.presence.vote;
-      if(!v||v.id!==act||!Number.isInteger(v.c)||v.c<0||v.c>=POLLS[act].o.length)continue;
-      const s=slot(act),key=p.by||p.peer;if(s.remote[key]!==v.c){s.remote[key]=v.c;changed=true}
-    }
-    if(changed){store.set("sondaggi-v1",votes);broadcastSoon()}
-    if(ch.joined.length)broadcastSoon();
-    renderPolls();
-  });
-  setInterval(broadcast,4000);broadcast();
-}
+let bt=null;function broadcastSoon(){if(bt||!live().length)return;bt=setTimeout(()=>{bt=null;broadcast()},600)}
 
-/* il telefono: la domanda in corso e i pulsanti per votare */
-let RQ=null,myVote=null,RFORM=null;
-function startRemote(room){
-  ROOM=room;document.body.classList.add("remote-mode");$("remote").hidden=false;renderRemote();
-  room.onConnection(ok=>{$("rst").classList.toggle("live",ok);$("rsttxt").textContent=ok?"In sala":"Riconnessione…"});
-  room.on("sondaggio",m=>{const d=m.data;if(!d||typeof d!=="object")return;
-    RFORM=!d.id&&okForm(d.form)?d.form:null;
-    if(!d.id){RQ=null}else if(typeof d.id==="string"&&typeof d.q==="string"&&Array.isArray(d.o)){
-      RQ={id:d.id.slice(0,40),q:d.q.slice(0,300),o:d.o.slice(0,8).map(t=>String(t).slice(0,80)),c:Array.isArray(d.c)?d.c.slice(0,8).map(n=>Math.max(0,+n||0)):[]}}
-    renderRemote()},()=>{$("rsttxt").textContent="Collegamento non disponibile"});
-  $("rbody").addEventListener("click",e=>{const b=e.target.closest("[data-v]");if(!b||!RQ)return;
-    myVote={id:RQ.id,c:+b.dataset.v};room.presence({vote:myVote}).catch(()=>{});renderRemote()});
+/* i messaggi dalla sala: chi è collegato e i voti (possono arrivare da chiunque: si controllano) */
+function onMsg(topic,buf){
+  if(!topic.startsWith(base()+"/"))return;const [kind,a,b]=topic.slice(base().length+1).split("/"),txt=String(buf||"");
+  if(kind==="here"&&/^[a-z0-9]{6,20}$/.test(a||"")){txt==="1"?PHONES.add(a):PHONES.delete(a);renderPolls();return}
+  if(kind!=="v"||!POLLS[a]||!/^[a-z0-9]{6,20}$/.test(b||""))return;
+  const s=slot(a);
+  if(!txt){if(b in s.remote){delete s.remote[b];savePolls()}return}
+  let c;try{c=JSON.parse(txt).c}catch(e){return}
+  if(!Number.isInteger(c)||c<0||c>=POLLS[a].o.length||s.remote[b]===c)return;
+  s.remote[b]=c;savePolls();
 }
-function renderRemote(){
-  if(!RQ&&RFORM){$("rbody").innerHTML=`<div class="r-wait"><div style="width:160px">${claudio("happy")}</div><h2>Il questionario finale</h2><p>Anonimo, cinque minuti. Grazie!</p><a class="btn" style="text-decoration:none;margin-top:8px" href="${esc(RFORM)}" target="_blank" rel="noopener">Apri il questionario</a></div>`;return}
-  if(!RQ){$("rbody").innerHTML=`<div class="r-wait"><div style="width:180px">${claudio("happy")}</div><h2>Aspettate la prossima domanda</h2><p>Quando sulla LIM compare un sondaggio, qui arrivano i pulsanti per votare.</p></div>`;return}
-  const mine=myVote&&myVote.id===RQ.id?myVote.c:null,tot=RQ.c.reduce((a,b)=>a+b,0),max=Math.max(1,...RQ.c),suit=["blu","rosso","giallo","verde","lilla"];
-  $("rbody").innerHTML=`<h2>${esc(RQ.q)}</h2>${RQ.o.map((t,i)=>`<button class="r-opt c-${suit[i%5]} ${mine===i?"sel":""}" data-v="${i}" aria-pressed="${mine===i}">${esc(t)}</button>`).join("")}
-    ${mine==null?`<p class="r-note">Toccate una risposta: potete cambiarla finché la domanda resta sulla LIM.</p>`
-    :`<p class="r-note">Voto inviato. Ecco la sala${tot?` (${tot} ${tot===1?"voto":"voti"})`:""}:</p><div class="r-res">${RQ.o.map((t,i)=>`<div class="c-${suit[i%5]}"><span>${esc(t)}</span><span>${RQ.c[i]||0}</span><i><b style="width:${(RQ.c[i]||0)/max*100}%"></b></i></div>`).join("")}</div>`}`;
+const topics=()=>[base()+"/v/+/+",base()+"/here/+"];
+function setSala(code){const old=topics();pub(base()+"/poll","");
+  live().forEach(c=>{try{c.unsubscribe(old)}catch(e){}});
+  SALA=code;store.set("voto-sala",SALA);votes={};PHONES.clear();store.set("sondaggi-v1",votes);
+  live().forEach(c=>{try{c.subscribe(topics())}catch(e){}});drawSalaQR();renderPolls();broadcast()}
+function startMQTT(){
+  BROKERS.forEach(url=>{let c;try{c=mqtt.connect(url,{clientId:"lim-"+newCode(),reconnectPeriod:5000,connectTimeout:8000,clean:true})}catch(e){return}
+    CLIENTS.push(c);
+    c.on("connect",()=>{c.subscribe(topics());renderPolls();broadcastSoon()});
+    c.on("close",renderPolls);c.on("error",()=>{});c.on("message",onMsg)});
+  setTimeout(()=>{TRIED=true;renderPolls()},9000);
+  addEventListener("pagehide",()=>pub(base()+"/poll",JSON.stringify({id:null})));
 }
-$("rdeck").onclick=()=>{document.body.classList.remove("remote-mode");$("remote").hidden=true;$("rback").hidden=false;fit()};
-$("rback").onclick=()=>{document.body.classList.add("remote-mode");$("remote").hidden=false;$("rback").hidden=true};
-
-(async()=>{
-  if(!window.claude||!window.claude.use)return;
-  const [room,user]=await Promise.all([claude.use("room"),claude.use("user")]);
-  if(!room)return;
-  const presenter=user?await user.canEdit().catch(()=>false):true;
-  if(presenter&&location.hash!=="#voto")startPresenter(room);else startRemote(room);
-})();
+if(IN_CLAUDE){TRIED=true;renderPolls()}
+else{const s=document.createElement("script");s.src="https://cdn.jsdelivr.net/npm/mqtt@5.10.1/dist/mqtt.min.js";
+  s.onload=startMQTT;s.onerror=()=>{TRIED=true;renderPolls()};document.head.appendChild(s)}
 
 /* ---------- indovina la parola: la sala vota, il modello pesca ---------- */
 const ESEMPIO=[30,25,15,20,10];

@@ -68,6 +68,11 @@ h2 em{font-style:italic;font-weight:400;color:var(--glow)}
 .tips b{color:var(--ink)}
 footer{color:var(--muted);font-size:15px;border-top:1px solid var(--line);padding-top:18px;display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px 20px}
 @media (max-width:640px){.hero{grid-template-columns:minmax(0,1fr)}.mascot{display:none}.feature{grid-template-columns:minmax(0,1fr)}.feature .ico{display:none}}
+
+/* logo Wolf Team, nei colori del corso */
+.wt{display:inline-flex;align-items:center;gap:.5em;font-family:"Bricolage Grotesque","Arial Narrow",system-ui,sans-serif;font-weight:800;letter-spacing:.16em;text-transform:uppercase;white-space:nowrap;vertical-align:middle;line-height:1;font-style:normal}
+.wt .wt-m{width:2.1em;height:2.1em;flex:none;display:block}
+.wt-w b{font-weight:800;color:var(--wt-accent,#F2B97F)}
 </style>
 
 <svg class="sky" id="sky" aria-hidden="true"></svg>
@@ -129,7 +134,7 @@ footer{color:var(--muted);font-size:15px;border-top:1px solid var(--line);paddin
     <p><b>Quello che scrivete</b> nelle schede resta solo nel vostro browser, su quel dispositivo.</p>
   </section>
 
-  <footer><span>IDEA<sup>IA</sup> · corso di formazione per docenti · IC Almese</span><span>Fatto con Claude, come tutto il resto.</span></footer>
+  <footer><span>IDEA<sup>IA</sup> · corso di formazione per docenti · IC Almese · <span class="wt"><svg class="wt-m" viewBox="0 0 200 200" aria-hidden="true"><circle cx="100" cy="100" r="93" style="fill:#ABA3DC;stroke:#F6D58E;stroke-width:7"/><circle cx="100" cy="100" r="84" style="fill:none;stroke:#F7F1EE;stroke-opacity:.28;stroke-width:2"/><path d="M53 40.9 74.8 64.3 49.7 72.7Z" style="fill:#F7F1EE"/><path d="M146.9 40.9 125.2 64.3 150.3 72.7Z" style="fill:#F7F1EE"/><path d="M100 57.6 116.8 62.6 160.3 89.4 180.5 116.1 133.5 143.1 100 176.6Z" style="fill:#F7F1EE;opacity:.5"/><path d="M61.5 96.2 88.2 101.2 76.5 109.5Z" style="fill:#17142C"/><path d="M138.5 96.2 111.8 101.2 123.5 109.5Z" style="fill:#17142C"/><path d="M88.2 153.1 111.8 153.1 100 168.1Z" style="fill:#17142C"/></svg><span class="wt-w">Wolf <b>Team</b></span></span></span><span>Fatto con Claude, come tutto il resto.</span></footer>
 </main>
 
 <script>
@@ -138,7 +143,7 @@ const f1=n=>Math.round(n*10)/10;
 function pine(x,base,h,w){const t=h*.12,y0=base-t;let d=`M${f1(x-w*.07)} ${f1(base)}h${f1(w*.14)}v${f1(-t)}h${f1(-w*.14)}Z`;[[1,0],[.78,.3],[.55,.56]].forEach(([k,o])=>{const yb=y0-h*o,ww=w*k/2,ht=h*.48;d+=`M${f1(x)} ${f1(yb-ht)}L${f1(x+ww)} ${f1(yb)}H${f1(x-ww)}Z`});return d}
 function treeline(r,x0,x1,base,hmin,hmax,wk){let d="";for(let x=x0;x<x1;){const h=hmin+r()*(hmax-hmin);d+=pine(x,base+r()*1.2,h,h*wk);x+=h*wk*(.42+r()*.35)}return d}
 function claudio(){return `<svg viewBox="0 0 120 120" aria-hidden="true"><circle cx="60" cy="82" r="36" style="fill:#F6D58E;opacity:.2"/><ellipse cx="38" cy="54" rx="20" ry="10" transform="rotate(-28 38 54)" style="fill:#C8A5D8;opacity:.6"/><ellipse cx="82" cy="54" rx="20" ry="10" transform="rotate(28 82 54)" style="fill:#C8A5D8;opacity:.6"/><ellipse cx="60" cy="81" rx="18" ry="22" style="fill:#F6D58E"/><path d="M44 76h32M45 86h30" style="stroke:#E2B866;stroke-width:2.2"/><ellipse cx="60" cy="59" rx="16" ry="11" style="fill:#4A3560"/><path d="M52 25Q46 11 37 9M68 25Q74 11 83 9" style="fill:none;stroke:#F3EAF0;stroke-width:3;stroke-linecap:round;opacity:.85"/><circle cx="37" cy="9" r="3.6" style="fill:#F2B97F"/><circle cx="83" cy="9" r="3.6" style="fill:#F2B97F"/><circle cx="60" cy="38" r="17.5" style="fill:#2A2045"/><circle cx="53" cy="35.5" r="5.6" style="fill:#fff"/><circle cx="67" cy="35.5" r="5.6" style="fill:#fff"/><circle cx="54.2" cy="36.6" r="2.7" style="fill:#17142C"/><circle cx="68.2" cy="36.6" r="2.7" style="fill:#17142C"/><circle cx="46.5" cy="43" r="3" style="fill:#EA9B8C;opacity:.7"/><circle cx="73.5" cy="43" r="3" style="fill:#EA9B8C;opacity:.7"/><path d="M52.5 44Q60 51.5 67.5 44" style="fill:none;stroke:#F3EAF0;stroke-width:2.4;stroke-linecap:round"/></svg>`}
-const wolf=`<svg viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="30" style="fill:#2A2045"/><circle cx="44" cy="20" r="8" style="fill:#FFF3E6;opacity:.9"/><circle cx="47" cy="18" r="7" style="fill:#2A2045"/><path d="M14 52 L22 30 L27 36 L32 22 L37 36 L42 30 L50 52 Z" style="fill:#C8A5D8"/><circle cx="27.5" cy="40" r="1.8" style="fill:#F6D58E"/><circle cx="36.5" cy="40" r="1.8" style="fill:#F6D58E"/></svg>`;
+const wolf=`<svg viewBox="0 0 200 200" aria-hidden="true"><circle cx="100" cy="100" r="93" style="fill:#ABA3DC;stroke:#F6D58E;stroke-width:7"/><circle cx="100" cy="100" r="84" style="fill:none;stroke:#F7F1EE;stroke-opacity:.28;stroke-width:2"/><path d="M53 40.9 74.8 64.3 49.7 72.7Z" style="fill:#F7F1EE"/><path d="M146.9 40.9 125.2 64.3 150.3 72.7Z" style="fill:#F7F1EE"/><path d="M100 57.6 116.8 62.6 160.3 89.4 180.5 116.1 133.5 143.1 100 176.6Z" style="fill:#F7F1EE;opacity:.5"/><path d="M61.5 96.2 88.2 101.2 76.5 109.5Z" style="fill:#17142C"/><path d="M138.5 96.2 111.8 101.2 123.5 109.5Z" style="fill:#17142C"/><path d="M88.2 153.1 111.8 153.1 100 168.1Z" style="fill:#17142C"/></svg>`;
 document.getElementById("mascot").innerHTML=claudio();
 document.getElementById("ico").innerHTML=claudio();
 document.getElementById("ico2").innerHTML=wolf;
