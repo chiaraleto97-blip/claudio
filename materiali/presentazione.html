@@ -217,6 +217,12 @@ a.ff:hover .n{background:var(--paper);color:var(--paper-ink)}
 .pbar .fill{display:block;height:100%;width:0;background:var(--suit);border-radius:12px;transition:width .6s cubic-bezier(.2,.8,.2,1)}
 .pbar .n{font-family:var(--f-display);font-weight:800;font-size:26px;text-align:right;font-variant-numeric:tabular-nums}
 .poll-head[hidden]{display:none}
+/* la bacheca del diario dei bisogni */
+.dwall{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;align-content:start;overflow:hidden;min-height:0}
+.dnote{background:#FBE8A6;color:#3A2E1A;border-radius:6px;padding:14px 16px 12px;font-family:var(--f-serif);font-size:21px;line-height:1.25;box-shadow:0 14px 24px -16px #000;transform:rotate(var(--r,0deg));overflow-wrap:anywhere;animation:pop .4s cubic-bezier(.2,.8,.2,1) backwards}
+.dnote small{display:block;margin-top:8px;font-family:var(--f-body);font-size:14px;opacity:.65}
+.dnote.rosa{background:#F6C9C0}.dnote.azzurro{background:#C9D2F2}.dnote.verde{background:#C6E3D8}
+.dwall .empty{grid-column:1/-1;color:var(--muted);font-size:24px}
 @media (prefers-reduced-motion: reduce){.sky .tw,.fly,.mascot .halo,.bob,.ff .g,.slide.on,.chips span,.ctxwin .blk,.phrase .blank.pop{animation:none}.frag,.pbar .fill{transition:none}}
 
 /* logo Wolf Team, nei colori del corso */
@@ -401,14 +407,20 @@ La&lt;/button&gt;</div></div>
   </div>
 </section>
 
-<section class="slide" data-inc="1" data-title="Il diario dei bisogni" data-timer="5" data-notes="Compito per la settimana. I diari saranno la materia prima delle idee nel secondo incontro.">
+<section class="slide" data-inc="1" data-title="Il diario dei bisogni" data-timer="5" data-notes="Compito per la settimana. Ognuno inquadra il QR e attacca i suoi post-it virtuali quando gli viene in mente un bisogno: restano nel Foglio Google del registro del corso e tornano sulla LIM al secondo incontro. Il link dell'app web del registro si incolla una volta sola qui sotto (è lo stesso della Segreteria). Il QR funziona aprendo la presentazione dal file o dal sito dei materiali.">
   <p class="eyebrow">Per la prossima volta</p>
   <h2>Il diario dei <em>bisogni</em></h2>
-  <p class="lead">Per una settimana, ogni volta che in classe pensate «mi servirebbe qualcosa che…», scrivetelo.</p>
-  <div class="row" style="margin-top:20px">
-    <div class="postit grow" style="--r:-2deg">…che faccia sentire il ritmo a chi non riesce a seguirlo.</div>
-    <div class="postit rosa grow" style="--r:1.5deg">…che mostri quanto manca alla fine del compito.</div>
-    <div class="postit azz grow" style="--r:-1deg">…che legga ad alta voce le consegne.</div>
+  <div class="row grow" style="min-height:0">
+    <div class="col grow">
+      <p class="lead">Per una settimana, ogni volta che in classe pensate «mi servirebbe qualcosa che…», attaccate un post-it sulla bacheca.</p>
+      <div class="row" style="margin-top:6px">
+        <div class="postit grow" style="--r:-2deg;font-size:24px">…che faccia sentire il ritmo a chi non riesce a seguirlo.</div>
+        <div class="postit rosa grow" style="--r:1.5deg;font-size:24px">…che mostri quanto manca alla fine del compito.</div>
+        <div class="postit azz grow" style="--r:-1deg;font-size:24px">…che legga ad alta voce le consegne.</div>
+      </div>
+      <form class="wallform" data-regform style="margin-top:auto"><input data-regin placeholder="Link dell'app web del registro (script.google.com/macros/s/…/exec)" autocomplete="off" aria-label="Link dell'app web del registro"><button class="btn" type="submit">Collega</button></form>
+    </div>
+    <div class="col" style="align-items:center"><div class="qr" data-diarioqr></div><p class="url" data-diariourl></p></div>
   </div>
 </section>
 
@@ -424,10 +436,12 @@ La&lt;/button&gt;</div></div>
   </div>
 </section>
 
-<section class="slide" data-inc="2" data-title="Leggiamo i diari" data-timer="15" data-notes="Un bisogno a testa, scritto alla lavagna. Non si giudica, si raccoglie.">
-  <p class="eyebrow">Dai diari dei bisogni</p>
-  <h2>«Mi servirebbe qualcosa <em>che…</em>»</h2>
-  <p class="lead">A turno, un bisogno a testa. Li scriviamo alla lavagna: sono la materia prima delle idee.</p>
+<section class="slide" data-inc="2" data-title="Leggiamo i diari" data-timer="15" data-notes="La bacheca dei post-it della settimana, dal Foglio Google del registro: si aggiorna da sola. Leggetene qualcuno ad alta voce: non si giudica, si raccoglie. Chi non l'ha ancora fatto può aggiungere un post-it adesso dal QR.">
+  <div class="row" style="align-items:flex-end;justify-content:space-between"><div class="col" style="gap:8px"><p class="eyebrow">Dai diari dei bisogni</p><h2>«Mi servirebbe qualcosa <em>che…</em>»</h2></div><span class="ffcount" data-dcount></span></div>
+  <div class="row grow" style="min-height:0">
+    <div class="dwall grow" data-wall></div>
+    <div class="col" style="align-items:center;width:230px"><div class="qr" data-diarioqr style="width:220px;height:220px"></div><p class="url" style="text-align:center;max-width:220px">Ne manca uno? Inquadrate e attaccatelo adesso.</p></div>
+  </div>
 </section>
 
 <section class="slide" data-inc="2" data-title="Le carte delle idee" data-timer="40" data-notes="Tre giri. Valgono anche le idee assurde. Il mazzo completo è nelle Carte delle idee, sulla LIM o stampato.">
@@ -776,6 +790,38 @@ if(IN_CLAUDE){TRIED=true;renderPolls()}
 else{const s=document.createElement("script");s.src="https://cdn.jsdelivr.net/npm/mqtt@5.10.1/dist/mqtt.min.js";
   s.onload=startMQTT;s.onerror=()=>{TRIED=true;renderPolls()};document.head.appendChild(s)}
 
+/* ---------- il diario dei bisogni: una bacheca di post-it nel Foglio Google del registro ---------- */
+const DIARIO="https://chiaraleto97-blip.github.io/claudio/diario/";
+let REG=store.get("registro-url","");
+let BACHECA=store.get("diario-bacheca","");if(!/^[a-z0-9]{6}$/.test(BACHECA)){BACHECA=newCode();store.set("diario-bacheca",BACHECA)}
+const regId=()=>(/^https:\/\/script\.google\.com\/macros\/s\/([A-Za-z0-9_-]{20,120})\/exec\/?$/.exec((REG||"").trim())||[])[1]||null;
+const diarioLink=()=>regId()?`${DIARIO}#s=${regId()}&b=${BACHECA}`:"";
+function renderDiario(){const link=diarioLink();
+  document.querySelectorAll("[data-diarioqr]").forEach(el=>{el.innerHTML="";
+    if(IN_CLAUDE){el.innerHTML='<p style="color:#2A2045;font-size:18px;margin:0;text-align:center">La bacheca si apre dalla presentazione nel file o sul sito dei materiali.</p>';return}
+    if(!link){el.innerHTML='<p style="color:#2A2045;font-size:18px;margin:0;text-align:center">Qui comparirà il QR della bacheca, dopo aver collegato il registro.</p>';return}
+    if(typeof QRCode!=="undefined"){try{new QRCode(el,{text:link,width:500,height:500,colorDark:"#2A2045",colorLight:"#FFFFFF",correctLevel:QRCode.CorrectLevel.M})}catch(e){}}
+    else el.innerHTML='<p style="color:#2A2045;font-size:18px;margin:0">Serve la connessione per il QR.</p>'});
+  document.querySelectorAll("[data-diariourl]").forEach(el=>el.textContent=link?`Bacheca ${BACHECA}`:"");
+  document.querySelectorAll("[data-regin]").forEach(el=>{if(document.activeElement!==el)el.value=REG});
+}
+document.querySelectorAll("[data-regform]").forEach(f=>f.addEventListener("submit",e=>{e.preventDefault();const u=f.querySelector("[data-regin]").value.trim();
+  REG=u;store.set("registro-url",REG);renderDiario();loadWall()}));
+let wallBusy=false;
+async function loadWall(){const box=document.querySelector("[data-wall]");if(!box||wallBusy)return;
+  if(IN_CLAUDE){box.innerHTML='<p class="empty">La bacheca si vede aprendo la presentazione dal file o dal sito dei materiali.</p>';return}
+  if(!regId()){box.innerHTML='<p class="empty">Collegate il registro nella slide «Il diario dei bisogni» dell\'incontro 1.</p>';return}
+  wallBusy=true;
+  try{const r=await fetch(`https://script.google.com/macros/s/${regId()}/exec?azione=diario&bacheca=${BACHECA}`);const d=await r.json();
+    const list=(Array.isArray(d.postit)?d.postit:[]).sort((a,b)=>a.quando-b.quando);
+    box.innerHTML=list.length?list.map((p,i)=>`<div class="dnote ${["rosa","azzurro","verde"].includes(p.colore)?p.colore:""}" style="--r:${((i*37)%7-3)*.5}deg;animation-delay:${Math.min(i,20)*40}ms">…${esc(p.testo)}${p.autore?`<small>${esc(p.autore)}</small>`:""}</div>`).join("")
+      :'<p class="empty">La bacheca è ancora vuota.</p>';
+    document.querySelectorAll("[data-dcount]").forEach(el=>el.textContent=list.length===1?"1 post-it":`${list.length} post-it`)}
+  catch(e){box.innerHTML='<p class="empty">Bacheca non raggiungibile: controllate la rete.</p>'}
+  finally{wallBusy=false}}
+renderDiario();
+setInterval(()=>{if(slides[cur]?.querySelector("[data-wall]"))loadWall()},15000);
+
 /* ---------- indovina la parola: la sala vota, il modello pesca ---------- */
 const ESEMPIO=[30,25,15,20,10];
 function hintTemp(t){return t===0?"Sceglie sempre la parola più votata: prevedibile, sempre uguale.":t<1?"Quasi sempre le parole più votate, ogni tanto una sorpresa.":t<1.5?"Anche le parole meno votate hanno le loro possibilità.":"Osa molto: escono spesso le parole meno votate."}
@@ -845,6 +891,7 @@ function go(n,showAll){
   trail();$("notes").innerHTML=`<b>${esc(s.dataset.title||"")}</b>${esc(s.dataset.notes||"Nessuna nota.")}`;
   $("live").textContent=s.dataset.title||"";
   if(s.querySelector("#tokin"))renderTok();
+  if(s.querySelector("[data-wall]"))loadWall();
   broadcastSoon();
   try{if(location.hash!=="#voto")history.replaceState(null,"","#s"+cur)}catch(e){}
   document.querySelectorAll("#menuin button").forEach(b=>b.classList.toggle("cur",+b.dataset.n===cur));

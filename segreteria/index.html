@@ -1,0 +1,701 @@
+<!doctype html>
+<html lang="it">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Segreteria IDEAᴵᴬ</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,650;1,9..144,400;1,9..144,600&family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&display=swap">
+<style>
+/* La segreteria del corso: sul tavolo notturno le schede di lavoro (corsisti, firme, attestati, questionario); i fogli A4 sono carta chiara, pronti da stampare dal file nella cartella. Un solo aspetto, notturno. */
+:root{
+  --bg:#17142C; --bg-2:#261E40; --panel:rgba(38,30,64,.86); --ink:#F3EAF0; --muted:#B9A9C4; --line:#3B3056;
+  --paper:#FFFDF8; --paper-ink:#2A2045; --paper-muted:#6C5F77; --paper-line:#CFC4D6;
+  --blu:#9EA6E2; --rosso:#EA9B8C; --giallo:#F2B97F; --verde:#88C0AF; --lilla:#C8A5D8; --glow:#F6D58E;
+  --rosso-d:#A3493C; --giallo-d:#8A5217; --verde-d:#2A6858;
+  --f-display:"Bricolage Grotesque","Arial Narrow",system-ui,sans-serif;
+  --f-serif:"Fraunces",Georgia,"Times New Roman",serif;
+  --f-body:"Atkinson Hyperlegible",Verdana,system-ui,sans-serif;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html{background:var(--bg)}
+body{margin:0;min-height:100vh;background:linear-gradient(to bottom,#14122A 0%,#1F1A3C 34%,#35284F 58%,#5C3760 78%,#8C4F63 92%,#B86E66 100%) fixed,var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.5;
+  padding-block:24px 60px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+button,input,textarea,select{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:3px solid var(--giallo);outline-offset:2px}
+.sky{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:0}
+.sky circle{fill:#FFF3E6}
+.wrap{position:relative;z-index:1;max-width:1100px;margin:0 auto;display:flex;flex-direction:column;gap:22px}
+header{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:12px 24px}
+.brand{font-family:var(--f-display);font-weight:800;font-size:15px;letter-spacing:.16em;text-transform:uppercase;color:var(--giallo);margin:0}
+.brand sup{color:var(--rosso);font-size:.7em}
+h1{font-family:var(--f-serif);font-weight:500;font-size:clamp(34px,5vw,52px);line-height:1.05;letter-spacing:-.02em;margin:4px 0 0;text-wrap:balance}
+h1 em{font-style:italic;font-weight:400;color:var(--giallo)}
+h2{font-family:var(--f-serif);font-weight:650;font-size:24px;margin:0;text-wrap:balance}
+.tabs{display:flex;flex-wrap:wrap;gap:8px}
+.tab{border:2px solid var(--line);background:transparent;border-radius:999px;padding:8px 18px;font-family:var(--f-display);font-weight:700;font-size:14px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.tab[aria-selected="true"]{background:var(--glow);border-color:var(--glow);color:var(--paper-ink)}
+.panel{background:var(--panel);border-radius:20px;padding:22px 24px;display:flex;flex-direction:column;gap:16px;min-width:0}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px 18px}
+label.f{display:flex;flex-direction:column;gap:6px;font-family:var(--f-display);font-weight:700;font-size:13px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);min-width:0}
+input[type=text],input[type=date],input[type=number],textarea,select{width:100%;background:rgba(255,255,255,.07);border:2px solid var(--line);border-radius:12px;padding:10px 12px;font-family:var(--f-body);font-size:16px;letter-spacing:0;text-transform:none;color:var(--ink)}
+input:focus,textarea:focus,select:focus{border-color:var(--giallo);outline:none}
+textarea{min-height:110px;resize:vertical}
+.hint{color:var(--muted);font-size:15px;margin:0}
+.btn{border:0;border-radius:14px;padding:11px 20px;font-family:var(--f-display);font-weight:800;font-size:15px;letter-spacing:.06em;text-transform:uppercase;background:var(--giallo);color:var(--paper-ink);box-shadow:0 4px 0 var(--giallo-d)}
+.btn:active{transform:translateY(3px);box-shadow:0 1px 0 var(--giallo-d)}
+.btn.line{background:transparent;color:var(--ink);border:2px solid var(--line);box-shadow:none}
+.bar{display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px}
+.inc{display:grid;grid-template-columns:32px minmax(0,1.4fr) minmax(0,1fr) minmax(0,.8fr) minmax(0,.8fr) 70px;gap:8px;align-items:center}
+.inc .n{font-family:var(--f-display);font-weight:800;font-size:20px;color:var(--glow);text-align:center}
+.inc.head{font-family:var(--f-display);font-weight:700;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.scroll{overflow-x:auto}
+table.roster{width:100%;border-collapse:collapse;min-width:640px}
+.roster th{font-family:var(--f-display);font-weight:700;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);text-align:left;padding:6px 8px;border-bottom:2px solid var(--line)}
+.roster td{padding:6px 8px;border-bottom:1px solid var(--line);vertical-align:middle}
+.roster td input[type=text]{padding:6px 10px}
+.roster .c{text-align:center}
+.roster input[type=checkbox]{width:22px;height:22px;accent-color:var(--glow)}
+.hours{font-family:var(--f-display);font-weight:800;font-variant-numeric:tabular-nums}
+.pill{display:inline-block;border-radius:999px;padding:2px 10px;font-family:var(--f-display);font-weight:700;font-size:12px;letter-spacing:.06em;text-transform:uppercase}
+.pill.ok{background:rgba(136,192,175,.25);color:var(--verde)}
+.pill.no{background:rgba(234,155,140,.2);color:var(--rosso)}
+.x{border:0;background:none;color:var(--muted);font-size:22px;line-height:1;padding:2px 6px}
+.empty{color:var(--muted);text-align:center;padding:22px 8px}
+.note{border-left:4px solid var(--glow);padding:4px 0 4px 14px;color:var(--muted);font-size:15px;margin:0}
+pre.gs{background:#120F24;border-radius:14px;padding:16px;font-size:13px;line-height:1.5;max-height:300px;overflow:auto;margin:0;white-space:pre}
+.steps{margin:0;padding-left:22px;display:grid;gap:6px}
+
+/* i fogli A4 */
+.wrap>section.wrap{margin:0;width:100%;min-width:0}
+pre.gs{max-width:100%}
+.papers{display:flex;flex-direction:column;align-items:center;gap:24px;overflow-x:auto;padding-bottom:6px}
+.sheet{flex:none;width:210mm;min-height:297mm;background:var(--paper);color:var(--paper-ink);padding:14mm 14mm 12mm;box-shadow:0 24px 50px -24px #000;display:flex;flex-direction:column;gap:5mm;font-size:10.5pt;line-height:1.4}
+.sheet .top{display:flex;justify-content:space-between;align-items:flex-start;gap:8mm;border-bottom:.6mm solid var(--paper-ink);padding-bottom:3mm}
+.sheet .logo{font-family:var(--f-display);font-weight:800;font-size:20pt;letter-spacing:-.02em;line-height:1}
+.sheet .logo sup{color:var(--rosso-d);font-size:.5em}
+.wt-paper,.wt-band{display:block;font-size:6.5pt;margin-top:2mm;letter-spacing:0}
+.wt-paper{--wt-accent:#A3493C;color:var(--paper-ink)}
+.wt-band{color:#F3EAF0;font-size:7.5pt}
+.att .band .wt .wt-m{position:static;width:2.1em;height:2.1em}
+.sheet .ist{font-family:var(--f-display);font-weight:700;font-size:8pt;letter-spacing:.14em;text-transform:uppercase;color:var(--paper-muted);text-align:right}
+.sheet h3{font-family:var(--f-serif);font-weight:650;font-size:17pt;margin:0;line-height:1.15}
+.sheet .meta{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:2mm 6mm;font-size:9.5pt}
+.sheet .meta b{display:block;font-family:var(--f-display);font-size:7pt;letter-spacing:.14em;text-transform:uppercase;color:var(--paper-muted)}
+.sheet .meta span{display:block;border-bottom:.3mm dotted var(--paper-line);min-height:5.5mm}
+table.firme{width:100%;border-collapse:collapse;font-size:10pt}
+.firme th{font-family:var(--f-display);font-weight:700;font-size:7.5pt;letter-spacing:.12em;text-transform:uppercase;color:var(--paper-muted);text-align:left;padding:1.5mm 2mm;border-bottom:.5mm solid var(--paper-ink)}
+.firme td{border-bottom:.3mm solid var(--paper-line);height:9.4mm;padding:0 2mm}
+.firme td:first-child{width:9mm;color:var(--paper-muted);font-variant-numeric:tabular-nums}
+.firme td:nth-child(2){width:58mm;font-weight:700}
+.firme td:nth-child(3){width:34mm;color:var(--paper-muted)}
+.sheet .foot{margin-top:auto;display:flex;justify-content:space-between;gap:10mm;font-size:9pt;color:var(--paper-muted)}
+.sheet .sig{flex:1;max-width:70mm;border-top:.3mm solid var(--paper-ink);padding-top:1.5mm;text-align:center}
+.sheet .sig b{display:block;color:var(--paper-ink);font-weight:700}
+
+.att{padding:0;gap:0;overflow:hidden}
+.att .band{position:relative;height:52mm;background:linear-gradient(to bottom,#14122A 0%,#2A2045 45%,#5C3760 80%,#8C4F63 100%);color:#F3EAF0;padding:12mm 16mm;display:flex;justify-content:space-between;align-items:flex-start;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.att .band svg{position:absolute;left:0;right:0;bottom:-1px;width:100%;height:20mm}
+.att .band .logo{font-size:30pt;color:#F3EAF0}
+.att .band .logo sup{color:var(--rosso)}
+.att .band .ist{color:#D9CBE0;max-width:80mm}
+.att .body{flex:1;display:flex;flex-direction:column;gap:6mm;padding:14mm 20mm 14mm}
+.att .k{font-family:var(--f-display);font-weight:800;font-size:9pt;letter-spacing:.2em;text-transform:uppercase;color:var(--giallo-d)}
+.att h4{font-family:var(--f-serif);font-weight:500;font-size:30pt;line-height:1.05;margin:0}
+.att .who{font-family:var(--f-serif);font-style:italic;font-weight:600;font-size:26pt;line-height:1.1;border-bottom:.4mm solid var(--paper-line);padding-bottom:2mm}
+.att p{margin:0;font-size:11.5pt;line-height:1.55}
+.att .hrs{display:flex;gap:6mm;align-items:baseline}
+.att .hrs strong{font-family:var(--f-display);font-weight:800;font-size:28pt;color:var(--paper-ink)}
+.att ul{margin:0;padding-left:5mm;font-size:10.5pt;line-height:1.5}
+.att .foot{padding:0 20mm 16mm}
+
+.q h4{font-family:var(--f-display);font-weight:800;font-size:8.5pt;letter-spacing:.16em;text-transform:uppercase;color:var(--giallo-d);margin:2mm 0 0}
+table.likert{width:100%;border-collapse:collapse;font-size:9.8pt}
+.likert th{font-family:var(--f-display);font-weight:700;font-size:8pt;color:var(--paper-muted);padding:1mm;text-align:center;width:9mm}
+.likert th:first-child{text-align:left;width:auto}
+.likert td{border-bottom:.3mm solid var(--paper-line);padding:1.6mm 1mm}
+.likert td.o{text-align:center}
+.likert td.o i{display:inline-block;width:4mm;height:4mm;border:.35mm solid var(--paper-ink);border-radius:50%}
+.q .opts{display:flex;flex-wrap:wrap;gap:2mm 7mm;font-size:10pt}
+.q .opts i{display:inline-block;width:3.6mm;height:3.6mm;border:.35mm solid var(--paper-ink);border-radius:50%;margin-right:1.5mm;vertical-align:-.5mm}
+.q .lines{border-bottom:.3mm solid var(--paper-line);height:8mm}
+.q .qq{font-weight:700;margin:0}
+
+/* firme dal telefono */
+.telgrid{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:18px 24px;align-items:start}
+.telqr{width:250px;padding:12px;background:#fff;border-radius:18px;box-shadow:0 0 34px -6px var(--glow)}
+.telqr img,.telqr canvas{width:100%!important;height:auto!important;display:block}
+.telqr p{color:#2A2045;font-size:15px;margin:0;text-align:center}
+.live{display:inline-flex;align-items:center;gap:8px;font-family:var(--f-display);font-weight:700;font-size:13px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.live i{width:10px;height:10px;border-radius:50%;background:#7D6F92}
+.live.on i{background:#7FD49B;box-shadow:0 0 10px #7FD49B}
+details.setup summary{cursor:pointer;font-family:var(--f-display);font-weight:700;font-size:14px;letter-spacing:.08em;text-transform:uppercase;color:var(--giallo)}
+details.setup[open]{display:flex;flex-direction:column;gap:12px}
+@media (max-width:760px){.telgrid{grid-template-columns:minmax(0,1fr)}.telqr{justify-self:center}}
+/* firme con il dito */
+.signgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px}
+.signbtn{display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:66px;padding:10px 14px;border-radius:14px;border:2px solid var(--line);background:rgba(255,255,255,.05);text-align:left;font-size:17px;line-height:1.25}
+.signbtn small{display:block;color:var(--muted);font-size:13px;margin-top:2px}
+.signbtn.done{border-color:var(--verde);background:rgba(136,192,175,.14)}
+.signbtn img{flex:none;height:40px;max-width:96px;object-fit:contain;background:#FFFDF8;border-radius:6px;padding:2px 4px}
+.seg{display:inline-flex;border:2px solid var(--line);border-radius:999px;overflow:hidden}
+.seg button{border:0;background:none;padding:9px 18px;font-family:var(--f-display);font-weight:700;font-size:14px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.seg button[aria-pressed="true"]{background:var(--glow);color:var(--paper-ink)}
+.pad{position:fixed;inset:0;z-index:30;background:rgba(10,8,22,.94);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;
+  padding:max(16px,env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) max(16px,env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
+.pad .who{font-family:var(--f-serif);font-weight:500;font-size:clamp(26px,4.4vw,44px);margin:0;text-align:center}
+.pad canvas{width:min(980px,100%);aspect-ratio:3/1;border-radius:18px;touch-action:none;cursor:crosshair;box-shadow:0 0 0 3px var(--glow);
+  background:linear-gradient(transparent 74%,#CFC4D6 74%,#CFC4D6 74.6%,transparent 74.6%),#FFFDF8}
+.pad .bar{justify-content:center}
+.firme img.sigimg{display:block;height:8.2mm;max-width:38mm;object-fit:contain}
+.sheet .sig img{display:block;height:11mm;max-width:60mm;object-fit:contain;margin:0 auto -1.5mm}
+@page{size:A4 portrait;margin:0}
+@media print{
+  html,body{background:#fff!important;padding:0!important;min-height:0}
+  .sky,header,.tabs,.panel,.noprint,.pad{display:none!important}
+  .wrap{max-width:none;gap:0;display:block}
+  .papers{display:block;overflow:visible;padding:0}
+  .sheet{box-shadow:none;margin:0;break-after:page;page-break-after:always;width:210mm;height:297mm;min-height:0}
+  .sheet:last-child{break-after:auto;page-break-after:auto}
+  section[hidden]{display:none!important}
+}
+@media (max-width:640px){.inc{grid-template-columns:28px minmax(0,1fr) minmax(0,1fr)}.inc.head{display:none}.inc .t2,.inc .t3{grid-column:2/span 2}}
+
+/* logo Wolf Team, nei colori del corso */
+.wt{display:inline-flex;align-items:center;gap:.5em;font-family:"Bricolage Grotesque","Arial Narrow",system-ui,sans-serif;font-weight:800;letter-spacing:.16em;text-transform:uppercase;white-space:nowrap;vertical-align:middle;line-height:1;font-style:normal}
+.wt .wt-m{width:2.1em;height:2.1em;flex:none;display:block}
+.wt-w b{font-weight:800;color:var(--wt-accent,#F2B97F)}
+</style>
+
+<svg class="sky" id="sky" aria-hidden="true"></svg>
+
+<div class="wrap">
+  <header>
+    <div><p class="brand">IDEA<sup>IA</sup> · corso per docenti <span style="color:var(--ink);margin-left:6px"><span class="wt"><svg class="wt-m" viewBox="0 0 200 200" aria-hidden="true"><circle cx="100" cy="100" r="93" style="fill:#ABA3DC;stroke:#F6D58E;stroke-width:7"/><circle cx="100" cy="100" r="84" style="fill:none;stroke:#F7F1EE;stroke-opacity:.28;stroke-width:2"/><path d="M53 40.9 74.8 64.3 49.7 72.7Z" style="fill:#F7F1EE"/><path d="M146.9 40.9 125.2 64.3 150.3 72.7Z" style="fill:#F7F1EE"/><path d="M100 57.6 116.8 62.6 160.3 89.4 180.5 116.1 133.5 143.1 100 176.6Z" style="fill:#F7F1EE;opacity:.5"/><path d="M61.5 96.2 88.2 101.2 76.5 109.5Z" style="fill:#17142C"/><path d="M138.5 96.2 111.8 101.2 123.5 109.5Z" style="fill:#17142C"/><path d="M88.2 153.1 111.8 153.1 100 168.1Z" style="fill:#17142C"/></svg><span class="wt-w">Wolf <b>Team</b></span></span></span></p><h1>Segreteria del <em>corso</em></h1></div>
+    <div class="tabs" role="tablist" aria-label="Sezioni">
+      <button class="tab" role="tab" id="t-corsisti" aria-controls="corsisti" aria-selected="true">Corsisti e presenze</button>
+      <button class="tab" role="tab" id="t-firme" aria-controls="firme" aria-selected="false">Foglio firme</button>
+      <button class="tab" role="tab" id="t-attestati" aria-controls="attestati" aria-selected="false">Attestati</button>
+      <button class="tab" role="tab" id="t-questionario" aria-controls="questionario" aria-selected="false">Questionario</button>
+    </div>
+  </header>
+
+  <!-- CORSISTI E PRESENZE -->
+  <section id="corsisti" role="tabpanel" aria-labelledby="t-corsisti" class="wrap" style="gap:18px">
+    <div class="panel">
+      <h2>Il corso</h2>
+      <div class="grid2">
+        <label class="f">Istituto<input type="text" id="istituto"></label>
+        <label class="f">Luogo degli incontri<input type="text" id="luogo" placeholder="Es. aula di musica, plesso…"></label>
+        <label class="f">Formazione a cura di<input type="text" id="formatore" placeholder="Nome e cognome"></label>
+        <label class="f">Dirigente scolastico<input type="text" id="dirigente" placeholder="Nome e cognome"></label>
+      </div>
+      <div class="inc head"><span></span><span>Incontro</span><span>Data</span><span>Dalle</span><span>Alle</span><span>Ore</span></div>
+      <div id="incontri" style="display:grid;gap:8px"></div>
+    </div>
+
+    <div class="panel">
+      <div class="bar" style="justify-content:space-between"><h2>Corsisti</h2><span class="hint" id="soglia-txt"></span></div>
+      <label class="f">Aggiungete i nomi, uno per riga (Cognome Nome). Dopo una virgola potete scrivere la scuola o il plesso.
+        <textarea id="nuovi" placeholder="Rossi Anna, primaria Milanere&#10;Bianchi Luca, secondaria"></textarea></label>
+      <div class="bar"><button class="btn" id="aggiungi">Aggiungi all'elenco</button><label class="f" style="flex-direction:row;align-items:center;gap:10px">Frequenza minima per l'attestato<input type="number" id="soglia" min="0" max="100" step="5" style="width:90px"> %</label></div>
+      <div class="scroll"><table class="roster"><thead><tr><th>Cognome e nome</th><th>Scuola o plesso</th><th class="c">1</th><th class="c">2</th><th class="c">3</th><th class="c">4</th><th class="c">5</th><th>Ore</th><th></th><th></th></tr></thead><tbody id="roster"></tbody></table></div>
+      <div class="bar noprint" id="copia-dati"><button class="btn line" type="button" id="esporta">Salva una copia dei dati</button><label class="btn line" style="cursor:pointer">Carica una copia<input type="file" id="importa" accept="application/json,.json" hidden></label><span class="hint" id="copia-msg2" aria-live="polite"></span></div>
+      <p class="note">Spuntate le presenze guardando il foglio firme: le ore e gli attestati si calcolano da sole. I dati restano solo in questo browser, su questo computer: usate sempre lo stesso.</p>
+    </div>
+  </section>
+
+  <!-- FOGLIO FIRME -->
+  <section id="firme" role="tabpanel" aria-labelledby="t-firme" hidden class="wrap" style="gap:18px">
+    <div class="panel noprint">
+      <div class="bar" style="justify-content:space-between"><h2>Firme dal telefono</h2><span class="live" id="tel-live"><i></i><span id="tel-txt">Non collegato</span></span></div>
+      <div class="telgrid">
+        <div class="col" style="display:flex;flex-direction:column;gap:14px;min-width:0">
+          <p class="hint">Proiettate il QR: ogni docente lo inquadra, scrive nome e cognome sul proprio telefono e firma con il dito. Le firme arrivano qui da sole, ogni pochi secondi, e compaiono nel foglio da stampare. Chi non è ancora nell'elenco viene aggiunto.</p>
+          <div class="bar">
+            <label class="f" style="min-width:180px">Incontro<select id="tel-inc"><option value="1">Incontro 1</option><option value="2">Incontro 2</option><option value="3">Incontro 3</option><option value="4">Incontro 4</option><option value="5">Incontro 5</option></select></label>
+            <div class="seg" role="group" aria-label="Momento della firma"><button type="button" id="tel-e" aria-pressed="true">Entrata</button><button type="button" id="tel-u" aria-pressed="false">Uscita</button></div>
+            <button class="btn line" type="button" id="tel-sync">Aggiorna adesso</button>
+          </div>
+          <p class="hint" id="tel-note"></p>
+          <details class="setup" id="tel-setup">
+            <summary>Collegamento al registro (si fa una volta)</summary>
+            <ol class="steps">
+              <li>Aprite <b>script.google.com</b>, <b>Nuovo progetto</b>, incollate lo script del registro (pulsante qui sotto) e salvate.</li>
+              <li>Scegliete la funzione <b>prepara</b> e premete <b>Esegui</b>: nel registro in basso compaiono il link del Foglio e la <b>chiave</b>.</li>
+              <li><b>Esegui il deployment</b>, Nuovo deployment, tipo <b>App web</b>: esegui come <b>Me</b>, accesso <b>Chiunque</b>. Copiate l'URL dell'app web.</li>
+              <li>Incollate qui l'URL e la chiave. Lo stesso URL serve anche per la bacheca del diario, nella presentazione.</li>
+            </ol>
+            <div class="grid2"><label class="f">URL dell'app web<input type="text" id="tel-url" placeholder="https://script.google.com/macros/s/…/exec"></label><label class="f">Chiave<input type="text" id="tel-key" placeholder="12 caratteri"></label></div>
+            <div class="bar"><button class="btn line" type="button" id="copia-reg">Copia lo script del registro</button><span class="hint" id="copia-reg-msg" aria-live="polite"></span></div>
+            <pre class="gs" id="gs-reg">/**
+ * IDEA^IA · Registro del corso
+ * Riceve le firme dal telefono dei corsisti e i post-it del diario dei bisogni,
+ * e li conserva in un Foglio Google di chi conduce il corso.
+ *
+ * Come si prepara (una volta sola):
+ * 1. script.google.com &gt; Nuovo progetto &gt; incollate tutto questo testo &gt; Salva.
+ * 2. Scegliete la funzione «prepara» e premete Esegui (autorizzate con il vostro account).
+ *    Nel Registro di esecuzione trovate il link del Foglio e la CHIAVE.
+ * 3. Esegui il deployment &gt; Nuovo deployment &gt; tipo «App web».
+ *    Esegui come: Me. Chi ha accesso: Chiunque. Poi Esegui il deployment e copiate l'URL dell'app web.
+ * 4. Segreteria del corso, scheda Foglio firme: incollate l'URL e la CHIAVE.
+ *    Presentazione, slide «Il diario dei bisogni»: incollate l'URL.
+ *
+ * Le firme si leggono solo con la CHIAVE; i post-it del diario li vede chi ha il link della bacheca.
+ */
+const P = PropertiesService.getScriptProperties();
+
+function prepara() {
+  let ss, id = P.getProperty('FOGLIO');
+  if (id) ss = SpreadsheetApp.openById(id);
+  else { ss = SpreadsheetApp.create('IDEAᴵᴬ · Registro del corso'); P.setProperty('FOGLIO', ss.getId()); }
+  foglio_(ss, 'Firme', ['Quando', 'Codice corso', 'Incontro', 'Momento', 'Nome e cognome', 'Firma (immagine)']);
+  foglio_(ss, 'Diario', ['Id', 'Bacheca', 'Quando', 'Testo', 'Autore', 'Colore', 'Token']);
+  const vuoto = ss.getSheetByName('Foglio1') || ss.getSheetByName('Sheet1');
+  if (vuoto &amp;&amp; ss.getSheets().length &gt; 2) ss.deleteSheet(vuoto);
+  let k = P.getProperty('CHIAVE');
+  if (!k) { k = Utilities.getUuid().replace(/-/g, '').slice(0, 12); P.setProperty('CHIAVE', k); }
+  Logger.log('Foglio del registro: ' + ss.getUrl());
+  Logger.log('CHIAVE da incollare nella Segreteria: ' + k);
+}
+
+function foglio_(ss, nome, intestazione) {
+  let sh = ss.getSheetByName(nome);
+  if (!sh) { sh = ss.insertSheet(nome); sh.appendRow(intestazione); sh.setFrozenRows(1); }
+  return sh;
+}
+const ss_ = () =&gt; SpreadsheetApp.openById(P.getProperty('FOGLIO'));
+const out_ = o =&gt; ContentService.createTextOutput(JSON.stringify(o)).setMimeType(ContentService.MimeType.JSON);
+const codice_ = c =&gt; /^[a-z0-9]{4,12}$/.test(c || '') ? c : null;
+/* testo pulito, e mai interpretato come formula dal Foglio */
+const pulito_ = (t, n) =&gt; {
+  const s = String(t == null ? '' : t).replace(/[\u0000-\u001f]/g, ' ').trim().slice(0, n);
+  return /^[=+\-@]/.test(s) ? "'" + s : s;
+};
+const ms_ = d =&gt; d instanceof Date ? d.getTime() : Number(d) || 0;
+
+function doGet(e) {
+  const p = e.parameter || {};
+  try {
+    if (p.azione === 'diario') {
+      const b = codice_(p.bacheca); if (!b) return out_({ errore: 'bacheca' });
+      const righe = ss_().getSheetByName('Diario').getDataRange().getValues().slice(1).filter(r =&gt; r[1] === b);
+      return out_({ postit: righe.map(r =&gt; ({ id: r[0], quando: ms_(r[2]), testo: String(r[3]).replace(/^'/, ''), autore: String(r[4]).replace(/^'/, ''), colore: r[5] })) });
+    }
+    if (p.azione === 'togli') {
+      const b = codice_(p.bacheca); if (!b) return out_({ errore: 'bacheca' });
+      const lock = LockService.getScriptLock(); lock.waitLock(10000);
+      try {
+        const sh = ss_().getSheetByName('Diario'), v = sh.getDataRange().getValues();
+        for (let i = v.length - 1; i &gt;= 1; i--) {
+          if (v[i][0] === p.id &amp;&amp; v[i][1] === b &amp;&amp; v[i][6] === p.token) { sh.deleteRow(i + 1); return out_({ ok: true }); }
+        }
+        return out_({ errore: 'non trovato' });
+      } finally { lock.releaseLock(); }
+    }
+    if (p.azione === 'firme') {
+      if (!p.chiave || p.chiave !== P.getProperty('CHIAVE')) return out_({ errore: 'chiave' });
+      const c = codice_(p.codice); if (!c) return out_({ errore: 'codice' });
+      const righe = ss_().getSheetByName('Firme').getDataRange().getValues().slice(1).filter(r =&gt; r[1] === c);
+      return out_({ firme: righe.map(r =&gt; ({ quando: ms_(r[0]), incontro: Number(r[2]), momento: r[3] === 'uscita' ? 'u' : 'e', nome: String(r[4]).replace(/^'/, ''), firma: r[5] })) });
+    }
+    return out_({ ok: true, servizio: 'IDEA^IA registro' });
+  } catch (err) { return out_({ errore: String(err) }); }
+}
+
+function doPost(e) {
+  let d;
+  try { d = JSON.parse(e.postData.contents); } catch (err) { return out_({ errore: 'formato' }); }
+  const lock = LockService.getScriptLock(); lock.waitLock(10000);
+  try {
+    if (d.tipo === 'firma') {
+      const c = codice_(d.codice), nome = pulito_(d.nome, 80), inc = Number(d.incontro), f = String(d.firma || '');
+      if (!c || nome.length &lt; 3 || !(inc &gt;= 1 &amp;&amp; inc &lt;= 5) || !/^data:image\/png;base64,[A-Za-z0-9+\/=]+$/.test(f) || f.length &gt; 45000)
+        return out_({ errore: 'dati' });
+      const sh = ss_().getSheetByName('Firme');
+      if (sh.getLastRow() &gt; 3000) return out_({ errore: 'pieno' });
+      sh.appendRow([new Date(), c, inc, d.momento === 'u' ? 'uscita' : 'entrata', nome, f]);
+      return out_({ ok: true });
+    }
+    if (d.tipo === 'postit') {
+      const b = codice_(d.bacheca), testo = pulito_(d.testo, 300), autore = pulito_(d.autore, 40);
+      const colore = ['giallo', 'rosa', 'azzurro', 'verde'].indexOf(d.colore) &gt;= 0 ? d.colore : 'giallo';
+      const token = String(d.token || '');
+      if (!b || testo.length &lt; 2 || !/^[a-z0-9]{8,40}$/.test(token)) return out_({ errore: 'dati' });
+      const sh = ss_().getSheetByName('Diario');
+      if (sh.getLastRow() &gt; 3000) return out_({ errore: 'pieno' });
+      const id = Utilities.getUuid().slice(0, 8);
+      sh.appendRow([id, b, new Date(), testo, autore, colore, token]);
+      return out_({ ok: true, id: id });
+    }
+    return out_({ errore: 'tipo' });
+  } catch (err) { return out_({ errore: String(err) }); }
+  finally { lock.releaseLock(); }
+}</pre>
+            <p class="note">Con l'account personale chiunque può firmare senza accedere; con l'account della scuola Google può chiedere di entrare con un account @comprensivoalmese.it. Le firme si leggono solo con la chiave.</p>
+          </details>
+        </div>
+        <div class="telqr" id="tel-qr"></div>
+      </div>
+    </div>
+    <div class="panel noprint">
+      <div class="bar" style="justify-content:space-between"><h2>Firma qui, sullo schermo</h2><span class="hint" id="sign-count"></span></div>
+      <p class="hint">In alternativa, sullo schermo touch della LIM o su un tablet: ognuno tocca il proprio nome e firma con il dito. La firma compare nel foglio qui sotto e segna anche la presenza.</p>
+      <div class="bar">
+        <label class="f" style="min-width:200px">Incontro<select id="sign-inc"><option value="0">Incontro 1</option><option value="1">Incontro 2</option><option value="2">Incontro 3</option><option value="3">Incontro 4</option><option value="4">Incontro 5</option></select></label>
+        <div class="seg" role="group" aria-label="Momento della firma"><button type="button" id="sign-e" aria-pressed="true">Entrata</button><button type="button" id="sign-u" aria-pressed="false">Uscita</button></div>
+        <button class="btn line" type="button" id="sign-form">Firma di chi conduce</button>
+      </div>
+      <div class="signgrid" id="signgrid"></div>
+    </div>
+    <div class="panel noprint">
+      <div class="bar"><label class="f" style="flex:1;min-width:200px">Che cosa stampare<select id="firme-sel"><option value="all">Tutti e cinque gli incontri</option><option value="1">Incontro 1</option><option value="2">Incontro 2</option><option value="3">Incontro 3</option><option value="4">Incontro 4</option><option value="5">Incontro 5</option></select></label>
+        <button class="btn" data-print>Stampa</button></div>
+      <p class="hint" data-printhint></p>
+    </div>
+    <div class="papers" id="firme-out"></div>
+  </section>
+
+  <div class="pad" id="pad" hidden role="dialog" aria-modal="true" aria-labelledby="pad-who">
+    <p class="brand" id="pad-when"></p>
+    <h2 class="who" id="pad-who"></h2>
+    <canvas id="pad-c" width="1500" height="500" aria-label="Spazio per la firma: firmate con il dito"></canvas>
+    <div class="bar"><button class="btn line" type="button" id="pad-clear">Cancella</button><button class="btn line" type="button" id="pad-del" hidden>Togli la firma</button><button class="btn line" type="button" id="pad-cancel">Annulla</button><button class="btn" type="button" id="pad-ok" disabled>Conferma la firma</button></div>
+    <p class="hint" id="pad-note">Firmate con il dito, o con la penna, sopra la riga.</p>
+  </div>
+
+  <!-- ATTESTATI -->
+  <section id="attestati" role="tabpanel" aria-labelledby="t-attestati" hidden class="wrap" style="gap:18px">
+    <div class="panel noprint">
+      <div class="bar"><label class="f" style="flex:1;min-width:200px">Data di rilascio<input type="date" id="rilascio"></label>
+        <label class="f" style="flex:1;min-width:200px">Chi<select id="att-sel"></select></label>
+        <button class="btn" data-print>Stampa</button></div>
+      <p class="hint" data-printhint></p>
+      <p class="note">La fascia di cielo in alto si stampa solo con «Grafica di sfondo» attiva nella finestra di stampa.</p>
+    </div>
+    <div class="papers" id="att-out"></div>
+  </section>
+
+  <!-- QUESTIONARIO -->
+  <section id="questionario" role="tabpanel" aria-labelledby="t-questionario" hidden class="wrap" style="gap:18px">
+    <div class="panel noprint">
+      <h2>Online, con Google Moduli</h2>
+      <p class="hint">Lo script crea da solo il modulo anonimo, con le stesse domande del foglio qui sotto, e il foglio Google delle risposte. Si fa una volta sola.</p>
+      <ol class="steps">
+        <li>Aprite <b>script.google.com</b> con l'account della scuola e scegliete <b>Nuovo progetto</b>.</li>
+        <li>Cancellate il testo che c'è e incollate lo script (pulsante qui sotto).</li>
+        <li>Salvate, poi premete <b>Esegui</b> e autorizzate.</li>
+        <li>Nel registro in basso compaiono tre link: quello «da dare ai corsisti» va incollato nella slide <b>Questionario finale</b> della presentazione, che lo trasforma in un QR.</li>
+      </ol>
+      <div class="bar"><button class="btn" id="copia-gs">Copia lo script</button><span class="hint" id="copia-msg" aria-live="polite"></span></div>
+      <pre class="gs" id="gs">/**
+ * IDEA^IA · Questionario finale
+ * Crea il modulo Google anonimo del questionario e il foglio delle risposte.
+ * Come si usa: script.google.com &gt; Nuovo progetto &gt; incollate tutto questo testo &gt;
+ * Salva &gt; Esegui (funzione creaQuestionario) &gt; autorizzate con il vostro account.
+ * Nel Registro di esecuzione trovate i tre link: quello "da dare ai corsisti"
+ * va incollato nella slide "Questionario finale" della presentazione.
+ */
+function creaQuestionario() {
+  const scala = ['1', '2', '3', '4', '5'];
+  const f = FormApp.create('IDEAᴵᴬ · Questionario finale');
+  f.setDescription('Il questionario è anonimo e richiede circa tre minuti. ' +
+    'Nelle griglie: 1 = per niente, 5 = moltissimo. Grazie!');
+  f.setCollectEmail(false);
+  f.setProgressBar(true);
+  f.setConfirmationMessage('Grazie! Le vostre risposte aiutano a migliorare il corso.');
+
+  f.addSectionHeaderItem().setTitle('Il corso');
+  f.addGridItem()
+    .setTitle('Quanto siete d\'accordo con queste frasi?')
+    .setRows([
+      'Gli obiettivi del corso erano chiari',
+      'I contenuti sono utili per la mia didattica',
+      'La teoria sui modelli linguistici mi ha aiutato a capire come funziona Claude',
+      'Il laboratorio (carte, scheda progetto, costruzione) è stato efficace',
+      'I materiali (Claudio, carte, schede) sono stati utili',
+      'Tempi e organizzazione degli incontri erano adeguati',
+      'Il clima di lavoro favoriva la collaborazione',
+      'La conduzione è stata chiara e disponibile'
+    ])
+    .setColumns(scala)
+    .setRequired(true);
+
+  f.addSectionHeaderItem().setTitle('Prima e dopo');
+  const abilita = [
+    'Costruire uno strumento didattico con l\'IA',
+    'Usare l\'IA in modo responsabile (privacy, verifiche)'
+  ];
+  f.addGridItem().setTitle('PRIMA del corso, quanto vi sentivate capaci di…')
+    .setRows(abilita).setColumns(scala).setRequired(true);
+  f.addGridItem().setTitle('ADESSO, quanto vi sentite capaci di…')
+    .setRows(abilita).setColumns(scala).setRequired(true);
+
+  f.addSectionHeaderItem().setTitle('In classe');
+  f.addMultipleChoiceItem()
+    .setTitle('Avete provato il vostro strumento in classe?')
+    .setChoiceValues(['Sì, più volte', 'Sì, una volta', 'Non ancora, ma lo farò', 'No'])
+    .setRequired(true);
+  f.addScaleItem()
+    .setTitle('Quanto è probabile che userete ancora l\'IA per creare strumenti per la classe?')
+    .setBounds(1, 5).setLabels('Per niente', 'Moltissimo')
+    .setRequired(true);
+
+  f.addSectionHeaderItem().setTitle('In parole vostre');
+  f.addParagraphTextItem().setTitle('Che cosa vi è stato più utile?');
+  f.addParagraphTextItem().setTitle('Che cosa cambiereste?');
+  f.addParagraphTextItem().setTitle('Su quali temi vorreste un secondo livello del corso?');
+  f.addMultipleChoiceItem()
+    .setTitle('Ordine di scuola (facoltativo)')
+    .setChoiceValues(['Infanzia', 'Primaria', 'Secondaria di primo grado', 'Altro']);
+
+  const ss = SpreadsheetApp.create('IDEAᴵᴬ · Risposte al questionario finale');
+  f.setDestination(FormApp.DestinationType.SPREADSHEET, ss.getId());
+
+  Logger.log('Link da dare ai corsisti: ' + f.getPublishedUrl());
+  Logger.log('Per modificare il modulo: ' + f.getEditUrl());
+  Logger.log('Foglio delle risposte: ' + ss.getUrl());
+}</pre>
+      <p class="note">Con l'account della scuola il modulo può accettare solo account @comprensivoalmese.it: per i colleghi va bene così. Lo script è anche nella cartella del corso: crea-questionario.gs.</p>
+    </div>
+    <div class="panel noprint"><div class="bar" style="justify-content:space-between"><h2>Su carta</h2><button class="btn" data-print>Stampa</button></div><p class="hint" data-printhint></p></div>
+    <div class="papers" id="q-out"></div>
+  </section>
+</div>
+
+<script>
+const $=id=>document.getElementById(id);
+const esc=t=>String(t??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const KEY="segreteria-idea-v1";
+const TITOLI=["Tutto è testo","Avere l'idea","Costruire parlando","Dalla classe al web","La fiera degli strumenti"];
+const DEF={istituto:"Istituto Comprensivo di Almese",luogo:"",formatore:"",dirigente:"",soglia:75,rilascio:"",
+  incontri:TITOLI.map(t=>({t,data:"",da:"",a:"",ore:2})),corsisti:[]};
+let S;try{S=Object.assign({},DEF,JSON.parse(localStorage.getItem(KEY))||{})}catch(e){S=structuredClone(DEF)}
+if(!Array.isArray(S.incontri)||S.incontri.length!==5)S.incontri=structuredClone(DEF.incontri);
+if(!Array.isArray(S.corsisti))S.corsisti=[];
+const newId=()=>Math.random().toString(36).slice(2,10);
+S.corsisti.forEach(c=>{if(!c.id)c.id=newId()});
+/* le firme stanno a parte: sono immagini, pesano più del resto */
+const KEYF=KEY+"-firme";
+let F;try{F=JSON.parse(localStorage.getItem(KEYF))||{}}catch(e){F={}}
+const saveF=()=>{try{localStorage.setItem(KEYF,JSON.stringify(F));return true}catch(e){return false}};
+const fk=(c,k,m)=>`${c.id}|${k}|${m}`;
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
+const framed=(()=>{try{return window.top!==window}catch(e){return true}})();
+
+const MESI=["gennaio","febbraio","marzo","aprile","maggio","giugno","luglio","agosto","settembre","ottobre","novembre","dicembre"];
+const dataIt=d=>{const m=/^(\d{4})-(\d{2})-(\d{2})$/.exec(d||"");return m?`${+m[3]} ${MESI[+m[2]-1]} ${m[1]}`:""};
+const oreTot=()=>S.incontri.reduce((a,i)=>a+(+i.ore||0),0);
+const oreDi=c=>S.incontri.reduce((a,i,k)=>a+(c.p[k]?(+i.ore||0):0),0);
+const okAtt=c=>oreTot()>0&&oreDi(c)/oreTot()*100>=(+S.soglia||0);
+const fmtOre=n=>String(Math.round(n*10)/10).replace(".",",");
+const ordina=()=>S.corsisti.sort((a,b)=>a.nome.localeCompare(b.nome,"it"));
+
+/* ---------- il corso ---------- */
+["istituto","luogo","formatore","dirigente","soglia","rilascio"].forEach(id=>{const el=$(id);el.value=S[id]??"";el.addEventListener("input",()=>{S[id]=el.value;save();renderAll()})});
+$("incontri").innerHTML=S.incontri.map((x,k)=>`<div class="inc"><span class="n">${k+1}</span>
+  <input type="text" id="inc${k}-t" aria-label="Titolo incontro ${k+1}" value="${esc(x.t)}">
+  <input type="date" class="t2" id="inc${k}-data" aria-label="Data incontro ${k+1}" value="${esc(x.data)}">
+  <input type="text" class="t3" id="inc${k}-da" aria-label="Inizio incontro ${k+1}" placeholder="16:30" value="${esc(x.da)}">
+  <input type="text" class="t3" id="inc${k}-a" aria-label="Fine incontro ${k+1}" placeholder="18:30" value="${esc(x.a)}">
+  <input type="number" id="inc${k}-ore" aria-label="Ore incontro ${k+1}" min="0" max="8" step="0.5" value="${esc(x.ore)}"></div>`).join("");
+S.incontri.forEach((x,k)=>["t","data","da","a","ore"].forEach(f=>$(`inc${k}-${f}`).addEventListener("input",e=>{x[f]=f==="ore"?+e.target.value:e.target.value;save();renderAll()})));
+
+/* ---------- corsisti ---------- */
+$("aggiungi").onclick=()=>{
+  const righe=$("nuovi").value.split(/\n/).map(r=>r.trim()).filter(Boolean);if(!righe.length){$("nuovi").focus();return}
+  righe.forEach(r=>{const [nome,...sc]=r.split(",");const n=nome.trim().replace(/\s+/g," ");if(!n||S.corsisti.some(c=>c.nome.toLowerCase()===n.toLowerCase()))return;
+    S.corsisti.push({id:newId(),nome:n,scuola:sc.join(",").trim(),p:[false,false,false,false,false]})});
+  ordina();$("nuovi").value="";save();renderAll();
+};
+function renderRoster(){
+  $("roster").innerHTML=S.corsisti.length?S.corsisti.map((c,i)=>`<tr>
+    <td><input type="text" data-i="${i}" data-f="nome" aria-label="Cognome e nome" value="${esc(c.nome)}"></td>
+    <td><input type="text" data-i="${i}" data-f="scuola" aria-label="Scuola o plesso" value="${esc(c.scuola)}"></td>
+    ${c.p.map((v,k)=>`<td class="c"><input type="checkbox" data-i="${i}" data-k="${k}" aria-label="Presente all'incontro ${k+1}" ${v?"checked":""}></td>`).join("")}
+    <td class="hours">${fmtOre(oreDi(c))}</td>
+    <td>${okAtt(c)?'<span class="pill ok">Attestato</span>':'<span class="pill no">Sotto soglia</span>'}</td>
+    <td><button class="x" data-del="${i}" aria-label="Togli ${esc(c.nome)}">×</button></td></tr>`).join("")
+    :`<tr><td colspan="10" class="empty">L'elenco è vuoto: scrivete i nomi qui sopra e premete «Aggiungi all'elenco».</td></tr>`;
+  $("soglia-txt").textContent=`${S.corsisti.length} ${S.corsisti.length===1?"iscritto":"iscritti"} · ${fmtOre(oreTot())} ore in tutto`;
+}
+$("roster").addEventListener("input",e=>{const t=e.target,c=S.corsisti[+t.dataset.i];if(!c)return;
+  if(t.type==="checkbox"){c.p[+t.dataset.k]=t.checked;save();const tds=t.closest("tr").children;tds[7].textContent=fmtOre(oreDi(c));tds[8].innerHTML=okAtt(c)?'<span class="pill ok">Attestato</span>':'<span class="pill no">Sotto soglia</span>';renderAtt()}else{c[t.dataset.f]=t.value;save();renderFirme();renderAtt()}});
+$("roster").addEventListener("click",e=>{const b=e.target.closest("[data-del]");if(!b)return;
+  const i=+b.dataset.del;if(b.dataset.sure){const via=S.corsisti.splice(i,1)[0];if(via)Object.keys(F).filter(x=>x.startsWith(via.id+"|")).forEach(x=>delete F[x]);saveF();save();renderAll()}else{b.dataset.sure="1";b.textContent="Togli?";b.style.fontSize="14px";setTimeout(()=>{if(b.isConnected){delete b.dataset.sure;b.textContent="×";b.style.fontSize=""}},3000)}});
+
+/* ---------- foglio firme ---------- */
+const head=()=>`<div class="top"><div class="logo">IDEA<sup>IA</sup><span class="wt-paper"><span class="wt"><svg class="wt-m" viewBox="0 0 200 200" aria-hidden="true"><circle cx="100" cy="100" r="93" style="fill:#ABA3DC;stroke:#F6D58E;stroke-width:7"/><circle cx="100" cy="100" r="84" style="fill:none;stroke:#F7F1EE;stroke-opacity:.28;stroke-width:2"/><path d="M53 40.9 74.8 64.3 49.7 72.7Z" style="fill:#F7F1EE"/><path d="M146.9 40.9 125.2 64.3 150.3 72.7Z" style="fill:#F7F1EE"/><path d="M100 57.6 116.8 62.6 160.3 89.4 180.5 116.1 133.5 143.1 100 176.6Z" style="fill:#F7F1EE;opacity:.5"/><path d="M61.5 96.2 88.2 101.2 76.5 109.5Z" style="fill:#17142C"/><path d="M138.5 96.2 111.8 101.2 123.5 109.5Z" style="fill:#17142C"/><path d="M88.2 153.1 111.8 153.1 100 168.1Z" style="fill:#17142C"/></svg><span class="wt-w">Wolf <b>Team</b></span></span></span></div><div class="ist">${esc(S.istituto)}<br>Corso di formazione per docenti</div></div>`;
+function foglio(k){const x=S.incontri[k],PER=20,pagine=Math.max(1,Math.ceil((S.corsisti.length+3)/PER));let out="";
+  for(let pg=0;pg<pagine;pg++){let tr="";
+    for(let r=pg*PER;r<(pg+1)*PER;r++){const c=S.corsisti[r];const im=m=>c&&F[fk(c,k,m)]?`<img class="sigimg" src="${F[fk(c,k,m)]}" alt="Firma di ${esc(c.nome)}">`:"";tr+=`<tr><td>${r+1}</td><td>${c?esc(c.nome):""}</td><td>${c?esc(c.scuola):""}</td><td>${im("e")}</td><td>${im("u")}</td></tr>`}
+    out+=`<article class="sheet">${head()}<h3>Registro presenze · Incontro ${k+1}: ${esc(x.t)}${pagine>1?` <span style="font-size:.6em;color:var(--paper-muted)">(foglio ${pg+1} di ${pagine})</span>`:""}</h3>
+  <div class="meta"><div><b>Data</b><span>${esc(dataIt(x.data))}</span></div><div><b>Orario</b><span>${x.da||x.a?esc(`${x.da} – ${x.a}`):""}</span></div><div><b>Luogo</b><span>${esc(S.luogo)}</span></div></div>
+  <table class="firme"><thead><tr><th>N.</th><th>Cognome e nome</th><th>Scuola o plesso</th><th>Firma entrata</th><th>Firma uscita</th></tr></thead><tbody>${tr}</tbody></table>
+  <div class="foot"><span>Ore dell'incontro: ${fmtOre(+x.ore||0)}</span><div class="sig">${F.formatore?`<img src="${F.formatore}" alt="Firma">`:""}<b>${esc(S.formatore)||"&nbsp;"}</b>Firma di chi conduce la formazione</div></div></article>`}
+  return out}
+function renderFirme(){const v=$("firme-sel").value;$("firme-out").innerHTML=(v==="all"?[0,1,2,3,4]:[+v-1]).map(foglio).join("")}
+$("firme-sel").addEventListener("change",renderFirme);
+
+/* ---------- firme con il dito ---------- */
+let MODO="e";
+const signInc=()=>+$("sign-inc").value;
+function renderSign(){const k=signInc(),fatte=S.corsisti.filter(c=>F[fk(c,k,MODO)]).length;
+  $("signgrid").innerHTML=S.corsisti.length?S.corsisti.map((c,i)=>{const f=F[fk(c,k,MODO)];
+    return `<button type="button" class="signbtn ${f?"done":""}" data-si="${i}"><span>${esc(c.nome)}<small>${f?"Firmato · tocca per rifare":"Tocca per firmare"}</small></span>${f?`<img src="${f}" alt="">`:""}</button>`}).join("")
+    :`<p class="hint">Prima aggiungete i corsisti nella scheda «Corsisti e presenze».</p>`;
+  $("sign-count").textContent=`${fatte} firme su ${S.corsisti.length} · incontro ${k+1}, ${MODO==="e"?"entrata":"uscita"}`;
+  $("sign-form").textContent=F.formatore?"Firma di chi conduce ✓":"Firma di chi conduce";
+}
+$("sign-inc").addEventListener("change",renderSign);
+[["sign-e","e"],["sign-u","u"]].forEach(([id,m])=>$(id).onclick=()=>{MODO=m;$("sign-e").setAttribute("aria-pressed",m==="e");$("sign-u").setAttribute("aria-pressed",m==="u");renderSign()});
+$("signgrid").addEventListener("click",e=>{const b=e.target.closest("[data-si]");if(!b)return;const c=S.corsisti[+b.dataset.si],k=signInc();
+  openPad({key:fk(c,k,MODO),title:c.nome,when:`Incontro ${k+1} · firma di ${MODO==="e"?"entrata":"uscita"}`,corsista:c,k})});
+$("sign-form").onclick=()=>openPad({key:"formatore",title:S.formatore||"Chi conduce la formazione",when:"Firma per i fogli e gli attestati"});
+
+/* la finestra per firmare: il tratto si disegna su una tela, si ritaglia e si salva come immagine */
+const cv=$("pad-c"),cx=cv.getContext("2d");let T=null,drawn=false,last=null;
+function openPad(t){T=t;$("pad-who").textContent=t.title;$("pad-when").textContent=t.when;cx.clearRect(0,0,cv.width,cv.height);drawn=false;
+  $("pad-ok").disabled=true;$("pad-del").hidden=!F[t.key];$("pad-note").textContent="Firmate con il dito, o con la penna, sopra la riga.";$("pad").hidden=false}
+function closePad(){$("pad").hidden=true;T=null}
+const pt=e=>{const r=cv.getBoundingClientRect();return[(e.clientX-r.left)*cv.width/r.width,(e.clientY-r.top)*cv.height/r.height]};
+cv.addEventListener("pointerdown",e=>{e.preventDefault();cv.setPointerCapture(e.pointerId);last=pt(e);cx.lineWidth=7;cx.lineCap="round";cx.lineJoin="round";cx.strokeStyle="#1E1830";
+  cx.beginPath();cx.arc(last[0],last[1],3.5,0,7);cx.fillStyle="#1E1830";cx.fill()});
+cv.addEventListener("pointermove",e=>{if(!last)return;const p=pt(e);cx.beginPath();cx.moveTo(last[0],last[1]);cx.lineTo(p[0],p[1]);cx.stroke();last=p;if(!drawn){drawn=true;$("pad-ok").disabled=false}});
+["pointerup","pointercancel","pointerleave"].forEach(ev=>cv.addEventListener(ev,()=>{last=null}));
+$("pad-clear").onclick=()=>{cx.clearRect(0,0,cv.width,cv.height);drawn=false;$("pad-ok").disabled=true};
+$("pad-cancel").onclick=closePad;
+document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!$("pad").hidden)closePad()});
+function trimmed(){const d=cx.getImageData(0,0,cv.width,cv.height).data;let x0=cv.width,y0=cv.height,x1=0,y1=0;
+  for(let y=0;y<cv.height;y+=2)for(let x=0;x<cv.width;x+=2)if(d[(y*cv.width+x)*4+3]>20){if(x<x0)x0=x;if(x>x1)x1=x;if(y<y0)y0=y;if(y>y1)y1=y}
+  if(x1<=x0||y1<=y0)return null;x0=Math.max(0,x0-12);y0=Math.max(0,y0-12);x1=Math.min(cv.width,x1+12);y1=Math.min(cv.height,y1+12);
+  const w=x1-x0,h=y1-y0,k=Math.min(1,180/h,600/w),o=document.createElement("canvas");o.width=Math.round(w*k);o.height=Math.round(h*k);
+  o.getContext("2d").drawImage(cv,x0,y0,w,h,0,0,o.width,o.height);return o.toDataURL("image/png")}
+$("pad-ok").onclick=()=>{if(!T||!drawn)return;const img=trimmed();if(!img)return;const prima=F[T.key];F[T.key]=img;
+  if(!saveF()){if(prima)F[T.key]=prima;else delete F[T.key];$("pad-note").textContent="La memoria del browser è piena: salvate una copia dei dati (scheda Corsisti) e togliete le firme già stampate.";return}
+  if(T.corsista){T.corsista.p[T.k]=true;save()}
+  closePad();renderAll()};
+$("pad-del").onclick=()=>{if(!T)return;delete F[T.key];saveF();closePad();renderAll()};
+
+/* ---------- firme dal telefono: arrivano dal Foglio Google del registro ---------- */
+const FIRMA_PAGE="https://chiaraleto97-blip.github.io/claudio/firma/";
+if(!/^[a-z0-9]{6}$/.test(S.codice||"")){S.codice=Array.from(crypto.getRandomValues(new Uint8Array(6)),b=>"abcdefghjkmnpqrstuvwxyz23456789"[b%31]).join("");save()}
+const IN_CLAUDE=!!(window.claude&&window.claude.use);
+let TMODO="e",tTimer=null,tLast=0;
+const appId=()=>(/^https:\/\/script\.google\.com\/macros\/s\/([A-Za-z0-9_-]{20,120})\/exec\/?$/.exec((S.regUrl||"").trim())||[])[1]||null;
+const norm=t=>String(t||"").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[^a-z ]/g," ").split(/\s+/).filter(Boolean).sort().join(" ");
+function telLink(){const id=appId();return id?`${FIRMA_PAGE}#s=${id}&c=${S.codice}&i=${$("tel-inc").value}&m=${TMODO}`:""}
+function telStatus(on,txt){$("tel-live").classList.toggle("on",on);$("tel-txt").textContent=txt}
+function renderTel(){const link=telLink(),box=$("tel-qr");box.innerHTML="";
+  if(!link){box.innerHTML="<p>Qui comparirà il QR, dopo il collegamento al registro.</p>";$("tel-setup").open=true;telStatus(false,"Non collegato")}
+  else if(typeof QRCode!=="undefined"){try{new QRCode(box,{text:link,width:420,height:420,colorDark:"#2A2045",colorLight:"#FFFFFF",correctLevel:QRCode.CorrectLevel.M})}catch(e){}}
+  else box.innerHTML="<p>Serve la connessione per il QR.</p>";
+  $("tel-note").textContent=IN_CLAUDE?"Da questa pagina su claude.ai le firme non possono arrivare: aprite la Segreteria dal file nella cartella del corso, o da chiaraleto97-blip.github.io/claudio/segreteria/.":link?`QR per l'incontro ${$("tel-inc").value}, ${TMODO==="e"?"entrata":"uscita"} · codice del corso ${S.codice}`:"";
+}
+async function telSync(){const id=appId();if(!id||!S.regKey||IN_CLAUDE)return;
+  try{const r=await fetch(`https://script.google.com/macros/s/${id}/exec?azione=firme&codice=${S.codice}&chiave=${encodeURIComponent(S.regKey.trim())}`);const d=await r.json();
+    if(d.errore){telStatus(false,d.errore==="chiave"?"Chiave sbagliata":"Errore dal registro");return}
+    let cambiate=0;(d.firme||[]).sort((a,b)=>a.quando-b.quando).forEach(x=>{
+      const k=(+x.incontro)-1,m=x.momento==="u"?"u":"e";if(!(k>=0&&k<5)||typeof x.firma!=="string"||!x.firma.startsWith("data:image/png;base64,"))return;
+      const nome=String(x.nome||"").trim().replace(/\s+/g," ").slice(0,80);if(nome.length<3)return;
+      let c=S.corsisti.find(c=>norm(c.nome)===norm(nome));
+      if(!c){c={id:newId(),nome,scuola:"",p:[false,false,false,false,false]};S.corsisti.push(c);cambiate++}
+      if(F[fk(c,k,m)]!==x.firma){F[fk(c,k,m)]=x.firma;cambiate++}
+      if(!c.p[k]){c.p[k]=true;cambiate++}});
+    tLast=Date.now();const n=(d.firme||[]).length;
+    if(cambiate){ordina();save();if(!saveF())telStatus(true,"Memoria del browser piena: salvate una copia dei dati");renderAll()}
+    telStatus(true,`Collegato · ${n} ${n===1?"firma":"firme"} dal telefono · ${new Date().toLocaleTimeString("it-IT",{hour:"2-digit",minute:"2-digit",second:"2-digit"})}`)}
+  catch(e){telStatus(false,"Registro non raggiungibile: controllate la rete")}}
+function telLoop(){clearInterval(tTimer);if(appId()&&S.regKey&&!IN_CLAUDE){telSync();tTimer=setInterval(()=>{if(!$("firme").hidden)telSync()},8000)}}
+$("tel-url").value=S.regUrl||"";$("tel-key").value=S.regKey||"";
+$("tel-url").addEventListener("input",e=>{S.regUrl=e.target.value.trim();save();renderTel();telLoop()});
+$("tel-key").addEventListener("input",e=>{S.regKey=e.target.value.trim();save();telLoop()});
+$("tel-inc").addEventListener("change",renderTel);
+[["tel-e","e"],["tel-u","u"]].forEach(([id,m])=>$(id).onclick=()=>{TMODO=m;$("tel-e").setAttribute("aria-pressed",m==="e");$("tel-u").setAttribute("aria-pressed",m==="u");renderTel()});
+$("tel-sync").onclick=telSync;
+$("copia-reg").onclick=()=>{const t=$("gs-reg").textContent;
+  const ok=()=>$("copia-reg-msg").textContent="Copiato: incollatelo in script.google.com.";
+  const ko=()=>{const r=document.createRange();r.selectNodeContents($("gs-reg"));const g=getSelection();g.removeAllRanges();g.addRange(r);$("copia-reg-msg").textContent="Testo selezionato: premete Ctrl+C."};
+  try{navigator.clipboard.writeText(t).then(ok,ko)}catch(e){ko()}};
+renderTel();telLoop();
+
+/* copia dei dati: per passare dal tablet al computer, o per conservarli */
+$("esporta").onclick=()=>{const blob=new Blob([JSON.stringify({segreteria:S,firme:F},null,1)],{type:"application/json"});
+  const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=`segreteria-idea-ia-${new Date().toISOString().slice(0,10)}.json`;document.body.appendChild(a);a.click();a.remove();
+  $("copia-msg2").textContent="Copia salvata nei download."};
+$("importa").addEventListener("change",async e=>{const f=e.target.files[0];if(!f)return;
+  try{const d=JSON.parse(await f.text());if(!d||!d.segreteria||!Array.isArray(d.segreteria.corsisti))throw 0;
+    S=Object.assign({},DEF,d.segreteria);S.corsisti.forEach(c=>{if(!c.id)c.id=newId()});F=d.firme&&typeof d.firme==="object"?d.firme:{};
+    save();saveF();location.reload()}
+  catch(err){$("copia-msg2").textContent="Questo file non è una copia dei dati della segreteria."}});
+if(framed)$("copia-dati").querySelector("#esporta").hidden=true;
+
+/* ---------- attestati ---------- */
+const ALBERI=(()=>{let d="";for(let x=-10;x<800;){const h=30+((x*37)%23),w=h*.5;d+=`M${x} 80L${x+w/2} ${80-h}L${x+w} 80Z`;x+=w*.62}return d})();
+function attestato(c){const d=S.incontri.map(i=>i.data).filter(Boolean).sort(),ore=oreDi(c),tot=oreTot();
+  const periodo=d.length?(d.length>1?`dal ${dataIt(d[0])} al ${dataIt(d[d.length-1])}`:`il ${dataIt(d[0])}`):"nell'anno scolastico in corso";
+  const pres=S.incontri.map((i,k)=>c.p[k]?k+1:null).filter(Boolean);
+  return `<article class="sheet att"><div class="band"><div class="logo" style="position:relative">IDEA<sup>IA</sup><span class="wt-band"><span class="wt"><svg class="wt-m" viewBox="0 0 200 200" aria-hidden="true"><circle cx="100" cy="100" r="93" style="fill:#ABA3DC;stroke:#F6D58E;stroke-width:7"/><circle cx="100" cy="100" r="84" style="fill:none;stroke:#F7F1EE;stroke-opacity:.28;stroke-width:2"/><path d="M53 40.9 74.8 64.3 49.7 72.7Z" style="fill:#F7F1EE"/><path d="M146.9 40.9 125.2 64.3 150.3 72.7Z" style="fill:#F7F1EE"/><path d="M100 57.6 116.8 62.6 160.3 89.4 180.5 116.1 133.5 143.1 100 176.6Z" style="fill:#F7F1EE;opacity:.5"/><path d="M61.5 96.2 88.2 101.2 76.5 109.5Z" style="fill:#17142C"/><path d="M138.5 96.2 111.8 101.2 123.5 109.5Z" style="fill:#17142C"/><path d="M88.2 153.1 111.8 153.1 100 168.1Z" style="fill:#17142C"/></svg><span class="wt-w">Wolf <b>Team</b></span></span></span></div><div class="ist" style="position:relative">${esc(S.istituto)}</div>
+    <svg viewBox="0 0 800 80" preserveAspectRatio="none" aria-hidden="true"><path d="${ALBERI}" style="fill:#2A2045"/><rect y="79" width="800" height="2" style="fill:#FFFDF8"/></svg></div>
+  <div class="body"><span class="k">Attestato di partecipazione</span><h4>Corso di formazione IDEA<sup style="font-size:.45em;color:var(--rosso-d)">IA</sup></h4>
+    <p>Si attesta che</p><div class="who">${esc(c.nome)}</div>
+    <p>${c.scuola?`in servizio presso ${esc(c.scuola)}, `:""}ha partecipato al corso di formazione per docenti <i>IDEA<sup>IA</sup> · l'intelligenza artificiale per costruire strumenti didattici</i>, svolto in presenza ${periodo}${S.luogo?`, ${esc(S.luogo)}`:""}.</p>
+    <div class="hrs"><strong>${fmtOre(ore)} ore</strong><span>di frequenza su ${fmtOre(tot)} complessive${pres.length?` (incontri ${pres.join(", ")})`:""}</span></div>
+    <p><b>Contenuti</b></p>
+    <ul><li>Come funzionano i modelli linguistici e Claude: previsione del testo, limiti, contesto e memoria.</li><li>Dall'idea allo strumento: progettazione di strumenti didattici interattivi con l'IA.</li><li>Prova in classe, revisione e pubblicazione con GitHub Pages.</li><li>Uso responsabile: Linee guida MIM (D.M. 166/2025), AI Act, privacy degli alunni.</li></ul>
+    <p style="font-size:10pt;color:var(--paper-muted)">Il percorso contribuisce all'alfabetizzazione in materia di intelligenza artificiale prevista dall'art. 4 del Regolamento (UE) 2024/1689.</p></div>
+  <div class="foot"><span>${esc(S.luogo?S.luogo.split(",")[0]:"")}${S.rilascio?`${S.luogo?", ":""}${esc(dataIt(S.rilascio))}`:""}</span></div>
+  <div class="foot" style="justify-content:space-between;padding-top:10mm"><div class="sig">${F.formatore?`<img src="${F.formatore}" alt="Firma">`:""}<b>${esc(S.formatore)||"&nbsp;"}</b>Formazione</div><div class="sig"><b>${esc(S.dirigente)||"&nbsp;"}</b>Dirigente scolastico</div></div></article>`}
+function renderAtt(){const sel=$("att-sel"),prev=sel.value;
+  sel.innerHTML=`<option value="ok">Chi ha raggiunto la frequenza minima (${S.corsisti.filter(okAtt).length})</option><option value="all">Tutti (${S.corsisti.length})</option>`+S.corsisti.map((c,i)=>`<option value="${i}">${esc(c.nome)}</option>`).join("");
+  sel.value=[...sel.options].some(o=>o.value===prev)?prev:"ok";
+  const v=sel.value,list=v==="ok"?S.corsisti.filter(okAtt):v==="all"?S.corsisti:[S.corsisti[+v]].filter(Boolean);
+  $("att-out").innerHTML=list.length?list.map(attestato).join(""):attestato({nome:"Nome Cognome (esempio)",scuola:"",p:[true,true,true,true,true]});
+}
+$("att-sel").addEventListener("change",renderAtt);
+
+/* ---------- questionario su carta ---------- */
+const LIK=["Gli obiettivi del corso erano chiari","I contenuti sono utili per la mia didattica","La teoria sui modelli linguistici mi ha aiutato a capire come funziona Claude","Il laboratorio (carte, scheda progetto, costruzione) è stato efficace","I materiali (Claudio, carte, schede) sono stati utili","Tempi e organizzazione degli incontri erano adeguati","Il clima di lavoro favoriva la collaborazione","La conduzione è stata chiara e disponibile"];
+const ABI=["Costruire uno strumento didattico con l'IA","Usare l'IA in modo responsabile (privacy, verifiche)"];
+const lik=(rows,cap)=>`<table class="likert"><thead><tr><th>${cap}</th>${[1,2,3,4,5].map(n=>`<th>${n}</th>`).join("")}</tr></thead><tbody>${rows.map(r=>`<tr><td>${esc(r)}</td>${"<td class='o'><i></i></td>".repeat(5)}</tr>`).join("")}</tbody></table>`;
+const opt=a=>`<div class="opts">${a.map(t=>`<span><i></i>${esc(t)}</span>`).join("")}</div>`;
+function renderQ(){
+  $("q-out").innerHTML=`<article class="sheet q">${head()}<h3>Questionario finale</h3><p style="margin:0">Il questionario è anonimo. Nelle griglie: 1 = per niente, 5 = moltissimo. Grazie!</p>
+    <h4>Il corso</h4>${lik(LIK,"Quanto siete d'accordo con queste frasi?")}
+    <h4>Prima e dopo</h4>${lik(ABI,"PRIMA del corso, quanto vi sentivate capaci di…")}${lik(ABI,"ADESSO, quanto vi sentite capaci di…")}
+    <h4>In classe</h4><p class="qq">Avete provato il vostro strumento in classe?</p>${opt(["Sì, più volte","Sì, una volta","Non ancora, ma lo farò","No"])}
+    <p class="qq">Quanto è probabile che userete ancora l'IA per creare strumenti per la classe?</p>${opt(["1 · per niente","2","3","4","5 · moltissimo"])}</article>
+  <article class="sheet q">${head()}<h4>In parole vostre</h4>
+    <p class="qq">Che cosa vi è stato più utile?</p><div class="lines"></div><div class="lines"></div><div class="lines"></div><div class="lines"></div>
+    <p class="qq">Che cosa cambiereste?</p><div class="lines"></div><div class="lines"></div><div class="lines"></div><div class="lines"></div>
+    <p class="qq">Su quali temi vorreste un secondo livello del corso?</p><div class="lines"></div><div class="lines"></div><div class="lines"></div><div class="lines"></div>
+    <p class="qq">Ordine di scuola (facoltativo)</p>${opt(["Infanzia","Primaria","Secondaria di primo grado","Altro"])}
+    <div class="foot"><span>IDEA<sup>IA</sup> · ${esc(S.istituto)}</span><span>Grazie per aver partecipato!</span></div></article>`;
+}
+$("copia-gs").onclick=()=>{const t=$("gs").textContent;
+  const ok=()=>$("copia-msg").textContent="Copiato: ora incollatelo in script.google.com.";
+  const ko=()=>{const r=document.createRange();r.selectNodeContents($("gs"));const s=getSelection();s.removeAllRanges();s.addRange(r);$("copia-msg").textContent="Testo selezionato: premete Ctrl+C."};
+  try{navigator.clipboard.writeText(t).then(ok,ko)}catch(e){ko()}};
+
+/* ---------- schede e stampa ---------- */
+const TABS=["corsisti","firme","attestati","questionario"];
+function show(id){TABS.forEach(t=>{$(t).hidden=t!==id;$("t-"+t).setAttribute("aria-selected",t===id)});try{localStorage.setItem(KEY+"-tab",id)}catch(e){}}
+TABS.forEach(t=>$("t-"+t).onclick=()=>show(t));
+document.querySelectorAll("[data-print]").forEach(b=>{if(framed)b.hidden=true;else b.onclick=()=>window.print()});
+document.querySelectorAll("[data-printhint]").forEach(p=>p.textContent=framed
+  ?"Per stampare aprite il file «08 Segreteria del corso.html» dalla cartella del corso e premete Ctrl+P: qui online la stampa non è disponibile."
+  :"Nella finestra di stampa: formato A4, margini «Nessuno», «Grafica di sfondo» attiva.");
+function renderAll(){renderRoster();renderSign();renderFirme();renderAtt();renderQ()}
+renderAll();
+let start="corsisti";try{start=localStorage.getItem(KEY+"-tab")||start}catch(e){}
+show(TABS.includes(location.hash.slice(1))?location.hash.slice(1):TABS.includes(start)?start:"corsisti");
+
+/* cielo */
+(()=>{let s=7,h="";const r=()=>{s=(s*16807)%2147483647;return s/2147483647};for(let i=0;i<80;i++)h+=`<circle cx="${(r()*100).toFixed(1)}%" cy="${(r()*r()*70).toFixed(1)}%" r="${(.4+r()*1.2).toFixed(1)}" opacity="${(.15+r()*.55).toFixed(2)}"/>`;$("sky").innerHTML=h})();
+</script>

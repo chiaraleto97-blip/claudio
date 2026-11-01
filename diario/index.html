@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="it">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Diario dei bisogni · IDEAᴵᴬ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,650;1,9..144,400;1,9..144,600&family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&display=swap">
+<style>
+/* Il diario dei bisogni: una bacheca di post-it sul cielo notturno. Ognuno attacca i suoi «mi servirebbe qualcosa che…» durante la settimana; i post-it restano nel Foglio Google del corso e tornano sulla LIM al secondo incontro. */
+:root{
+  --bg:#17142C; --panel:rgba(38,30,64,.84); --ink:#F3EAF0; --muted:#B9A9C4; --line:#3B3056;
+  --rosso:#EA9B8C; --giallo:#F2B97F; --glow:#F6D58E; --giallo-d:#8A5217;
+  --p-giallo:#FBE8A6; --p-rosa:#F6C9C0; --p-azzurro:#C9D2F2; --p-verde:#C6E3D8; --p-ink:#3A2E1A;
+  --f-display:"Bricolage Grotesque","Arial Narrow",system-ui,sans-serif;
+  --f-serif:"Fraunces",Georgia,"Times New Roman",serif;
+  --f-body:"Atkinson Hyperlegible",Verdana,system-ui,sans-serif;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html{background:var(--bg)}
+body{margin:0;min-height:100vh;background:linear-gradient(to bottom,#14122A 0%,#1F1A3C 35%,#35284F 65%,#5C3760 90%,#8C4F63 100%) fixed,var(--bg);color:var(--ink);font-family:var(--f-body);font-size:17px;line-height:1.45;
+  padding-block:max(18px,env(safe-area-inset-top,0px)) max(40px,env(safe-area-inset-bottom,0px));padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+button,input,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:3px solid var(--giallo);outline-offset:3px}
+.wrap{max-width:1100px;margin:0 auto;display:flex;flex-direction:column;gap:20px}
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.logo{font-family:var(--f-display);font-weight:800;font-size:28px;letter-spacing:-.02em}
+.logo sup{font-size:.45em;color:var(--rosso)}
+.eyebrow{font-family:var(--f-display);font-weight:800;font-size:13px;letter-spacing:.16em;text-transform:uppercase;color:var(--giallo);margin:0}
+h1{font-family:var(--f-serif);font-weight:500;font-size:clamp(32px,5vw,48px);line-height:1.05;margin:4px 0 0;text-wrap:balance}
+h1 em{font-style:italic;font-weight:400;color:var(--glow)}
+.intro{color:var(--muted);margin:8px 0 0;max-width:60ch}
+.composer{background:var(--panel);border-radius:20px;padding:18px;display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:16px}
+@media (max-width:760px){.composer{grid-template-columns:minmax(0,1fr)}}
+.draft{border-radius:6px;padding:16px 16px 12px;background:var(--pc,var(--p-giallo));color:var(--p-ink);box-shadow:0 14px 26px -16px #000;transform:rotate(-1deg)}
+.draft label{display:block;font-family:var(--f-serif);font-style:italic;font-size:19px}
+.draft textarea{display:block;width:100%;min-height:120px;margin-top:6px;background:transparent;border:0;border-bottom:2px dashed rgba(58,46,26,.3);resize:vertical;font-family:var(--f-serif);font-size:21px;line-height:1.35;color:var(--p-ink)}
+.draft textarea:focus{outline:none;border-bottom-color:rgba(58,46,26,.7)}
+.draft .count{font-size:13px;opacity:.6;text-align:right;margin-top:4px}
+.side{display:flex;flex-direction:column;gap:12px}
+.side label.f{display:flex;flex-direction:column;gap:6px;font-family:var(--f-display);font-weight:700;font-size:13px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.side input{background:rgba(255,255,255,.08);border:2px solid var(--line);border-radius:12px;padding:11px 12px;font-family:var(--f-body);font-size:17px;letter-spacing:0;text-transform:none}
+.side input:focus{border-color:var(--giallo);outline:none}
+.colors{display:flex;gap:10px}
+.colors button{width:40px;height:40px;border-radius:10px;border:3px solid transparent;background:var(--c)}
+.colors button[aria-pressed="true"]{border-color:var(--glow);box-shadow:0 0 14px -2px var(--glow)}
+.btn{border:0;border-radius:16px;padding:14px 20px;font-family:var(--f-display);font-weight:800;font-size:16px;letter-spacing:.06em;text-transform:uppercase;background:var(--giallo);color:#2A2045;box-shadow:0 5px 0 var(--giallo-d)}
+.btn:disabled{opacity:.45;box-shadow:none}
+.msg{margin:0;font-size:15px;color:var(--muted)}
+.msg.err{color:var(--rosso)}
+.wallhead{display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.wallhead h2{font-family:var(--f-serif);font-weight:500;font-size:28px;margin:0}
+.wall{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,230px),1fr));gap:18px;align-items:start}
+.note{position:relative;border-radius:6px;padding:16px 16px 12px;background:var(--pc);color:var(--p-ink);font-family:var(--f-serif);font-size:19px;line-height:1.3;box-shadow:0 14px 24px -16px #000;transform:rotate(var(--r,0deg));overflow-wrap:anywhere}
+.note small{display:block;margin-top:10px;font-family:var(--f-body);font-size:13px;opacity:.65}
+.note .x{position:absolute;right:6px;top:2px;border:0;background:none;font-size:24px;line-height:1;color:var(--p-ink);opacity:.55;padding:4px}
+.note.mine{box-shadow:0 0 0 3px rgba(246,213,142,.7),0 14px 24px -16px #000}
+.empty{color:var(--muted);grid-column:1/-1}
+.c-giallo{--pc:var(--p-giallo)}.c-rosa{--pc:var(--p-rosa)}.c-azzurro{--pc:var(--p-azzurro)}.c-verde{--pc:var(--p-verde)}
+footer{display:flex;justify-content:center;color:var(--muted);font-size:13px;margin-top:10px}
+/* logo Wolf Team, nei colori del corso */
+.wt{display:inline-flex;align-items:center;gap:.5em;font-family:"Bricolage Grotesque","Arial Narrow",system-ui,sans-serif;font-weight:800;letter-spacing:.16em;text-transform:uppercase;white-space:nowrap;vertical-align:middle;line-height:1;font-style:normal;font-size:12px}
+.wt .wt-m{width:2.1em;height:2.1em;flex:none;display:block}
+.wt-w b{font-weight:800;color:var(--wt-accent,#F2B97F)}
+</style>
+
+<div class="wrap">
+  <div class="top"><span class="logo">IDEA<sup>IA</sup></span><span class="wt"><svg class="wt-m" viewBox="0 0 200 200" aria-hidden="true"><circle cx="100" cy="100" r="93" style="fill:#ABA3DC;stroke:#F6D58E;stroke-width:7"/><circle cx="100" cy="100" r="84" style="fill:none;stroke:#F7F1EE;stroke-opacity:.28;stroke-width:2"/><path d="M53 40.9 74.8 64.3 49.7 72.7Z" style="fill:#F7F1EE"/><path d="M146.9 40.9 125.2 64.3 150.3 72.7Z" style="fill:#F7F1EE"/><path d="M100 57.6 116.8 62.6 160.3 89.4 180.5 116.1 133.5 143.1 100 176.6Z" style="fill:#F7F1EE;opacity:.5"/><path d="M61.5 96.2 88.2 101.2 76.5 109.5Z" style="fill:#17142C"/><path d="M138.5 96.2 111.8 101.2 123.5 109.5Z" style="fill:#17142C"/><path d="M88.2 153.1 111.8 153.1 100 168.1Z" style="fill:#17142C"/></svg><span class="wt-w">Wolf <b>Team</b></span></span></div>
+  <header><p class="eyebrow">Compito per la settimana</p><h1>Il diario dei <em>bisogni</em></h1>
+    <p class="intro">Ogni volta che in classe pensate «mi servirebbe qualcosa che…», attaccate un post-it. Uno per ogni bisogno: al secondo incontro li leggeremo sulla LIM e diventeranno idee.</p></header>
+
+  <p id="bad" class="msg err" hidden>Questo link non è completo. Inquadrate di nuovo il QR della presentazione.</p>
+
+  <form class="composer" id="form" hidden>
+    <div class="draft c-giallo" id="draft"><label for="testo">Mi servirebbe qualcosa che…</label><textarea id="testo" maxlength="280" placeholder="…faccia sentire il ritmo a chi non riesce a seguirlo." required></textarea><div class="count" id="count">0 / 280</div></div>
+    <div class="side">
+      <label class="f" for="autore">Il vostro nome <span style="text-transform:none;letter-spacing:0;font-weight:400">(facoltativo)</span><input type="text" id="autore" maxlength="40" autocomplete="given-name" placeholder="Anna"></label>
+      <div><span class="msg">Colore</span><div class="colors" role="group" aria-label="Colore del post-it" style="margin-top:6px">
+        <button type="button" data-c="giallo" style="--c:var(--p-giallo)" aria-label="Giallo" aria-pressed="true"></button><button type="button" data-c="rosa" style="--c:var(--p-rosa)" aria-label="Rosa" aria-pressed="false"></button><button type="button" data-c="azzurro" style="--c:var(--p-azzurro)" aria-label="Azzurro" aria-pressed="false"></button><button type="button" data-c="verde" style="--c:var(--p-verde)" aria-label="Verde" aria-pressed="false"></button></div></div>
+      <button class="btn" type="submit" id="send" disabled>Attacca il post-it</button>
+      <p class="msg" id="msg" aria-live="polite">Niente nomi di alunni né dati personali: si descrivono i bisogni, non le persone.</p>
+    </div>
+  </form>
+
+  <section id="board" hidden>
+    <div class="wallhead"><h2>La bacheca</h2><span class="msg" id="stat"></span></div>
+    <div class="wall" id="wall" aria-live="polite"></div>
+  </section>
+  <footer>I post-it si possono togliere solo dal telefono che li ha attaccati.</footer>
+</div>
+
+<script>
+const $=id=>document.getElementById(id);
+const esc=t=>String(t??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const store={get(k,d){try{return JSON.parse(localStorage.getItem(k))??d}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
+/* dal QR: #s=<app web del registro>&b=<codice della bacheca> */
+const Q=Object.fromEntries(new URLSearchParams(location.hash.slice(1)));
+const OK=/^[A-Za-z0-9_-]{20,120}$/.test(Q.s||"")&&/^[a-z0-9]{4,12}$/.test(Q.b||"");
+const APP=OK?`https://script.google.com/macros/s/${Q.s}/exec`:"";
+const COLORI=["giallo","rosa","azzurro","verde"];
+let COLORE=store.get("diario-colore","giallo");if(!COLORI.includes(COLORE))COLORE="giallo";
+const MIEI=store.get("diario-miei-"+(Q.b||""),{}); /* id del post-it → token per toglierlo */
+const rnd=n=>Array.from(crypto.getRandomValues(new Uint8Array(n)),b=>"abcdefghijkmnpqrstuvwxyz23456789"[b%32]).join("");
+if(!OK)$("bad").hidden=false;else{$("form").hidden=false;$("board").hidden=false}
+$("autore").value=store.get("diario-autore","");
+
+function setColore(c){COLORE=c;store.set("diario-colore",c);$("draft").className="draft c-"+c;document.querySelectorAll("[data-c]").forEach(b=>b.setAttribute("aria-pressed",b.dataset.c===c))}
+setColore(COLORE);
+document.querySelectorAll("[data-c]").forEach(b=>b.onclick=()=>setColore(b.dataset.c));
+$("testo").addEventListener("input",()=>{const n=$("testo").value.trim().length;$("count").textContent=`${$("testo").value.length} / 280`;$("send").disabled=n<2});
+
+function render(list){
+  list.sort((a,b)=>b.quando-a.quando);
+  $("stat").textContent=list.length===1?"1 post-it":`${list.length} post-it`;
+  $("wall").innerHTML=list.length?list.map((p,i)=>{const mine=MIEI[p.id];const col=COLORI.includes(p.colore)?p.colore:"giallo";
+    return `<div class="note c-${col} ${mine?"mine":""}" style="--r:${((i*37)%7-3)*.5}deg">${mine?`<button class="x" data-del="${esc(p.id)}" aria-label="Togli questo post-it">×</button>`:""}…${esc(p.testo)}<small>${p.autore?esc(p.autore)+" · ":""}${new Date(p.quando).toLocaleDateString("it-IT",{day:"numeric",month:"long"})}</small></div>`}).join("")
+    :`<p class="empty">La bacheca è ancora vuota: attaccate il primo post-it.</p>`;
+}
+async function load(){if(!OK)return;
+  try{const r=await fetch(`${APP}?azione=diario&bacheca=${Q.b}`);const d=await r.json();if(Array.isArray(d.postit))render(d.postit)}
+  catch(e){$("stat").textContent="Bacheca non raggiungibile: controllate la connessione."}}
+$("form").addEventListener("submit",async e=>{e.preventDefault();
+  const testo=$("testo").value.trim().replace(/^…\s*/,""),autore=$("autore").value.trim();if(testo.length<2)return;
+  store.set("diario-autore",autore);const token=rnd(16);$("send").disabled=true;$("msg").className="msg";$("msg").textContent="Lo attacco…";
+  try{const r=await fetch(APP,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({tipo:"postit",bacheca:Q.b,testo,autore,colore:COLORE,token})});
+    const d=await r.json();if(!d.ok)throw new Error(d.errore||"risposta");
+    MIEI[d.id]=token;store.set("diario-miei-"+Q.b,MIEI);$("testo").value="";$("count").textContent="0 / 280";$("msg").textContent="Attaccato! Potete aggiungerne altri quando volete.";load()}
+  catch(err){$("msg").className="msg err";$("msg").textContent="Il post-it non è arrivato. Controllate la connessione e riprovate.";$("send").disabled=false}});
+$("wall").addEventListener("click",async e=>{const b=e.target.closest("[data-del]");if(!b)return;const id=b.dataset.del;
+  if(!b.dataset.sure){b.dataset.sure="1";b.textContent="Togli?";b.style.fontSize="14px";setTimeout(()=>{if(b.isConnected){delete b.dataset.sure;b.textContent="×";b.style.fontSize=""}},3000);return}
+  try{const r=await fetch(`${APP}?azione=togli&bacheca=${Q.b}&id=${encodeURIComponent(id)}&token=${encodeURIComponent(MIEI[id]||"")}`);const d=await r.json();
+    if(d.ok){delete MIEI[id];store.set("diario-miei-"+Q.b,MIEI)}load()}catch(err){}});
+load();setInterval(()=>{if(!document.hidden)load()},20000);
+</script>
