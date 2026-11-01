@@ -45,6 +45,18 @@ h1{font-family:var(--f-serif);font-weight:650;font-size:28px;line-height:1.15;ma
 .opt.sel::before{background:var(--suit-d)}
 .opt:active{transform:translateY(3px);box-shadow:0 2px 0 var(--suit-d)}
 .note{font-size:16px;color:var(--muted);margin:0}
+.draft{border-radius:6px;padding:14px 14px 10px;background:var(--pc,#FBE8A6);color:#3A2E1A;box-shadow:0 14px 26px -16px #000;transform:rotate(-1deg)}
+.draft label{display:block;font-family:var(--f-serif);font-style:italic;font-size:18px}
+.draft textarea{display:block;width:100%;min-height:110px;margin-top:6px;background:transparent;border:0;border-bottom:2px dashed rgba(58,46,26,.3);resize:vertical;font-family:var(--f-serif);font-size:20px;line-height:1.35;color:#3A2E1A}
+.draft textarea:focus{outline:none;border-bottom-color:rgba(58,46,26,.7)}
+.who{width:100%;background:rgba(255,255,255,.08);border:2px solid var(--line);border-radius:12px;padding:11px 12px;font-size:17px;color:var(--ink)}
+.colors{display:flex;gap:10px}
+.colors button{width:40px;height:40px;border-radius:10px;border:3px solid transparent;background:var(--c)}
+.colors button[aria-pressed="true"]{border-color:var(--glow);box-shadow:0 0 14px -2px var(--glow)}
+.mine{display:grid;gap:10px}
+.pn{position:relative;border-radius:6px;padding:12px 40px 12px 14px;background:var(--pc);color:#3A2E1A;font-family:var(--f-serif);font-size:17px;line-height:1.3;overflow-wrap:anywhere}
+.pn button{position:absolute;right:6px;top:4px;border:0;background:none;font-size:24px;line-height:1;color:#3A2E1A;opacity:.6;padding:4px}
+.k-giallo{--pc:#FBE8A6}.k-rosa{--pc:#F6C9C0}.k-azzurro{--pc:#C9D2F2}.k-verde{--pc:#C6E3D8}
 .res{display:grid;gap:8px}
 .res div{display:grid;grid-template-columns:minmax(0,1fr) 34px;gap:4px 10px;font-size:15px;color:var(--muted)}
 .res i{grid-column:1/-1;display:block;height:8px;border-radius:6px;background:rgba(255,255,255,.08);overflow:hidden}
@@ -98,6 +110,7 @@ function render(){
       <form class="code" id="codef" style="margin-top:10px;width:100%"><input id="codein" maxlength="6" autocomplete="off" autocapitalize="none" spellcheck="false" aria-label="Codice della sala" placeholder="codice"><button class="btn" type="submit">Entra</button></form></div>`;
     $("codef").onsubmit=e=>{e.preventDefault();const v=$("codein").value.trim().toLowerCase();if(/^[a-z0-9]{6}$/.test(v)){location.hash=v}};
     return}
+  if(POLL&&!POLL.id&&POLL.board){renderBoard();return}
   if(!POLL||(!POLL.id&&!POLL.form)){
     $("body").innerHTML=`<div class="wait"><div class="mascot">${MASCOT}</div><h1>Aspettate la prossima domanda</h1><p>Quando sulla LIM compare un sondaggio, qui arrivano i pulsanti per votare. Tenete aperta questa pagina.</p></div>`;return}
   if(!POLL.id){
@@ -111,14 +124,43 @@ function render(){
 $("body").addEventListener("click",e=>{const b=e.target.closest("[data-v]");if(!b||!POLL||!POLL.id)return;
   const c=+b.dataset.v;store.set(vkey(),c);pub(`${base()}/v/${POLL.id}/${ME}`,JSON.stringify({c}));render()});
 
+/* la bacheca del diario dei bisogni: un post-it per bisogno, si possono togliere i propri */
+const COLORI=["giallo","rosa","azzurro","verde"];
+let COLORE=store.get("bacheca-colore","giallo");if(!COLORI.includes(COLORE))COLORE="giallo";
+const mieiKey=()=>`bacheca-${SALA}`;
+function renderBoard(){const miei=store.get(mieiKey(),[]);
+  $("body").innerHTML=`<div style="display:flex;flex-direction:column;gap:14px">
+    <h1>La bacheca dei bisogni</h1><p class="note">Ricopiate dal foglio i bisogni con la stella: uno per post-it. Compaiono subito sulla LIM.</p>
+    <form id="pf" style="display:flex;flex-direction:column;gap:12px">
+      <div class="draft k-${COLORE}" id="draft"><label for="pt">Mi servirebbe qualcosa che…</label><textarea id="pt" maxlength="280" placeholder="…faccia sentire il ritmo a chi non riesce a seguirlo."></textarea></div>
+      <div class="colors" role="group" aria-label="Colore del post-it">${COLORI.map(c=>`<button type="button" class="k-${c}" data-col="${c}" style="--c:var(--pc)" aria-label="${c}" aria-pressed="${c===COLORE}"></button>`).join("")}</div>
+      <input class="who" id="pa" maxlength="40" placeholder="Il vostro nome (facoltativo)" autocomplete="given-name" value="${esc(store.get("bacheca-nome",""))}">
+      <button class="btn" type="submit" id="ps" disabled>Attacca il post-it</button>
+      <p class="note" id="pm">Niente nomi di alunni: si descrivono i bisogni, non le persone.</p>
+    </form>
+    ${miei.length?`<h2 style="font-family:var(--f-serif);font-weight:500;font-size:22px;margin:6px 0 0">I vostri post-it</h2><div class="mine">${miei.map(p=>`<div class="pn k-${COLORI.includes(p.c)?p.c:"giallo"}">…${esc(p.t)}<button type="button" data-rm="${esc(p.id)}" aria-label="Togli questo post-it">×</button></div>`).join("")}</div>`:""}
+  </div>`;
+  const ta=$("pt");ta.addEventListener("input",()=>{$("ps").disabled=ta.value.trim().length<2});
+  document.querySelectorAll("[data-col]").forEach(b=>b.onclick=()=>{COLORE=b.dataset.col;store.set("bacheca-colore",COLORE);$("draft").className="draft k-"+COLORE;document.querySelectorAll("[data-col]").forEach(x=>x.setAttribute("aria-pressed",x===b))});
+  $("pf").onsubmit=e=>{e.preventDefault();const t=ta.value.trim().replace(/^…\s*/,"");if(t.length<2)return;
+    if(!live().length){$("pm").textContent="Non siete collegati alla sala: controllate la connessione e riprovate.";return}
+    const a=$("pa").value.trim();store.set("bacheca-nome",a);const id=`${ME}-${rnd(5)}`;
+    pub(`${base()}/p/diario/${id}`,JSON.stringify({t,a,c:COLORE}));
+    const m=store.get(mieiKey(),[]);m.push({id,t,c:COLORE});store.set(mieiKey(),m);renderBoard();$("pm").textContent="Attaccato! Potete aggiungerne altri.";};
+}
+$("body").addEventListener("click",e=>{const b=e.target.closest("[data-rm]");if(!b)return;const id=b.dataset.rm;
+  if(!b.dataset.sure){b.dataset.sure="1";b.textContent="Togli?";b.style.fontSize="14px";setTimeout(()=>{if(b.isConnected){delete b.dataset.sure;b.textContent="×";b.style.fontSize=""}},3000);return}
+  pub(`${base()}/p/diario/${id}`,"");store.set(mieiKey(),store.get(mieiKey(),[]).filter(p=>p.id!==id));renderBoard()});
+
 /* la domanda arriva dalla LIM: è un dato di chiunque conosca la sala, quindi si controlla */
 function onMsg(topic,buf){
-  if(topic!==base()+"/poll")return;let d=null;const txt=String(buf||"");
+  if(topic!==base()+"/poll")return;let d=null;const txt=String(buf||""),prev=POLL;
   if(txt){try{d=JSON.parse(txt)}catch(e){return}}
   if(!d||typeof d!=="object"){POLL=null}
-  else if(!d.id){POLL={id:null,form:okForm(d.form)?d.form:null}}
+  else if(!d.id){POLL={id:null,form:okForm(d.form)?d.form:null,board:d.board&&d.board.id==="diario"?{id:"diario",q:"Mi servirebbe qualcosa che…"}:null}}
   else if(typeof d.id==="string"&&/^[a-z0-9-]{1,40}$/.test(d.id)&&typeof d.q==="string"&&Array.isArray(d.o)){
     POLL={id:d.id,r:Number.isInteger(d.r)&&d.r>=0?d.r:0,q:d.q.slice(0,300),o:d.o.slice(0,8).map(t=>String(t).slice(0,80)),c:(Array.isArray(d.c)?d.c:[]).slice(0,8).map(n=>Math.max(0,Math.floor(+n)||0))}}
+  if(POLL&&POLL.board&&document.getElementById("pt")&&prev&&prev.board)return;
   render();
 }
 function connect(){

@@ -229,14 +229,14 @@ details.setup[open]{display:flex;flex-direction:column;gap:12px}
               <li>Aprite <b>script.google.com</b>, <b>Nuovo progetto</b>, incollate lo script del registro (pulsante qui sotto) e salvate.</li>
               <li>Scegliete la funzione <b>prepara</b> e premete <b>Esegui</b>: nel registro in basso compaiono il link del Foglio e la <b>chiave</b>.</li>
               <li><b>Esegui il deployment</b>, Nuovo deployment, tipo <b>App web</b>: esegui come <b>Me</b>, accesso <b>Chiunque</b>. Copiate l'URL dell'app web.</li>
-              <li>Incollate qui l'URL e la chiave. Lo stesso URL serve anche per la bacheca del diario, nella presentazione.</li>
+              <li>Incollate qui l'URL e la chiave.</li>
             </ol>
             <div class="grid2"><label class="f">URL dell'app web<input type="text" id="tel-url" placeholder="https://script.google.com/macros/s/…/exec"></label><label class="f">Chiave<input type="text" id="tel-key" placeholder="12 caratteri"></label></div>
             <div class="bar"><button class="btn line" type="button" id="copia-reg">Copia lo script del registro</button><span class="hint" id="copia-reg-msg" aria-live="polite"></span></div>
             <pre class="gs" id="gs-reg">/**
  * IDEA^IA · Registro del corso
- * Riceve le firme dal telefono dei corsisti e i post-it del diario dei bisogni,
- * e li conserva in un Foglio Google di chi conduce il corso.
+ * Riceve le firme dal telefono dei corsisti e le conserva in un Foglio Google
+ * di chi conduce il corso.
  *
  * Come si prepara (una volta sola):
  * 1. script.google.com &gt; Nuovo progetto &gt; incollate tutto questo testo &gt; Salva.
@@ -245,9 +245,8 @@ details.setup[open]{display:flex;flex-direction:column;gap:12px}
  * 3. Esegui il deployment &gt; Nuovo deployment &gt; tipo «App web».
  *    Esegui come: Me. Chi ha accesso: Chiunque. Poi Esegui il deployment e copiate l'URL dell'app web.
  * 4. Segreteria del corso, scheda Foglio firme: incollate l'URL e la CHIAVE.
- *    Presentazione, slide «Il diario dei bisogni»: incollate l'URL.
  *
- * Le firme si leggono solo con la CHIAVE; i post-it del diario li vede chi ha il link della bacheca.
+ * Le firme si leggono solo con la CHIAVE.
  */
 const P = PropertiesService.getScriptProperties();
 
@@ -256,9 +255,8 @@ function prepara() {
   if (id) ss = SpreadsheetApp.openById(id);
   else { ss = SpreadsheetApp.create('IDEAᴵᴬ · Registro del corso'); P.setProperty('FOGLIO', ss.getId()); }
   foglio_(ss, 'Firme', ['Quando', 'Codice corso', 'Incontro', 'Momento', 'Nome e cognome', 'Firma (immagine)']);
-  foglio_(ss, 'Diario', ['Id', 'Bacheca', 'Quando', 'Testo', 'Autore', 'Colore', 'Token']);
   const vuoto = ss.getSheetByName('Foglio1') || ss.getSheetByName('Sheet1');
-  if (vuoto &amp;&amp; ss.getSheets().length &gt; 2) ss.deleteSheet(vuoto);
+  if (vuoto &amp;&amp; ss.getSheets().length &gt; 1) ss.deleteSheet(vuoto);
   let k = P.getProperty('CHIAVE');
   if (!k) { k = Utilities.getUuid().replace(/-/g, '').slice(0, 12); P.setProperty('CHIAVE', k); }
   Logger.log('Foglio del registro: ' + ss.getUrl());
@@ -283,22 +281,6 @@ const ms_ = d =&gt; d instanceof Date ? d.getTime() : Number(d) || 0;
 function doGet(e) {
   const p = e.parameter || {};
   try {
-    if (p.azione === 'diario') {
-      const b = codice_(p.bacheca); if (!b) return out_({ errore: 'bacheca' });
-      const righe = ss_().getSheetByName('Diario').getDataRange().getValues().slice(1).filter(r =&gt; r[1] === b);
-      return out_({ postit: righe.map(r =&gt; ({ id: r[0], quando: ms_(r[2]), testo: String(r[3]).replace(/^'/, ''), autore: String(r[4]).replace(/^'/, ''), colore: r[5] })) });
-    }
-    if (p.azione === 'togli') {
-      const b = codice_(p.bacheca); if (!b) return out_({ errore: 'bacheca' });
-      const lock = LockService.getScriptLock(); lock.waitLock(10000);
-      try {
-        const sh = ss_().getSheetByName('Diario'), v = sh.getDataRange().getValues();
-        for (let i = v.length - 1; i &gt;= 1; i--) {
-          if (v[i][0] === p.id &amp;&amp; v[i][1] === b &amp;&amp; v[i][6] === p.token) { sh.deleteRow(i + 1); return out_({ ok: true }); }
-        }
-        return out_({ errore: 'non trovato' });
-      } finally { lock.releaseLock(); }
-    }
     if (p.azione === 'firme') {
       if (!p.chiave || p.chiave !== P.getProperty('CHIAVE')) return out_({ errore: 'chiave' });
       const c = codice_(p.codice); if (!c) return out_({ errore: 'codice' });
@@ -322,17 +304,6 @@ function doPost(e) {
       if (sh.getLastRow() &gt; 3000) return out_({ errore: 'pieno' });
       sh.appendRow([new Date(), c, inc, d.momento === 'u' ? 'uscita' : 'entrata', nome, f]);
       return out_({ ok: true });
-    }
-    if (d.tipo === 'postit') {
-      const b = codice_(d.bacheca), testo = pulito_(d.testo, 300), autore = pulito_(d.autore, 40);
-      const colore = ['giallo', 'rosa', 'azzurro', 'verde'].indexOf(d.colore) &gt;= 0 ? d.colore : 'giallo';
-      const token = String(d.token || '');
-      if (!b || testo.length &lt; 2 || !/^[a-z0-9]{8,40}$/.test(token)) return out_({ errore: 'dati' });
-      const sh = ss_().getSheetByName('Diario');
-      if (sh.getLastRow() &gt; 3000) return out_({ errore: 'pieno' });
-      const id = Utilities.getUuid().slice(0, 8);
-      sh.appendRow([id, b, new Date(), testo, autore, colore, token]);
-      return out_({ ok: true, id: id });
     }
     return out_({ errore: 'tipo' });
   } catch (err) { return out_({ errore: String(err) }); }

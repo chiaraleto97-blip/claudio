@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="it">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Diario dei bisogni</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,650;1,9..144,400;1,9..144,600&family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&display=swap">
+<style>
+/* Il diario dei bisogni su carta: un A4 da dare alla fine del primo incontro. Si compila a mano durante la settimana; al secondo incontro le righe con la stella diventano post-it sulla bacheca condivisa. Sul tavolo notturno l'anteprima, in stampa solo carta chiara. */
+:root{
+  --bg:#17142C; --panel:rgba(38,30,64,.86); --ink:#F3EAF0; --muted:#B9A9C4; --line:#3B3056;
+  --paper:#FFFDF8; --paper-ink:#2A2045; --paper-muted:#6C5F77; --paper-line:#D3C7B6;
+  --blu:#9EA6E2; --rosso:#EA9B8C; --giallo:#F2B97F; --verde:#88C0AF; --lilla:#C8A5D8; --glow:#F6D58E;
+  --rosso-d:#A3493C; --giallo-d:#8A5217;
+  --p-giallo:#FBE8A6;
+  --f-display:"Bricolage Grotesque","Arial Narrow",system-ui,sans-serif;
+  --f-serif:"Fraunces",Georgia,"Times New Roman",serif;
+  --f-body:"Atkinson Hyperlegible",Verdana,system-ui,sans-serif;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html{background:var(--bg)}
+body{margin:0;min-height:100vh;background:linear-gradient(to bottom,#14122A 0%,#1F1A3C 34%,#35284F 58%,#5C3760 78%,#8C4F63 92%,#B86E66 100%) fixed,var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.5;
+  padding-block:24px 60px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+button{font:inherit;cursor:pointer}
+:focus-visible{outline:3px solid var(--giallo);outline-offset:2px}
+.wrap{max-width:1000px;margin:0 auto;display:flex;flex-direction:column;gap:20px}
+.brand{font-family:var(--f-display);font-weight:800;font-size:15px;letter-spacing:.16em;text-transform:uppercase;color:var(--giallo);margin:0}
+.brand sup{color:var(--rosso);font-size:.7em}
+h1{font-family:var(--f-serif);font-weight:500;font-size:clamp(34px,5vw,52px);line-height:1.05;letter-spacing:-.02em;margin:4px 0 0}
+h1 em{font-style:italic;font-weight:400;color:var(--giallo)}
+.panel{background:var(--panel);border-radius:20px;padding:20px 24px;display:flex;flex-wrap:wrap;align-items:center;gap:12px 20px}
+.panel p{margin:0;color:var(--muted);flex:1;min-width:260px}
+.btn{border:0;border-radius:14px;padding:11px 20px;font-family:var(--f-display);font-weight:800;font-size:15px;letter-spacing:.06em;text-transform:uppercase;background:var(--giallo);color:var(--paper-ink);box-shadow:0 4px 0 var(--giallo-d)}
+.papers{display:flex;justify-content:center;overflow-x:auto;padding-bottom:6px}
+
+/* il foglio A4 */
+.sheet{flex:none;width:210mm;height:297mm;background:var(--paper);color:var(--paper-ink);padding:13mm 14mm 11mm;box-shadow:0 24px 50px -24px #000;display:flex;flex-direction:column;gap:4.5mm;font-size:10.5pt;line-height:1.4}
+.top{display:flex;justify-content:space-between;align-items:flex-start;gap:8mm;border-bottom:.6mm solid var(--paper-ink);padding-bottom:3mm}
+.logo{font-family:var(--f-display);font-weight:800;font-size:19pt;letter-spacing:-.02em;line-height:1}
+.logo sup{color:var(--rosso-d);font-size:.5em}
+.logo .wt{display:flex;font-size:6.5pt;margin-top:2mm;letter-spacing:.16em;--wt-accent:#A3493C;color:var(--paper-ink)}
+.when{font-family:var(--f-display);font-weight:700;font-size:7.5pt;letter-spacing:.14em;text-transform:uppercase;color:var(--paper-muted);text-align:right}
+.title{display:flex;align-items:flex-end;justify-content:space-between;gap:8mm}
+.title h2{font-family:var(--f-serif);font-weight:500;font-size:27pt;line-height:1;margin:0;letter-spacing:-.02em}
+.title h2 em{font-style:italic;font-weight:400;color:var(--rosso-d)}
+.title p{margin:1.5mm 0 0;font-family:var(--f-serif);font-style:italic;font-size:11pt;color:var(--paper-muted)}
+.postit{flex:none;width:44mm;background:var(--p-giallo);color:#3A2E1A;border-radius:1mm;padding:3mm 3.5mm;font-family:var(--f-serif);font-size:10pt;line-height:1.25;transform:rotate(2deg);box-shadow:0 2mm 4mm -2mm rgba(0,0,0,.35);-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.who{display:grid;grid-template-columns:1fr 1.4fr;gap:8mm;font-size:9pt}
+.who b{display:block;font-family:var(--f-display);font-size:7pt;letter-spacing:.14em;text-transform:uppercase;color:var(--paper-muted)}
+.who span{display:block;border-bottom:.3mm solid var(--paper-line);height:7mm}
+.how{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4mm;margin:0;padding:0;list-style:none;counter-reset:h}
+.how li{counter-increment:h;display:flex;gap:2.5mm;font-size:9pt;line-height:1.35}
+.how li::before{content:counter(h);flex:none;width:6mm;height:6mm;border-radius:50%;background:var(--paper-ink);color:var(--paper);display:grid;place-items:center;font-family:var(--f-display);font-weight:800;font-size:8pt;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+table{width:100%;border-collapse:collapse;table-layout:fixed}
+th{font-family:var(--f-display);font-weight:700;font-size:7.2pt;letter-spacing:.12em;text-transform:uppercase;color:var(--paper-muted);text-align:left;padding:1.5mm 2mm;border-bottom:.5mm solid var(--paper-ink)}
+th.star,td.star{width:9mm;text-align:center}
+td{border-bottom:.3mm solid var(--paper-line);height:22.5mm;padding:2mm;vertical-align:top}
+td+td{border-left:.3mm dotted var(--paper-line)}
+td.star{vertical-align:middle}
+td.star i{display:inline-block;width:5mm;height:5mm;background:none;border:.35mm solid var(--paper-line);clip-path:polygon(50% 0,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%);background:var(--paper-line)}
+tr.ex td{height:auto;color:var(--paper-muted);font-style:italic;font-size:9pt;padding:1.6mm 2mm}
+tr.ex td.star i{background:#E2B866}
+.lead-cell{font-family:var(--f-serif);font-style:italic;color:var(--paper-muted);font-size:9pt}
+.foot{margin-top:auto;display:flex;justify-content:space-between;gap:8mm;font-size:8.5pt;color:var(--paper-muted);border-top:.3mm solid var(--paper-line);padding-top:2mm}
+.foot b{color:var(--paper-ink)}
+/* logo Wolf Team, nei colori del corso */
+.wt{display:inline-flex;align-items:center;gap:.5em;font-family:"Bricolage Grotesque","Arial Narrow",system-ui,sans-serif;font-weight:800;letter-spacing:.16em;text-transform:uppercase;white-space:nowrap;vertical-align:middle;line-height:1;font-style:normal}
+.wt .wt-m{width:2.1em;height:2.1em;flex:none;display:block}
+.wt-w b{font-weight:800;color:var(--wt-accent,#F2B97F)}
+
+@page{size:A4 portrait;margin:0}
+@media print{
+  html,body{background:#fff!important;padding:0!important;min-height:0}
+  .noprint{display:none!important}
+  .wrap{max-width:none;display:block}
+  .papers{display:block;overflow:visible;padding:0}
+  .sheet{box-shadow:none}
+}
+</style>
+
+<div class="wrap">
+  <header class="noprint"><p class="brand">IDEA<sup>IA</sup> · incontro 1</p><h1>Il diario dei <em>bisogni</em></h1></header>
+  <div class="panel noprint">
+    <p id="hint"></p>
+    <button class="btn" id="print">Stampa</button>
+  </div>
+
+  <div class="papers">
+    <article class="sheet">
+      <div class="top">
+        <div class="logo">IDEA<sup>IA</sup><span class="wt"><svg class="wt-m" viewBox="0 0 200 200" aria-hidden="true"><circle cx="100" cy="100" r="93" style="fill:#ABA3DC;stroke:#F6D58E;stroke-width:7"/><circle cx="100" cy="100" r="84" style="fill:none;stroke:#F7F1EE;stroke-opacity:.28;stroke-width:2"/><path d="M53 40.9 74.8 64.3 49.7 72.7Z" style="fill:#F7F1EE"/><path d="M146.9 40.9 125.2 64.3 150.3 72.7Z" style="fill:#F7F1EE"/><path d="M100 57.6 116.8 62.6 160.3 89.4 180.5 116.1 133.5 143.1 100 176.6Z" style="fill:#F7F1EE;opacity:.5"/><path d="M61.5 96.2 88.2 101.2 76.5 109.5Z" style="fill:#17142C"/><path d="M138.5 96.2 111.8 101.2 123.5 109.5Z" style="fill:#17142C"/><path d="M88.2 153.1 111.8 153.1 100 168.1Z" style="fill:#17142C"/></svg><span class="wt-w">Wolf <b>Team</b></span></span></div>
+        <div class="when">Corso di formazione per docenti<br>Dal primo al secondo incontro</div>
+      </div>
+      <div class="title">
+        <div><h2>Il diario dei <em>bisogni</em></h2><p>Una settimana in classe, con un'antenna accesa.</p></div>
+        <div class="postit">Mi servirebbe qualcosa che…</div>
+      </div>
+      <div class="who"><div><b>Nome</b><span></span></div><div><b>Discipline e classi</b><span></span></div></div>
+      <ol class="how">
+        <li><span>Ogni volta che in classe pensate <b>«mi servirebbe qualcosa che…»</b>, annotatelo qui, anche in due parole.</span></li>
+        <li><span>Va bene tutto: bisogni piccoli, strani, che sembrano impossibili. Non serve sapere come si farebbe.</span></li>
+        <li><span>Segnate con la stella i più importanti: al secondo incontro diventano post-it sulla bacheca condivisa.</span></li>
+      </ol>
+      <table>
+        <thead><tr><th style="width:27mm">Quando · classe</th><th style="width:58mm">Che cosa stava succedendo</th><th>Mi servirebbe qualcosa che…</th><th class="star">★</th></tr></thead>
+        <tbody>
+          <tr class="ex"><td>es. martedì · 2ªB</td><td>Ripasso del ritmo: tre alunni perdono sempre il tempo.</td><td>…faccia sentire e vedere il ritmo a chi non riesce a seguirlo.</td><td class="star"><i></i></td></tr>
+          <tr><td></td><td></td><td class="lead-cell">…</td><td class="star"><i></i></td></tr>
+          <tr><td></td><td></td><td class="lead-cell">…</td><td class="star"><i></i></td></tr>
+          <tr><td></td><td></td><td class="lead-cell">…</td><td class="star"><i></i></td></tr>
+          <tr><td></td><td></td><td class="lead-cell">…</td><td class="star"><i></i></td></tr>
+          <tr><td></td><td></td><td class="lead-cell">…</td><td class="star"><i></i></td></tr>
+          <tr><td></td><td></td><td class="lead-cell">…</td><td class="star"><i></i></td></tr>
+          <tr><td></td><td></td><td class="lead-cell">…</td><td class="star"><i></i></td></tr>
+        </tbody>
+      </table>
+      <div class="foot"><span><b>Niente nomi di alunni:</b> si descrivono i bisogni, non le persone.</span><span>Portate il foglio al secondo incontro.</span></div>
+    </article>
+  </div>
+</div>
+
+<script>
+const framed=(()=>{try{return window.top!==window}catch(e){return true}})();
+const b=document.getElementById("print");
+if(framed){b.hidden=true;document.getElementById("hint").textContent="Da distribuire alla fine del primo incontro, uno a testa. Per stampare aprite il file «10 Diario dei bisogni.html» dalla cartella del corso e premete Ctrl+P: qui online la stampa non è disponibile."}
+else{b.onclick=()=>window.print();document.getElementById("hint").textContent="Da distribuire alla fine del primo incontro, uno a testa. Nella finestra di stampa: A4, margini «Nessuno», «Grafica di sfondo» attiva per il post-it giallo."}
+</script>

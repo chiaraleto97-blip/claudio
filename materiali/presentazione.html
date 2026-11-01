@@ -407,20 +407,14 @@ La&lt;/button&gt;</div></div>
   </div>
 </section>
 
-<section class="slide" data-inc="1" data-title="Il diario dei bisogni" data-timer="5" data-notes="Compito per la settimana. Ognuno inquadra il QR e attacca i suoi post-it virtuali quando gli viene in mente un bisogno: restano nel Foglio Google del registro del corso e tornano sulla LIM al secondo incontro. Il link dell'app web del registro si incolla una volta sola qui sotto (è lo stesso della Segreteria). Il QR funziona aprendo la presentazione dal file o dal sito dei materiali.">
+<section class="slide" data-inc="1" data-title="Il diario dei bisogni" data-timer="5" data-notes="Compito per la settimana: distribuite il foglio «10 Diario dei bisogni», uno a testa. Si compila a mano in classe, anche in due parole; al secondo incontro le righe con la stella si ricopiano dal telefono sulla bacheca, con lo stesso QR dei sondaggi.">
   <p class="eyebrow">Per la prossima volta</p>
   <h2>Il diario dei <em>bisogni</em></h2>
-  <div class="row grow" style="min-height:0">
-    <div class="col grow">
-      <p class="lead">Per una settimana, ogni volta che in classe pensate «mi servirebbe qualcosa che…», attaccate un post-it sulla bacheca.</p>
-      <div class="row" style="margin-top:6px">
-        <div class="postit grow" style="--r:-2deg;font-size:24px">…che faccia sentire il ritmo a chi non riesce a seguirlo.</div>
-        <div class="postit rosa grow" style="--r:1.5deg;font-size:24px">…che mostri quanto manca alla fine del compito.</div>
-        <div class="postit azz grow" style="--r:-1deg;font-size:24px">…che legga ad alta voce le consegne.</div>
-      </div>
-      <form class="wallform" data-regform style="margin-top:auto"><input data-regin placeholder="Link dell'app web del registro (script.google.com/macros/s/…/exec)" autocomplete="off" aria-label="Link dell'app web del registro"><button class="btn" type="submit">Collega</button></form>
-    </div>
-    <div class="col" style="align-items:center"><div class="qr" data-diarioqr></div><p class="url" data-diariourl></p></div>
+  <p class="lead">Per una settimana, ogni volta che in classe pensate «mi servirebbe qualcosa che…», annotatelo sul foglio. Segnate con la stella i più importanti: al prossimo incontro diventano post-it sulla bacheca di tutti.</p>
+  <div class="row" style="margin-top:20px">
+    <div class="postit grow" style="--r:-2deg">…che faccia sentire il ritmo a chi non riesce a seguirlo.</div>
+    <div class="postit rosa grow" style="--r:1.5deg">…che mostri quanto manca alla fine del compito.</div>
+    <div class="postit azz grow" style="--r:-1deg">…che legga ad alta voce le consegne.</div>
   </div>
 </section>
 
@@ -436,11 +430,12 @@ La&lt;/button&gt;</div></div>
   </div>
 </section>
 
-<section class="slide" data-inc="2" data-title="Leggiamo i diari" data-timer="15" data-notes="La bacheca dei post-it della settimana, dal Foglio Google del registro: si aggiorna da sola. Leggetene qualcuno ad alta voce: non si giudica, si raccoglie. Chi non l'ha ancora fatto può aggiungere un post-it adesso dal QR.">
-  <div class="row" style="align-items:flex-end;justify-content:space-between"><div class="col" style="gap:8px"><p class="eyebrow">Dai diari dei bisogni</p><h2>«Mi servirebbe qualcosa <em>che…</em>»</h2></div><span class="ffcount" data-dcount></span></div>
+<section class="slide" data-inc="2" data-title="Leggiamo i diari" data-timer="15" data-board="diario" data-notes="Come per i sondaggi: ognuno prende il foglio del diario, inquadra il QR della sala e ricopia dal telefono i bisogni con la stella, uno per post-it. I post-it compaiono qui in diretta; ognuno può togliere i propri dal telefono. Leggetene qualcuno ad alta voce: non si giudica, si raccoglie. Restano in questo browser fino a «Svuota la bacheca» o a una nuova sala.">
+  <div class="row" style="align-items:flex-end;justify-content:space-between"><div class="col" style="gap:8px"><p class="eyebrow">Dai diari dei bisogni · la bacheca di tutti</p><h2>«Mi servirebbe qualcosa <em>che…</em>»</h2></div><span class="ffcount" data-dcount></span></div>
   <div class="row grow" style="min-height:0">
     <div class="dwall grow" data-wall></div>
-    <div class="col" style="align-items:center;width:230px"><div class="qr" data-diarioqr style="width:220px;height:220px"></div><p class="url" style="text-align:center;max-width:220px">Ne manca uno? Inquadrate e attaccatelo adesso.</p></div>
+    <div class="col" style="align-items:center;width:250px;gap:12px"><div class="qr" data-qrsala style="width:240px;height:240px"></div><p class="url" style="text-align:center;max-width:240px">Inquadrate e ricopiate i bisogni con la stella, uno per post-it.</p>
+      <button class="btn line" type="button" data-boardclear style="font-size:15px;padding:8px 14px">Svuota la bacheca</button></div>
   </div>
 </section>
 
@@ -716,7 +711,7 @@ document.querySelectorAll("[data-poll]").forEach(el=>{
   <div class="poll-meta"><span class="dot"></span><span class="pm-txt"></span><button data-newsala title="Un codice nuovo: i telefoni dovranno inquadrare di nuovo il QR">Nuova sala</button><button data-reset>Azzera</button></div>`;
 });
 function drawSalaQR(){document.querySelectorAll("[data-qrsala]").forEach(el=>{el.innerHTML="";
-  if(IN_CLAUDE){el.closest(".poll-head").hidden=true;return}
+  if(IN_CLAUDE){const h=el.closest(".poll-head");if(h)h.hidden=true;else el.innerHTML='<p style="color:#2A2045;font-size:18px;margin:0;text-align:center">Il QR della sala compare aprendo la presentazione dal file o dal sito dei materiali.</p>';return}
   if(typeof QRCode!=="undefined"){try{new QRCode(el,{text:VOTA+"#"+SALA,width:300,height:300,colorDark:"#2A2045",colorLight:"#FFFFFF",correctLevel:QRCode.CorrectLevel.M})}catch(e){}}
   else el.innerHTML="<p>Serve la connessione per il QR.</p>"})}
 drawSalaQR();
@@ -746,8 +741,8 @@ document.addEventListener("click",e=>{
 });
 const activePoll=()=>slides[cur]?.querySelector("[data-poll]")?.dataset.poll||null;
 renderPolls();
-function broadcast(){if(!live().length)return;const id=activePoll(),form=slides[cur]?.hasAttribute("data-form")&&FORM?FORM:null;
-  pub(base()+"/poll",JSON.stringify(id?{id,r:slot(id).r||0,q:POLLS[id].q,o:POLLS[id].o,c:counts(id)}:{id:null,form}))}
+function broadcast(){if(!live().length)return;const id=activePoll(),form=slides[cur]?.hasAttribute("data-form")&&FORM?FORM:null,board=slides[cur]?.dataset.board||null;
+  pub(base()+"/poll",JSON.stringify(id?{id,r:slot(id).r||0,q:POLLS[id].q,o:POLLS[id].o,c:counts(id)}:board?{id:null,board:{id:board,q:"Mi servirebbe qualcosa che…"}}:{id:null,form}))}
 
 /* il questionario finale: il link del modulo diventa un QR (e un pulsante sui telefoni) */
 const okForm=u=>/^https:\/\/(docs\.google\.com\/forms\/|forms\.gle\/)/.test(u||"");
@@ -766,6 +761,12 @@ let bt=null;function broadcastSoon(){if(bt||!live().length)return;bt=setTimeout(
 function onMsg(topic,buf){
   if(!topic.startsWith(base()+"/"))return;const [kind,a,b]=topic.slice(base().length+1).split("/"),txt=String(buf||"");
   if(kind==="here"&&/^[a-z0-9]{6,20}$/.test(a||"")){txt==="1"?PHONES.add(a):PHONES.delete(a);renderPolls();return}
+  if(kind==="p"){if(a!=="diario"||!/^[a-z0-9-]{6,40}$/.test(b||""))return;
+    if(!txt){if(BOARD[b]){delete BOARD[b];saveBoard()}return}
+    let d;try{d=JSON.parse(txt)}catch(e){return}
+    const t=typeof d.t==="string"?d.t.trim().slice(0,280):"";if(t.length<2)return;
+    const n={t,a:typeof d.a==="string"?d.a.trim().slice(0,40):"",c:["giallo","rosa","azzurro","verde"].includes(d.c)?d.c:"giallo",q:BOARD[b]?.q||Date.now()};
+    if(JSON.stringify(BOARD[b])!==JSON.stringify(n)){BOARD[b]=n;saveBoard()}return}
   if(kind!=="v"||!POLLS[a]||!/^[a-z0-9]{6,20}$/.test(b||""))return;
   const s=slot(a);
   if(!txt){if(b in s.remote){delete s.remote[b];savePolls()}return}
@@ -773,10 +774,11 @@ function onMsg(topic,buf){
   if(!Number.isInteger(c)||c<0||c>=POLLS[a].o.length||s.remote[b]===c)return;
   s.remote[b]=c;savePolls();
 }
-const topics=()=>[base()+"/v/+/+",base()+"/here/+"];
+const topics=()=>[base()+"/v/+/+",base()+"/here/+",base()+"/p/+/+"];
 function setSala(code){const old=topics();pub(base()+"/poll","");
   live().forEach(c=>{try{c.unsubscribe(old)}catch(e){}});
-  SALA=code;store.set("voto-sala",SALA);votes={};PHONES.clear();store.set("sondaggi-v1",votes);
+  Object.keys(BOARD).forEach(k=>pub(`${base()}/p/diario/${k}`,""));
+  SALA=code;store.set("voto-sala",SALA);votes={};PHONES.clear();store.set("sondaggi-v1",votes);BOARD={};saveBoard();
   live().forEach(c=>{try{c.subscribe(topics())}catch(e){}});drawSalaQR();renderPolls();broadcast()}
 function startMQTT(){
   BROKERS.forEach(url=>{let c;try{c=mqtt.connect(url,{clientId:"lim-"+newCode(),reconnectPeriod:5000,connectTimeout:8000,clean:true})}catch(e){return}
@@ -790,37 +792,20 @@ if(IN_CLAUDE){TRIED=true;renderPolls()}
 else{const s=document.createElement("script");s.src="https://cdn.jsdelivr.net/npm/mqtt@5.10.1/dist/mqtt.min.js";
   s.onload=startMQTT;s.onerror=()=>{TRIED=true;renderPolls()};document.head.appendChild(s)}
 
-/* ---------- il diario dei bisogni: una bacheca di post-it nel Foglio Google del registro ---------- */
-const DIARIO="https://chiaraleto97-blip.github.io/claudio/diario/";
-let REG=store.get("registro-url","");
-let BACHECA=store.get("diario-bacheca","");if(!/^[a-z0-9]{6}$/.test(BACHECA)){BACHECA=newCode();store.set("diario-bacheca",BACHECA)}
-const regId=()=>(/^https:\/\/script\.google\.com\/macros\/s\/([A-Za-z0-9_-]{20,120})\/exec\/?$/.exec((REG||"").trim())||[])[1]||null;
-const diarioLink=()=>regId()?`${DIARIO}#s=${regId()}&b=${BACHECA}`:"";
-function renderDiario(){const link=diarioLink();
-  document.querySelectorAll("[data-diarioqr]").forEach(el=>{el.innerHTML="";
-    if(IN_CLAUDE){el.innerHTML='<p style="color:#2A2045;font-size:18px;margin:0;text-align:center">La bacheca si apre dalla presentazione nel file o sul sito dei materiali.</p>';return}
-    if(!link){el.innerHTML='<p style="color:#2A2045;font-size:18px;margin:0;text-align:center">Qui comparirà il QR della bacheca, dopo aver collegato il registro.</p>';return}
-    if(typeof QRCode!=="undefined"){try{new QRCode(el,{text:link,width:500,height:500,colorDark:"#2A2045",colorLight:"#FFFFFF",correctLevel:QRCode.CorrectLevel.M})}catch(e){}}
-    else el.innerHTML='<p style="color:#2A2045;font-size:18px;margin:0">Serve la connessione per il QR.</p>'});
-  document.querySelectorAll("[data-diariourl]").forEach(el=>el.textContent=link?`Bacheca ${BACHECA}`:"");
-  document.querySelectorAll("[data-regin]").forEach(el=>{if(document.activeElement!==el)el.value=REG});
-}
-document.querySelectorAll("[data-regform]").forEach(f=>f.addEventListener("submit",e=>{e.preventDefault();const u=f.querySelector("[data-regin]").value.trim();
-  REG=u;store.set("registro-url",REG);renderDiario();loadWall()}));
-let wallBusy=false;
-async function loadWall(){const box=document.querySelector("[data-wall]");if(!box||wallBusy)return;
-  if(IN_CLAUDE){box.innerHTML='<p class="empty">La bacheca si vede aprendo la presentazione dal file o dal sito dei materiali.</p>';return}
-  if(!regId()){box.innerHTML='<p class="empty">Collegate il registro nella slide «Il diario dei bisogni» dell\'incontro 1.</p>';return}
-  wallBusy=true;
-  try{const r=await fetch(`https://script.google.com/macros/s/${regId()}/exec?azione=diario&bacheca=${BACHECA}`);const d=await r.json();
-    const list=(Array.isArray(d.postit)?d.postit:[]).sort((a,b)=>a.quando-b.quando);
-    box.innerHTML=list.length?list.map((p,i)=>`<div class="dnote ${["rosa","azzurro","verde"].includes(p.colore)?p.colore:""}" style="--r:${((i*37)%7-3)*.5}deg;animation-delay:${Math.min(i,20)*40}ms">…${esc(p.testo)}${p.autore?`<small>${esc(p.autore)}</small>`:""}</div>`).join("")
-      :'<p class="empty">La bacheca è ancora vuota.</p>';
-    document.querySelectorAll("[data-dcount]").forEach(el=>el.textContent=list.length===1?"1 post-it":`${list.length} post-it`)}
-  catch(e){box.innerHTML='<p class="empty">Bacheca non raggiungibile: controllate la rete.</p>'}
-  finally{wallBusy=false}}
-renderDiario();
-setInterval(()=>{if(slides[cur]?.querySelector("[data-wall]"))loadWall()},15000);
+/* ---------- il diario dei bisogni: la bacheca dei post-it, come i sondaggi ----------
+   Con lo stesso QR della sala, ognuno ricopia dal telefono i bisogni del suo foglio: un post-it per bisogno.
+   I post-it arrivano dai server della sala e restano in questo browser, insieme alla sala. */
+let BOARD=store.get("bacheca-v1",{});
+function renderBoard(){const box=document.querySelector("[data-wall]");if(!box)return;
+  const list=Object.entries(BOARD).sort((x,y)=>x[1].q-y[1].q);
+  box.innerHTML=list.length?list.map(([k,p],i)=>`<div class="dnote ${["rosa","azzurro","verde"].includes(p.c)?p.c:""}" style="--r:${((i*37)%7-3)*.5}deg">…${esc(p.t)}${p.a?`<small>${esc(p.a)}</small>`:""}</div>`).join("")
+    :`<p class="empty">${IN_CLAUDE?"La bacheca si riempie aprendo la presentazione dal file o dal sito dei materiali.":"Inquadrate il QR e ricopiate i bisogni con la stella: i post-it compaiono qui."}</p>`;
+  document.querySelectorAll("[data-dcount]").forEach(el=>el.textContent=list.length===1?"1 post-it":`${list.length} post-it`)}
+function saveBoard(){store.set("bacheca-v1",BOARD);renderBoard()}
+document.addEventListener("click",e=>{const b=e.target.closest("[data-boardclear]");if(!b)return;
+  if(!b.dataset.sure){b.dataset.sure="1";b.textContent="Sicuri? Clic di nuovo";setTimeout(()=>{delete b.dataset.sure;b.textContent="Svuota la bacheca"},3000);return}
+  Object.keys(BOARD).forEach(k=>pub(`${base()}/p/diario/${k}`,""));BOARD={};saveBoard();b.textContent="Svuota la bacheca";delete b.dataset.sure});
+renderBoard();
 
 /* ---------- indovina la parola: la sala vota, il modello pesca ---------- */
 const ESEMPIO=[30,25,15,20,10];
@@ -891,7 +876,7 @@ function go(n,showAll){
   trail();$("notes").innerHTML=`<b>${esc(s.dataset.title||"")}</b>${esc(s.dataset.notes||"Nessuna nota.")}`;
   $("live").textContent=s.dataset.title||"";
   if(s.querySelector("#tokin"))renderTok();
-  if(s.querySelector("[data-wall]"))loadWall();
+  if(s.querySelector("[data-wall]"))renderBoard();
   broadcastSoon();
   try{if(location.hash!=="#voto")history.replaceState(null,"","#s"+cur)}catch(e){}
   document.querySelectorAll("#menuin button").forEach(b=>b.classList.toggle("cur",+b.dataset.n===cur));
