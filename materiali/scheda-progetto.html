@@ -121,26 +121,29 @@ td textarea{min-height:2.4em}
   .sky,.forest,.bar,.prompt-actions,.foot,.tip,.band .trees,.band .stars,.head .cluster{display:none!important}
   .sheet{box-shadow:none;border-radius:0;max-width:none;overflow:visible}
   .sheet + .sheet{margin-top:0;break-before:page}
-  .band{background:none;color:var(--paper-ink);padding:0 0 2.5mm;border-bottom:.5mm solid var(--paper-ink);margin-bottom:4mm}
+  .band{background:none;color:var(--paper-ink);padding:0 0 2mm;border-bottom:.5mm solid var(--paper-ink);margin-bottom:3mm}
+  .head{flex-wrap:nowrap}
   h1{font-size:22pt}
   h1 em{background:none;color:var(--paper-ink);-webkit-text-fill-color:currentColor}
   .when{color:var(--paper-muted)}
   .when .wt{--wt-accent:#A3493C;color:var(--paper-ink)}
   .when .wt .wt-m{width:1.4em;height:1.4em}
   .body{padding:0}
-  section{margin-bottom:3.4mm;break-inside:avoid}
+  section{margin-bottom:2.6mm;break-inside:avoid}
   h2{font-size:11.5pt;margin-bottom:1.6mm;gap:2mm}
   h2 .n{width:5.6mm;height:5.6mm;font-size:8.5pt;-webkit-print-color-adjust:exact;print-color-adjust:exact}
   .row{gap:2mm 4mm}
   .c2{grid-template-columns:1fr 1fr}
   .c4{grid-template-columns:repeat(4,1fr)}
   input[type="text"],textarea{font-size:9.5pt;border-radius:1.5mm;padding:1.2mm 2mm;min-height:7.5mm;border-width:.3mm}
-  textarea{min-height:calc(var(--r,2) * 5.6mm);field-sizing:content}
+  textarea{min-height:calc(var(--r,2) * 5.6mm);field-sizing:content;height:auto!important}
   input::placeholder,textarea::placeholder{color:transparent}
   .cardfield{box-shadow:0 0 0 .3mm var(--paper-line);-webkit-print-color-adjust:exact;print-color-adjust:exact}
   .cardfield .lab{padding:1.2mm 2mm}
   .lab{font-size:8pt}
   .chk{font-size:9pt}
+  .checks.col{display:grid;grid-template-columns:1fr 1fr;gap:1.6mm 6mm}
+  .privacy{margin-top:2.5mm;padding:2mm 3mm}
   .chk input{width:3.6mm;height:3.6mm}
   .privacy{background:none;border-left-width:1mm}
   .prompt{background:none;color:var(--paper-ink);border:.3mm solid var(--paper-line);border-radius:2mm;font-size:9.5pt;padding:3mm 4mm;line-height:1.75}
