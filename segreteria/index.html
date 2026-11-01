@@ -446,10 +446,12 @@ const esc=t=>String(t??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&g
 const KEY="segreteria-idea-v1";
 const TITOLI=["Tutto è testo","Avere l'idea","Costruire parlando","Dalla classe al web","La fiera degli strumenti"];
 const DEF={istituto:"Istituto Comprensivo di Almese",luogo:"",formatore:"",dirigente:"",soglia:75,rilascio:"",
+  regUrl:"https://script.google.com/macros/s/AKfycbwtWc7CL68kXddP25THcRUbORr5BEHy8k3m3ewPGoiE6VOy7cPmDEefE0yPsVXM8K7z/exec",regKey:"",
   incontri:TITOLI.map(t=>({t,data:"",da:"",a:"",ore:2})),corsisti:[]};
 let S;try{S=Object.assign({},DEF,JSON.parse(localStorage.getItem(KEY))||{})}catch(e){S=structuredClone(DEF)}
 if(!Array.isArray(S.incontri)||S.incontri.length!==5)S.incontri=structuredClone(DEF.incontri);
 if(!Array.isArray(S.corsisti))S.corsisti=[];
+if(!S.regUrl)S.regUrl=DEF.regUrl;if(!S.regKey)S.regKey=DEF.regKey;
 const newId=()=>Math.random().toString(36).slice(2,10);
 S.corsisti.forEach(c=>{if(!c.id)c.id=newId()});
 /* le firme stanno a parte: sono immagini, pesano più del resto */
