@@ -152,7 +152,9 @@ details.setup[open]{display:flex;flex-direction:column;gap:12px}
 .pad canvas{width:min(980px,100%);aspect-ratio:3/1;border-radius:18px;touch-action:none;cursor:crosshair;box-shadow:0 0 0 3px var(--glow);
   background:linear-gradient(transparent 74%,#CFC4D6 74%,#CFC4D6 74.6%,transparent 74.6%),#FFFDF8}
 .pad .bar{justify-content:center}
-.firme img.sigimg{display:block;height:8.2mm;max-width:38mm;object-fit:contain}
+.firme img.sigimg{display:block;height:8.2mm;max-width:31mm;object-fit:contain}
+.sigcell{display:flex;align-items:center;justify-content:space-between;gap:1.5mm}
+.sigt{flex:none;font-size:7.5pt;color:var(--paper-muted);font-variant-numeric:tabular-nums}
 .sheet .sig img{display:block;height:11mm;max-width:60mm;object-fit:contain;margin:0 auto -1.5mm}
 @page{size:A4 portrait;margin:0}
 @media print{
@@ -459,6 +461,8 @@ const KEYF=KEY+"-firme";
 let F;try{F=JSON.parse(localStorage.getItem(KEYF))||{}}catch(e){F={}}
 const saveF=()=>{try{localStorage.setItem(KEYF,JSON.stringify(F));return true}catch(e){return false}};
 const fk=(c,k,m)=>`${c.id}|${k}|${m}`;
+if(!S.ore||typeof S.ore!=="object")S.ore={};
+const ora=ms=>ms?new Date(ms).toLocaleTimeString("it-IT",{hour:"2-digit",minute:"2-digit"}):"";
 function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
 const framed=(()=>{try{return window.top!==window}catch(e){return true}})();
 
@@ -501,13 +505,13 @@ function renderRoster(){
 $("roster").addEventListener("input",e=>{const t=e.target,c=S.corsisti[+t.dataset.i];if(!c)return;
   if(t.type==="checkbox"){c.p[+t.dataset.k]=t.checked;save();const tds=t.closest("tr").children;tds[7].textContent=fmtOre(oreDi(c));tds[8].innerHTML=okAtt(c)?'<span class="pill ok">Attestato</span>':'<span class="pill no">Sotto soglia</span>';renderAtt()}else{c[t.dataset.f]=t.value;save();renderFirme();renderAtt()}});
 $("roster").addEventListener("click",e=>{const b=e.target.closest("[data-del]");if(!b)return;
-  const i=+b.dataset.del;if(b.dataset.sure){const via=S.corsisti.splice(i,1)[0];if(via)Object.keys(F).filter(x=>x.startsWith(via.id+"|")).forEach(x=>delete F[x]);saveF();save();renderAll()}else{b.dataset.sure="1";b.textContent="Togli?";b.style.fontSize="14px";setTimeout(()=>{if(b.isConnected){delete b.dataset.sure;b.textContent="×";b.style.fontSize=""}},3000)}});
+  const i=+b.dataset.del;if(b.dataset.sure){const via=S.corsisti.splice(i,1)[0];if(via){Object.keys(F).filter(x=>x.startsWith(via.id+"|")).forEach(x=>delete F[x]);Object.keys(S.ore).filter(x=>x.startsWith(via.id+"|")).forEach(x=>delete S.ore[x])}saveF();save();renderAll()}else{b.dataset.sure="1";b.textContent="Togli?";b.style.fontSize="14px";setTimeout(()=>{if(b.isConnected){delete b.dataset.sure;b.textContent="×";b.style.fontSize=""}},3000)}});
 
 /* ---------- foglio firme ---------- */
 const head=()=>`<div class="top"><div class="logo">IDEA<sup>IA</sup><span class="wt-paper"><span class="wt"><svg class="wt-m" viewBox="0 0 200 200" aria-hidden="true"><circle cx="100" cy="100" r="93" style="fill:#ABA3DC;stroke:#F6D58E;stroke-width:7"/><circle cx="100" cy="100" r="84" style="fill:none;stroke:#F7F1EE;stroke-opacity:.28;stroke-width:2"/><path d="M53 40.9 74.8 64.3 49.7 72.7Z" style="fill:#F7F1EE"/><path d="M146.9 40.9 125.2 64.3 150.3 72.7Z" style="fill:#F7F1EE"/><path d="M100 57.6 116.8 62.6 160.3 89.4 180.5 116.1 133.5 143.1 100 176.6Z" style="fill:#F7F1EE;opacity:.5"/><path d="M61.5 96.2 88.2 101.2 76.5 109.5Z" style="fill:#17142C"/><path d="M138.5 96.2 111.8 101.2 123.5 109.5Z" style="fill:#17142C"/><path d="M88.2 153.1 111.8 153.1 100 168.1Z" style="fill:#17142C"/></svg><span class="wt-w">Wolf <b>Team</b></span></span></span></div><div class="ist">${esc(S.istituto)}<br>Corso di formazione per docenti</div></div>`;
 function foglio(k){const x=S.incontri[k],PER=20,pagine=Math.max(1,Math.ceil((S.corsisti.length+3)/PER));let out="";
   for(let pg=0;pg<pagine;pg++){let tr="";
-    for(let r=pg*PER;r<(pg+1)*PER;r++){const c=S.corsisti[r];const im=m=>c&&F[fk(c,k,m)]?`<img class="sigimg" src="${F[fk(c,k,m)]}" alt="Firma di ${esc(c.nome)}">`:"";tr+=`<tr><td>${r+1}</td><td>${c?esc(c.nome):""}</td><td>${c?esc(c.scuola):""}</td><td>${im("e")}</td><td>${im("u")}</td></tr>`}
+    for(let r=pg*PER;r<(pg+1)*PER;r++){const c=S.corsisti[r];const im=m=>c&&F[fk(c,k,m)]?`<div class="sigcell"><img class="sigimg" src="${F[fk(c,k,m)]}" alt="Firma di ${esc(c.nome)}"><span class="sigt">${ora(S.ore[fk(c,k,m)])}</span></div>`:"";tr+=`<tr><td>${r+1}</td><td>${c?esc(c.nome):""}</td><td>${c?esc(c.scuola):""}</td><td>${im("e")}</td><td>${im("u")}</td></tr>`}
     out+=`<article class="sheet">${head()}<h3>Registro presenze · Incontro ${k+1}: ${esc(x.t)}${pagine>1?` <span style="font-size:.6em;color:var(--paper-muted)">(foglio ${pg+1} di ${pagine})</span>`:""}</h3>
   <div class="meta"><div><b>Data</b><span>${esc(dataIt(x.data))}</span></div><div><b>Orario</b><span>${x.da||x.a?esc(`${x.da} – ${x.a}`):""}</span></div><div><b>Luogo</b><span>${esc(S.luogo)}</span></div></div>
   <table class="firme"><thead><tr><th>N.</th><th>Cognome e nome</th><th>Scuola o plesso</th><th>Firma entrata</th><th>Firma uscita</th></tr></thead><tbody>${tr}</tbody></table>
@@ -521,7 +525,7 @@ let MODO="e";
 const signInc=()=>+$("sign-inc").value;
 function renderSign(){const k=signInc(),fatte=S.corsisti.filter(c=>F[fk(c,k,MODO)]).length;
   $("signgrid").innerHTML=S.corsisti.length?S.corsisti.map((c,i)=>{const f=F[fk(c,k,MODO)];
-    return `<button type="button" class="signbtn ${f?"done":""}" data-si="${i}"><span>${esc(c.nome)}<small>${f?"Firmato · tocca per rifare":"Tocca per firmare"}</small></span>${f?`<img src="${f}" alt="">`:""}</button>`}).join("")
+    return `<button type="button" class="signbtn ${f?"done":""}" data-si="${i}"><span>${esc(c.nome)}<small>${f?(S.ore[fk(c,k,MODO)]?`Firmato alle ${ora(S.ore[fk(c,k,MODO)])} · tocca per rifare`:"Firmato · tocca per rifare"):"Tocca per firmare"}</small></span>${f?`<img src="${f}" alt="">`:""}</button>`}).join("")
     :`<p class="hint">Prima aggiungete i corsisti nella scheda «Corsisti e presenze».</p>`;
   $("sign-count").textContent=`${fatte} firme su ${S.corsisti.length} · incontro ${k+1}, ${MODO==="e"?"entrata":"uscita"}`;
   $("sign-form").textContent=F.formatore?"Firma di chi conduce ✓":"Firma di chi conduce";
@@ -552,9 +556,9 @@ function trimmed(){const d=cx.getImageData(0,0,cv.width,cv.height).data;let x0=c
   o.getContext("2d").drawImage(cv,x0,y0,w,h,0,0,o.width,o.height);return o.toDataURL("image/png")}
 $("pad-ok").onclick=()=>{if(!T||!drawn)return;const img=trimmed();if(!img)return;const prima=F[T.key];F[T.key]=img;
   if(!saveF()){if(prima)F[T.key]=prima;else delete F[T.key];$("pad-note").textContent="La memoria del browser è piena: salvate una copia dei dati (scheda Corsisti) e togliete le firme già stampate.";return}
-  if(T.corsista){T.corsista.p[T.k]=true;save()}
+  if(T.corsista){T.corsista.p[T.k]=true;S.ore[T.key]=Date.now();save()}
   closePad();renderAll()};
-$("pad-del").onclick=()=>{if(!T)return;delete F[T.key];saveF();closePad();renderAll()};
+$("pad-del").onclick=()=>{if(!T)return;delete F[T.key];delete S.ore[T.key];saveF();save();closePad();renderAll()};
 
 /* ---------- firme dal telefono: arrivano dal Foglio Google del registro ---------- */
 const FIRMA_PAGE="https://chiaraleto97-blip.github.io/claudio/firma/";
@@ -580,6 +584,7 @@ async function telSync(){const id=appId();if(!id||!S.regKey||IN_CLAUDE)return;
       let c=S.corsisti.find(c=>norm(c.nome)===norm(nome));
       if(!c){c={id:newId(),nome,scuola:"",p:[false,false,false,false,false]};S.corsisti.push(c);cambiate++}
       if(F[fk(c,k,m)]!==x.firma){F[fk(c,k,m)]=x.firma;cambiate++}
+      if(x.quando&&S.ore[fk(c,k,m)]!==x.quando){S.ore[fk(c,k,m)]=x.quando;cambiate++}
       if(!c.p[k]){c.p[k]=true;cambiate++}});
     tLast=Date.now();const n=(d.firme||[]).length;
     if(cambiate){ordina();save();if(!saveF())telStatus(true,"Memoria del browser piena: salvate una copia dei dati");renderAll()}
